@@ -1,15 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { ThemeProvider } from "@emotion/react";
+import { createTheme } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
   </React.StrictMode>
 );
 

@@ -1,18 +1,25 @@
 import "./App.css";
 import { Box, Drawer, IconButton, Tab, Tabs, Typography } from "@mui/material";
-import NoteBookCmp from "./components/NoteBookCmp";
+import NoteBookCmp from "./modules/NoteBookCmp";
 import { useEffect, useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import defaultSettings from "./settings";
-import { Modules, Settings } from "./settings";
+import { ModuleNames, Settings } from "./settings";
+import SettingsCmp from "./components/Settings";
 
 const App = () => {
-  const [value, setValue] = useState<Modules>("notebook");
+  const [value, setValue] = useState<ModuleNames>("notebook");
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
-  const handleChange = (e: React.SyntheticEvent, newValue: Modules) => {
+
+  const handleSettingsChange = (newSettings: Settings) => {
+    setSettings(newSettings);
+  };
+
+  const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
     setValue(newValue);
   };
+
   useEffect(() => {
     const lsSettings = localStorage.getItem("webPlannerSettings");
     if (lsSettings !== null) {
@@ -28,23 +35,16 @@ const App = () => {
         </IconButton>
       </Box>
       <Box>
-        <Drawer
-          anchor="right"
-          open={settingsOpen}
-          onClose={() => setSettingsOpen(false)}
-        >
-          <Typography>Einstellungen</Typography>
+        <Drawer anchor="right" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
+          <SettingsCmp settings={settings} handleSettingsChange={handleSettingsChange} />
         </Drawer>
         <Tabs value={value} onChange={handleChange} variant="fullWidth">
-          {settings.modules.map((module) => {
-            return (
-              <Tab
-                key={`tab-${module}`}
-                value={module}
-                label={module.charAt(0).toUpperCase() + module.slice(1)}
-              />
-            );
-          })}
+          {Object.keys(settings.modules)
+            //@ts-ignore
+            .filter((module: ModuleNames) => settings.modules[module] === true)
+            .map((module) => {
+              return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
+            })}
         </Tabs>
         {value === "notebook" && <NoteBookCmp />}
       </Box>

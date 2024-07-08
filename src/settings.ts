@@ -18,4 +18,5 @@ const defaultSettings = {
     flow: true,
   },
 };
+
 export default defaultSettings;

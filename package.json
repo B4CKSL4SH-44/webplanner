@@ -21,13 +21,15 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start-client": "PORT=3000 react-scripts start",
+    "build-client": "PORT=3000 react-scripts build",
+    "test-client": "PORT=3000 react-scripts test",
+    "eject-client": "PORT=3000 react-scripts eject",
     "lint": "eslint -c ./src/*.ts --ext .ts,.tsx",
     "lint-fix": "eslint -c ./src/.ts -c ./src/.tsx --fix",
-    "lint-quiet": "eslint  -c ./src/.ts -c ./src/.tsx --quiet"
+    "lint-quiet": "eslint  -c ./src/.ts -c ./src/.tsx --quiet",
+    "start-server": "bun run index.ts",
+    "start-dev": "bun --watch run index.ts"
   },
   "eslintConfig": {
     "extends": [

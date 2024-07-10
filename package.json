@@ -14,6 +14,7 @@
     "@types/node": "^16.18.101",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "eslint-config-baral": "git+https://git/git/DevPool/ESLintConfig.git#36bcd381348c794734da4404f2f2e1c327d32e4e",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
@@ -23,7 +24,10 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint -c ./src/*.ts --ext .ts,.tsx",
+    "lint-fix": "eslint -c ./src/.ts -c ./src/.tsx --fix",
+    "lint-quiet": "eslint  -c ./src/.ts -c ./src/.tsx --quiet"
   },
   "eslintConfig": {
     "extends": [
@@ -47,8 +51,5 @@
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.5.3"
   }
 }

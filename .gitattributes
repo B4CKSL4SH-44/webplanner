@@ -1,0 +1,5 @@
+*.docx filter=lfs diff=lfs merge=lfs -text lockable
+*.hnd filter=lfs diff=lfs merge=lfs -text lockable
+*.pptx filter=lfs diff=lfs merge=lfs -text lockable
+*.pub filter=lfs diff=lfs merge=lfs -text lockable
+*.xlsx filter=lfs diff=lfs merge=lfs -text lockable

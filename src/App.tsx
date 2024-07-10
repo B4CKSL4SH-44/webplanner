@@ -4,7 +4,7 @@ import NoteBookCmp from "./modules/NoteBookCmp";
 import { useEffect, useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import defaultSettings from "./settings";
-import { ModuleNames, Settings } from "./settings";
+import { type ModuleNames, type Settings } from "./settings";
 import SettingsCmp from "./components/Settings";
 
 const App = () => {
@@ -35,15 +35,28 @@ const App = () => {
         </IconButton>
       </Box>
       <Box>
-        <Drawer anchor="right" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
-          <SettingsCmp settings={settings} handleSettingsChange={handleSettingsChange} />
+        <Drawer
+          anchor="right"
+          open={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+        >
+          <SettingsCmp
+            settings={settings}
+            handleSettingsChange={handleSettingsChange}
+          />
         </Drawer>
         <Tabs value={value} onChange={handleChange} variant="fullWidth">
           {Object.keys(settings.modules)
             //@ts-ignore
             .filter((module: ModuleNames) => settings.modules[module] === true)
             .map((module) => {
-              return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
+              return (
+                <Tab
+                  key={`tab-${module}`}
+                  value={module}
+                  label={module.charAt(0).toUpperCase() + module.slice(1)}
+                />
+              );
             })}
         </Tabs>
         {value === "notebook" && <NoteBookCmp />}

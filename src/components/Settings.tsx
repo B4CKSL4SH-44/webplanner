@@ -12,8 +12,8 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
-import { ReactElement, useEffect } from "react";
-import { ModuleNames, Settings } from "../settings";
+import { type ReactElement, useEffect } from "react";
+import { type ModuleNames, type Settings } from "../settings";
 
 const SettingsCmp = ({
   settings,
@@ -27,7 +27,7 @@ const SettingsCmp = ({
     if (lsSettings !== null) {
       handleSettingsChange(JSON.parse(lsSettings));
     }
-  }, []);
+  }, [handleSettingsChange]);
 
   const handleToggle = (module: ModuleNames) => {
     let moduleSettings = settings.modules;
@@ -63,9 +63,14 @@ const SettingsCmp = ({
             {allModules.map((moduleName) => {
               return (
                 <ListItem>
-                  <ListItemButton dense onClick={() => handleToggle(moduleName)}>
+                  <ListItemButton
+                    dense
+                    onClick={() => handleToggle(moduleName)}
+                  >
                     <ListItemIcon>
-                      <Checkbox checked={settings.modules[moduleName] === true} />
+                      <Checkbox
+                        checked={settings.modules[moduleName] === true}
+                      />
                     </ListItemIcon>
                     <ListItemText>{getText(moduleName)}</ListItemText>
                   </ListItemButton>

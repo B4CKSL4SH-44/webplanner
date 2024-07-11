@@ -1,20 +1,11 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import SettingStore from "stores/SettingsStore";
 
-export default class Store {
-  private static instance: Store | undefined;
-
+class Store {
   public settingsStore = SettingStore.getInstance();
-
-  public static getInstance = () => {
-    if (Store.instance === undefined) {
-      Store.instance = new Store();
-    }
-    return Store.instance;
-  };
 }
 
-// const store = Store.getInstance;
-// const useStores = createContext(Store.getInstance);
+const StoreContext = createContext(new Store());
+const useStores = (): Store => useContext(StoreContext);
 
-// export default useStores;
+export default useStores;

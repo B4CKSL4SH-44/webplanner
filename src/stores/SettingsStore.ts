@@ -5,32 +5,29 @@ import defaultSettings from "settings";
 export default class SettingStore {
   private static instance: SettingStore | undefined;
 
+  private getLsSettings = (): Settings => {
+    const lsSettings = localStorage.getItem("webPlannerSettings") as string;
+    return JSON.parse(lsSettings);
+  };
+
+  private writeLsSettings = (newSettings: Settings) => {
+    localStorage.setItem("webPlannerSettings", JSON.stringify(newSettings));
+  };
+
   public modules: Modules;
   public setModules = (newModules: Modules) => {
     this.modules = newModules;
-    const lsSettings = localStorage.getItem("webPlannerSettings");
-    if (lsSettings !== null) {
-      const parsedSettings: Settings = JSON.parse(lsSettings);
-      parsedSettings.modules = this.modules;
-      localStorage.setItem(
-        "webPlannerSettings",
-        JSON.stringify(parsedSettings)
-      );
-    }
+    const parsedSettings = this.getLsSettings();
+    parsedSettings.modules = this.modules;
+    this.writeLsSettings(parsedSettings);
   };
 
   public displayMode: "light" | "dark";
   public setDisplayMode = (newMode: "light" | "dark") => {
     this.displayMode = newMode;
-    const lsSettings = localStorage.getItem("webPlannerSettings");
-    if (lsSettings !== null) {
-      const parsedSettings: Settings = JSON.parse(lsSettings);
-      parsedSettings.displayMode = this.displayMode;
-      localStorage.setItem(
-        "webPlannerSettings",
-        JSON.stringify(parsedSettings)
-      );
-    }
+    const parsedSettings = this.getLsSettings();
+    parsedSettings.displayMode = this.displayMode;
+    this.writeLsSettings(parsedSettings);
   };
 
   public static getInstance = () => {
@@ -48,6 +45,8 @@ export default class SettingStore {
       const parsedSettings: Settings = JSON.parse(lsSettings);
       this.modules = parsedSettings.modules;
       this.displayMode = parsedSettings.displayMode;
+    } else {
+      localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
     }
     makeObservable(this, {
       modules: observable,

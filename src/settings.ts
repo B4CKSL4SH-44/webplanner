@@ -7,10 +7,12 @@ export interface Modules {
   flow: boolean;
 }
 export interface Settings {
+  displayMode: "light" | "dark";
   modules: Modules;
 }
 
-const defaultSettings = {
+const defaultSettings: Settings = {
+  displayMode: "light",
   modules: {
     notebook: true,
     tasks: true,

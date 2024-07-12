@@ -5,13 +5,9 @@ import defaultSettings from "settings";
 export default class SettingStore {
   private static instance: SettingStore | undefined;
 
-  private getLsSettings = (): Settings => {
-    const lsSettings = localStorage.getItem("webPlannerSettings") as string;
-    return JSON.parse(lsSettings);
-  };
-
-  private writeLsSettings = (newSettings: Settings) => {
-    localStorage.setItem("webPlannerSettings", JSON.stringify(newSettings));
+  public settingsOpen: boolean = false;
+  public setSettingsOpen = (newOpen: boolean) => {
+    this.settingsOpen = newOpen;
   };
 
   public modules: Modules;
@@ -49,10 +45,21 @@ export default class SettingStore {
       localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
     }
     makeObservable(this, {
+      settingsOpen: observable,
+      setSettingsOpen: action,
       modules: observable,
       setModules: action,
       displayMode: observable,
       setDisplayMode: action,
     });
   }
+
+  private getLsSettings = (): Settings => {
+    const lsSettings = localStorage.getItem("webPlannerSettings") as string;
+    return JSON.parse(lsSettings);
+  };
+
+  private writeLsSettings = (newSettings: Settings) => {
+    localStorage.setItem("webPlannerSettings", JSON.stringify(newSettings));
+  };
 }

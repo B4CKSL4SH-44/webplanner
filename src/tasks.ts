@@ -1,4 +1,18 @@
-const tasks = [
+export interface Task {
+  id: number;
+  title: string;
+  desription: string;
+  severity: "high" | "medium" | "low";
+  relations: {
+    blocks: number[];
+    follows: number[];
+    relation: number[];
+  };
+  creator: string;
+  assignees: string[];
+}
+
+const tasks: Task[] = [
   {
     id: 1,
     title: "Erster Task",
@@ -29,7 +43,7 @@ const tasks = [
     id: 3,
     title: "Dritter Task",
     desription: "Lorem ipsum",
-    severity: "normal",
+    severity: "medium",
     relations: {
       blocks: [],
       follows: [],

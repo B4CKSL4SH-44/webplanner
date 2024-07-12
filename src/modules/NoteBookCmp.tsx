@@ -31,7 +31,8 @@ const NoteBookCmp = (): ReactElement => {
   const editor = useEditor({
     extensions: [StarterKit, Color, Underline, TextStyle, Highlight],
     content: stores.noteBookStore.content,
-    onUpdate: () => stores.noteBookStore.setContent(editor?.getHTML() as string),
+    onUpdate: () =>
+      stores.noteBookStore.setContent(editor?.getHTML() as string),
   });
 
   return (
@@ -65,13 +66,20 @@ const NoteBookCmp = (): ReactElement => {
               <MenuButtonUnderline />
               <MenuButtonStrikethrough />
               <MenuDivider />
-              <MenuButtonTextColor defaultTextColor={theme.palette.text.primary} />
+              <MenuButtonTextColor
+                defaultTextColor={theme.palette.text.primary}
+              />
               <MenuButtonHighlightColor />
               <MenuDivider />
               <MenuButtonOrderedList />
               <MenuButtonBulletedList />
               <Box flexGrow={1} display={"flex"} justifyContent={"flex-end"}>
-                <Button sx={{ alignSelf: "flex-end" }} variant="contained" startIcon={<Send />}>
+                <Button
+                  onClick={() => stores.tasksStore.setTaskOverlayActive(true)}
+                  sx={{ alignSelf: "flex-end" }}
+                  variant="contained"
+                  startIcon={<Send />}
+                >
                   Taskify!
                 </Button>
               </Box>

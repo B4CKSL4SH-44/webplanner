@@ -26,10 +26,10 @@ const App = observer(() => {
     },
   });
   return (
-    <Box>
+    <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box height={"100%"} width={"100%"}>
+        <Box flexGrow={1} width={"100%"} display={"flex"} flexDirection={"column"}>
           <AppBar position="static">
             <Toolbar>
               <Typography sx={{ flexGrow: 1 }}>WebConductor</Typography>
@@ -38,7 +38,7 @@ const App = observer(() => {
               </IconButton>
             </Toolbar>
           </AppBar>
-          <Box>
+          <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
             <Drawer anchor="right" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
               <SettingsCmp />
             </Drawer>
@@ -49,7 +49,7 @@ const App = observer(() => {
                   return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
                 })}
             </Tabs>
-            <Divider sx={{ mb: "1rem" }} />
+            <Divider />
             {value === "notebook" && <NoteBookCmp />}
           </Box>
         </Box>

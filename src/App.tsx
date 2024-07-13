@@ -29,35 +29,18 @@ const App = observer(() => {
     <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box
-          flexGrow={1}
-          width={"100%"}
-          display={"flex"}
-          flexDirection={"column"}
-        >
+        <Box flexGrow={1} width={"100%"} display={"flex"} flexDirection={"column"}>
           <HeaderCmp />
           <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
-            <TaskOverlayCmp />
-            <Drawer
-              anchor="right"
-              open={stores.settingsStore.settingsOpen}
-              onClose={() => stores.settingsStore.setSettingsOpen(false)}
-            >
+            {stores.tasksStore.isTaskOverlayActive && <TaskOverlayCmp />}
+            <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
               <SettingsCmp />
             </Drawer>
             <Tabs value={value} onChange={handleChange} variant="fullWidth">
               {(Object.keys(stores.settingsStore.modules) as ModuleNames[])
-                .filter(
-                  (module) => stores.settingsStore.modules[module] === true
-                )
+                .filter((module) => stores.settingsStore.modules[module] === true)
                 .map((module) => {
-                  return (
-                    <Tab
-                      key={`tab-${module}`}
-                      value={module}
-                      label={module.charAt(0).toUpperCase() + module.slice(1)}
-                    />
-                  );
+                  return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
                 })}
             </Tabs>
             <Divider />

@@ -1,22 +1,38 @@
 export interface Task {
   id: number;
   title: string;
-  desription: string;
+  description: string;
   priority: "high" | "medium" | "low";
-  relations: {
-    blocks: number[];
-    follows: number[];
-    relation: number[];
-  };
+  relations: Relations;
   creator: string;
   assignees: string[];
 }
+
+export interface Relations {
+  blocks: number[] | false;
+  follows: number[] | false;
+  relation: number[] | false;
+}
+
+export const defaultTask: Task = {
+  id: -1,
+  title: "",
+  description: "",
+  priority: "medium",
+  relations: {
+    blocks: false,
+    follows: false,
+    relation: false,
+  },
+  creator: "",
+  assignees: [],
+};
 
 const tasks: Task[] = [
   {
     id: 1,
     title: "Erster Task",
-    desription: "Lorem ipsum",
+    description: "Lorem ipsum",
     priority: "high",
     relations: {
       blocks: [],
@@ -29,7 +45,7 @@ const tasks: Task[] = [
   {
     id: 2,
     title: "Zweiter Task",
-    desription: "Lorem ipsum",
+    description: "Lorem ipsum",
     priority: "low",
     relations: {
       blocks: [],
@@ -42,7 +58,7 @@ const tasks: Task[] = [
   {
     id: 3,
     title: "Dritter Task",
-    desription: "Lorem ipsum",
+    description: "Lorem ipsum",
     priority: "medium",
     relations: {
       blocks: [],

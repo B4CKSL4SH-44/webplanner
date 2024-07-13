@@ -58,40 +58,26 @@ const SettingsCmp = observer((): ReactElement => {
       <Box display={"flex"} justifyContent={"space-between"}>
         <Toolbar sx={{ flexGrow: 1 }}>
           <Typography sx={{ flexGrow: 1 }}>Einstellungen</Typography>
-          <Paper
-            sx={{ display: "flex", alignItems: "center", padding: "0 1rem" }}
-          >
+          <Paper sx={{ display: "flex", alignItems: "center", padding: "0 1rem" }}>
             <LightMode />
-            <Switch
-              checked={stores.settingsStore.displayMode === "dark"}
-              onChange={(_e, newChecked) => handleSwitch(newChecked)}
-            />
+            <Switch checked={stores.settingsStore.displayMode === "dark"} onChange={(_e, newChecked) => handleSwitch(newChecked)} />
             <DarkMode />
           </Paper>
-          <IconButton
-            onClick={() => stores.settingsStore.setSettingsOpen(false)}
-          >
+          <IconButton onClick={() => stores.settingsStore.setSettingsOpen(false)}>
             <Close />
           </IconButton>
         </Toolbar>
       </Box>
-      <Accordion sx={{ margin: "4px" }}>
+      <Accordion disableGutters sx={{ margin: "4px" }}>
         <AccordionSummary expandIcon={<ExpandMore />}>Module</AccordionSummary>
         <AccordionDetails>
           <List>
             {allModules.map((moduleName) => {
               return (
                 <ListItem>
-                  <ListItemButton
-                    dense
-                    onClick={() => handleToggleModule(moduleName)}
-                  >
+                  <ListItemButton dense onClick={() => handleToggleModule(moduleName)}>
                     <ListItemIcon>
-                      <Checkbox
-                        checked={
-                          stores.settingsStore.modules[moduleName] === true
-                        }
-                      />
+                      <Checkbox checked={stores.settingsStore.modules[moduleName] === true} />
                     </ListItemIcon>
                     <ListItemText>{getText(moduleName)}</ListItemText>
                   </ListItemButton>

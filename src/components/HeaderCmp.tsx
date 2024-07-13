@@ -1,5 +1,5 @@
-import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
-import { Settings as SettingsIcon } from "@mui/icons-material";
+import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
+import { Send, Settings as SettingsIcon } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import type { ReactElement } from "react";
 import useStores from "Store";
@@ -10,6 +10,16 @@ const HeaderCmp = observer((): ReactElement => {
     <AppBar position="static">
       <Toolbar>
         <Typography sx={{ flexGrow: 1 }}>WebConductor</Typography>
+        <Button
+          sx={{ mr: "1rem" }}
+          color="info"
+          size="small"
+          onClick={() => stores.tasksStore.setTaskOverlayActive(true)}
+          variant="contained"
+          startIcon={<Send />}
+        >
+          Taskify!
+        </Button>
         <IconButton edge={"end"} onClick={() => stores.settingsStore.setSettingsOpen(true)}>
           <SettingsIcon />
         </IconButton>

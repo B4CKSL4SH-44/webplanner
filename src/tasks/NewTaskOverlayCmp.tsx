@@ -32,7 +32,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
   const stores = useStores();
 
   const [task, setTask] = useState<Task>(defaultTask);
-  const [project, setProject] = useState<string>("personal");
+  const [project, setProject] = useState<number>(0);
   const [titleError, setTitleError] = useState<boolean>(false);
 
   const nodeRef = useRef(null);
@@ -56,21 +56,18 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
       return;
     }
     let newId;
-    if (stores.tasksStore.projects.personal.length === 0) {
+    if (stores.tasksStore.projects[project].tasks.length === 0) {
       newId = 1;
     } else {
-      const sorted = stores.tasksStore.projects.personal.sort((a, b) => b.id - a.id);
+      const sorted = stores.tasksStore.projects[project].tasks.sort((a, b) => b.id - a.id);
       newId = sorted[0].id + 1;
     }
-    stores.tasksStore.addTask(
-      {
-        ...task,
-        id: newId,
-        project,
-        description: task.description.replaceAll(" ", "").length === 0 ? "" : task.description,
-      },
-      project
-    );
+    stores.tasksStore.addTask({
+      ...task,
+      id: newId,
+      project,
+      description: task.description.replaceAll(" ", "").length === 0 ? "" : task.description,
+    });
     stores.tasksStore.setTaskOverlayActive(false);
   };
 
@@ -170,7 +167,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                   renderValue={(selected) => {
                     return (
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, maxWidth: "300px" }}>
-                        {stores.tasksStore.projects.personal
+                        {stores.tasksStore.projects[0].tasks
                           .filter((storeTask) => selected.includes(storeTask.id))
                           .map((storeTask) => (
                             <Tooltip title={storeTask.title}>
@@ -183,7 +180,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                   multiple
                   value={task.relations.blocks}
                 >
-                  {stores.tasksStore.projects.personal.map((storeTask) => {
+                  {stores.tasksStore.projects[0].tasks.map((storeTask) => {
                     return (
                       <MenuItem sx={{ maxWidth: "320px" }} key={storeTask.id} value={storeTask.id}>
                         <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>{storeTask.title}</Box>
@@ -195,11 +192,12 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
             </List>
             <FormControl>
               <InputLabel id="select-label">Projekt auswählen</InputLabel>
-              <Select labelId="select-label" value={project} label="Projekt auswählen" onChange={(e) => setProject(e.target.value)}>
-                {Object.keys(stores.tasksStore.projects).map((projectName) => {
+              <Select labelId="select-label" value={project} label="Projekt auswählen" onChange={(e) => setProject(Number(e.target.value))}>
+                {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
+                  const projectId = Number(projectStringId);
                   return (
-                    <MenuItem key={projectName} value={projectName}>
-                      {projectName}
+                    <MenuItem key={projectId} value={projectId}>
+                      {stores.tasksStore.projects[projectId].alias}
                     </MenuItem>
                   );
                 })}

@@ -1,31 +1,35 @@
 import { action, makeObservable, observable } from "mobx";
-import type { Projects, Task } from "tasks";
+import { defaultProjects, type Project, type Projects, type Task } from "tasks";
 
 export default class TasksStore {
   private static instance: TasksStore;
 
-  public projects: Projects = { personal: [] };
-
+  public projects: Projects = defaultProjects;
   public setProjects = (newProjects: Projects) => {
     this.projects = newProjects;
     this.writeLsProjects(this.projects);
   };
-  public addProject = (newProject: string) => {
+  public addProject = (newProject: Project) => {
     const lsProjects = this.getLsProjects();
-    lsProjects[newProject] = [];
+    lsProjects[newProject.id] = newProject;
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
 
-  public addTask = (newTask: Task, project: string) => {
+  public newProjectOverlayActive: boolean = false;
+  public setNewProjectOverlayActive = (bool: boolean) => {
+    this.newProjectOverlayActive = bool;
+  };
+
+  public addTask = (newTask: Task) => {
     const lsProjects = this.getLsProjects();
-    lsProjects[project].push(newTask);
+    lsProjects[newTask.project].tasks.push(newTask);
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
   public deleteTask = (task: Task) => {
     const lsProjects = this.getLsProjects();
-    lsProjects[task.project] = lsProjects[task.project].filter((oldTask) => oldTask.id !== task.id);
+    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter((oldTask) => oldTask.id !== task.id);
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
@@ -54,12 +58,14 @@ export default class TasksStore {
     if (lsProjects !== null) {
       this.projects = JSON.parse(lsProjects);
     } else {
-      localStorage.setItem("webPlannerProjects", '{"personal":[]}');
+      localStorage.setItem("webPlannerProjects", JSON.stringify(defaultProjects));
     }
     makeObservable(this, {
       projects: observable,
       setProjects: action,
       addProject: action,
+      newProjectOverlayActive: observable,
+      setNewProjectOverlayActive: action,
       addTask: action,
       deleteTask: action,
       isTaskOverlayActive: observable,

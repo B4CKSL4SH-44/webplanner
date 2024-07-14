@@ -12,6 +12,7 @@ import HeaderCmp from "components/HeaderCmp";
 import TaskOverlayCmp from "tasks/NewTaskOverlayCmp";
 import TasksBoardCmp from "modules/TasksBoardCmp";
 import OpenTasksOverlayCmp from "tasks/OpenTasksOverlayCmp";
+import NewProjectOverlayCmp from "tasks/NewProjectOverlay";
 
 const App = observer(() => {
   const stores = useStores();
@@ -45,6 +46,7 @@ const App = observer(() => {
           <HeaderCmp />
           <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
             {stores.tasksStore.isTaskOverlayActive && <TaskOverlayCmp />}
+            {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp />}
             {stores.tasksStore.openTasks.map((openTask) => (
               <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
             ))}

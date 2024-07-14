@@ -38,6 +38,8 @@ const TasksBoardCmp = observer((): ReactElement => {
     stores.tasksStore.setOpenTasks([...stores.tasksStore.openTasks, newTask]);
   };
 
+  console.log(theme);
+
   return (
     <Box
       sx={{
@@ -90,7 +92,9 @@ const TasksBoardCmp = observer((): ReactElement => {
             >
               <TableHead
                 sx={{
-                  "& .MuiTableRow-head": { backgroundColor: theme.palette.primary.light },
+                  "& .MuiTableRow-head": {
+                    backgroundColor: theme.palette.mode === "dark" ? theme.palette.action.hover : theme.palette.primary.light,
+                  },
                 }}
               >
                 <TableRow sx={{ "& .MuiTableCell-root": { fontWeight: theme.typography.fontWeightBold } }}>

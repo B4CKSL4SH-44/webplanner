@@ -1,19 +1,33 @@
 import { action, makeObservable, observable } from "mobx";
-import type { Task } from "tasks";
+import type { Projects, Task } from "tasks";
 
 export default class TasksStore {
   private static instance: TasksStore;
 
-  public tasks: Task[] = [];
-  public setTasks = (newTasks: Task[]) => {
-    this.tasks = newTasks;
-    this.writeLsTasks(this.tasks);
+  public projects: Projects = { personal: [] };
+
+  public setProjects = (newProjects: Projects) => {
+    this.projects = newProjects;
+    this.writeLsProjects(this.projects);
   };
-  public addTask = (newTask: Task) => {
-    const lsTasks = this.getLsTasks();
-    lsTasks.push(newTask);
-    this.tasks = lsTasks;
-    this.writeLsTasks(lsTasks);
+  public addProject = (newProject: string) => {
+    const lsProjects = this.getLsProjects();
+    lsProjects[newProject] = [];
+    this.projects = lsProjects;
+    this.writeLsProjects(lsProjects);
+  };
+
+  public addTask = (newTask: Task, project: string) => {
+    const lsProjects = this.getLsProjects();
+    lsProjects[project].push(newTask);
+    this.projects = lsProjects;
+    this.writeLsProjects(lsProjects);
+  };
+  public deleteTask = (task: Task) => {
+    const lsProjects = this.getLsProjects();
+    lsProjects[task.project] = lsProjects[task.project].filter((oldTask) => oldTask.id !== task.id);
+    this.projects = lsProjects;
+    this.writeLsProjects(lsProjects);
   };
 
   public isTaskOverlayActive: boolean = false;
@@ -21,19 +35,37 @@ export default class TasksStore {
     this.isTaskOverlayActive = newBool;
   };
 
+  public openTasks: Task[] = [];
+  public setOpenTasks = (newTasks: Task[]) => {
+    this.openTasks = newTasks;
+  };
+  public addOpenTask = (task: Task) => {
+    if (!this.openTasks.some((openTask) => openTask.id === task.id)) {
+      this.setOpenTasks([...this.openTasks, task]);
+    }
+  };
+  public closeTask = (task: Task) => {
+    const updatedTasks = this.openTasks.filter((openTask) => openTask.id !== task.id);
+    this.setOpenTasks(updatedTasks);
+  };
+
   private constructor() {
-    const lsTasks = localStorage.getItem("webPlannerTasks");
-    if (lsTasks !== null) {
-      this.tasks = JSON.parse(lsTasks);
+    const lsProjects = localStorage.getItem("webPlannerProjects");
+    if (lsProjects !== null) {
+      this.projects = JSON.parse(lsProjects);
     } else {
-      localStorage.setItem("webPlannerTasks", "[]");
+      localStorage.setItem("webPlannerProjects", '{"personal":[]}');
     }
     makeObservable(this, {
-      tasks: observable,
-      setTasks: action,
+      projects: observable,
+      setProjects: action,
+      addProject: action,
       addTask: action,
+      deleteTask: action,
       isTaskOverlayActive: observable,
       setTaskOverlayActive: action,
+      openTasks: observable,
+      setOpenTasks: action,
     });
   }
 
@@ -44,12 +76,12 @@ export default class TasksStore {
     return TasksStore.instance;
   };
 
-  private getLsTasks = (): Task[] => {
-    const lsTasks = localStorage.getItem("webPlannerTasks") as string;
-    return JSON.parse(lsTasks) as Task[];
+  private getLsProjects = (): Projects => {
+    const lsProjects = localStorage.getItem("webPlannerProjects") as string;
+    return JSON.parse(lsProjects) as Projects;
   };
 
-  private writeLsTasks = (newTasks: Task[]): void => {
-    localStorage.setItem("webPlannerTasks", JSON.stringify(newTasks));
+  private writeLsProjects = (newProjects: Projects): void => {
+    localStorage.setItem("webPlannerProjects", JSON.stringify(newProjects));
   };
 }

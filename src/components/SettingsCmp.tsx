@@ -25,7 +25,7 @@ const SettingsCmp = observer((): ReactElement => {
   const stores = useStores();
 
   const handleToggleModule = (module: ModuleNames) => {
-    let moduleSettings = stores.settingsStore.modules;
+    let moduleSettings = { ...stores.settingsStore.modules };
     moduleSettings[module] = !moduleSettings[module];
     stores.settingsStore.setModules(moduleSettings);
   };
@@ -74,7 +74,7 @@ const SettingsCmp = observer((): ReactElement => {
           <List>
             {allModules.map((moduleName) => {
               return (
-                <ListItem>
+                <ListItem key={moduleName}>
                   <ListItemButton dense onClick={() => handleToggleModule(moduleName)}>
                     <ListItemIcon>
                       <Checkbox checked={stores.settingsStore.modules[moduleName] === true} />

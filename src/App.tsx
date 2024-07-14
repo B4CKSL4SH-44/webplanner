@@ -1,7 +1,7 @@
 import "./App.css";
 import { Box, Drawer, Tab, Tabs, CssBaseline, Divider } from "@mui/material";
 import NoteBookCmp from "./modules/NoteBookCmp";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { type ModuleNames } from "./settings";
 import SettingsCmp from "./components/SettingsCmp";
 import { observer } from "mobx-react";
@@ -9,12 +9,24 @@ import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@emotion/react";
 import useStores from "Store";
 import HeaderCmp from "components/HeaderCmp";
-import TaskOverlayCmp from "tasks/TaskOverlayCmp";
+import TaskOverlayCmp from "tasks/NewTaskOverlayCmp";
+import TasksBoardCmp from "modules/TasksBoardCmp";
+import OpenTasksOverlayCmp from "tasks/OpenTasksOverlayCmp";
 
 const App = observer(() => {
   const stores = useStores();
 
-  const [value, setValue] = useState<ModuleNames>("notebook");
+  const [value, setValue] = useState<ModuleNames | null>(
+    (Object.keys(stores.settingsStore.modules) as ModuleNames[]).find((key) => stores.settingsStore.modules[key] === true) ?? null
+  );
+
+  useEffect(() => {
+    if (value !== null && stores.settingsStore.modules[value] === false) {
+      setValue((Object.keys(stores.settingsStore.modules) as ModuleNames[]).find((key) => stores.settingsStore.modules[key] === true) ?? null);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stores.settingsStore.modules]);
 
   const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
     setValue(newValue);
@@ -33,6 +45,9 @@ const App = observer(() => {
           <HeaderCmp />
           <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
             {stores.tasksStore.isTaskOverlayActive && <TaskOverlayCmp />}
+            {stores.tasksStore.openTasks.map((openTask) => (
+              <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
+            ))}
             <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
               <SettingsCmp />
             </Drawer>
@@ -45,6 +60,7 @@ const App = observer(() => {
             </Tabs>
             <Divider />
             {value === "notebook" && <NoteBookCmp />}
+            {value === "tasks" && <TasksBoardCmp />}
           </Box>
         </Box>
       </ThemeProvider>

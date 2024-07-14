@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   IconButton,
+  InputLabel,
   List,
   ListItemButton,
   ListItemText,
@@ -23,16 +24,23 @@ import {
 } from "@mui/material";
 import useStores from "Store";
 import { observer } from "mobx-react";
-import { useState, type ReactElement } from "react";
+import { useRef, useState, type ReactElement } from "react";
 import Draggable from "react-draggable";
 import { defaultTask, type Relations, type Task } from "tasks";
 
-const TaskOverlayCmp = observer((): ReactElement => {
+const NewTaskOverlayCmp = observer((): ReactElement => {
   const stores = useStores();
 
   const [task, setTask] = useState<Task>(defaultTask);
+  const [project, setProject] = useState<string>("personal");
+  const [titleError, setTitleError] = useState<boolean>(false);
+
+  const nodeRef = useRef(null);
 
   const handleUpdateTask = (key: keyof Task, value: string) => {
+    if (titleError) {
+      setTitleError(false);
+    }
     const updatedTask = { ...task, [key]: value };
     setTask(updatedTask);
   };
@@ -43,15 +51,26 @@ const TaskOverlayCmp = observer((): ReactElement => {
   };
 
   const handleSave = () => {
+    if (task.title.replaceAll(" ", "").length === 0) {
+      setTitleError(true);
+      return;
+    }
     let newId;
-    if (stores.tasksStore.tasks.length === 0) {
+    if (stores.tasksStore.projects.personal.length === 0) {
       newId = 1;
     } else {
-      const sorted = stores.tasksStore.tasks.sort((a, b) => b.id - a.id);
-      console.log(sorted);
+      const sorted = stores.tasksStore.projects.personal.sort((a, b) => b.id - a.id);
       newId = sorted[0].id + 1;
     }
-    stores.tasksStore.addTask({ ...task, id: newId });
+    stores.tasksStore.addTask(
+      {
+        ...task,
+        id: newId,
+        project,
+        description: task.description.replaceAll(" ", "").length === 0 ? "" : task.description,
+      },
+      project
+    );
     stores.tasksStore.setTaskOverlayActive(false);
   };
 
@@ -73,8 +92,9 @@ const TaskOverlayCmp = observer((): ReactElement => {
   };
 
   return (
-    <Draggable handle="#draggable-dialog-button" cancel={'[class*="MuiDialogContent-root"]'}>
+    <Draggable nodeRef={nodeRef} handle="#draggable-dialog-button" cancel={'[class*="MuiDialogContent-root"]'}>
       <Dialog
+        ref={nodeRef}
         sx={{ pointerEvents: "none" }}
         disablePortal
         disableEnforceFocus
@@ -93,6 +113,8 @@ const TaskOverlayCmp = observer((): ReactElement => {
           <FormControl sx={{ p: "1rem" }}>
             <TextField
               required
+              helperText={titleError ? "Bitte geben Sie einen Titel ein" : undefined}
+              error={titleError}
               sx={{ mb: "1rem" }}
               value={task.title}
               onChange={(e) => handleUpdateTask("title", e.target.value)}
@@ -148,7 +170,7 @@ const TaskOverlayCmp = observer((): ReactElement => {
                   renderValue={(selected) => {
                     return (
                       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, maxWidth: "300px" }}>
-                        {stores.tasksStore.tasks
+                        {stores.tasksStore.projects.personal
                           .filter((storeTask) => selected.includes(storeTask.id))
                           .map((storeTask) => (
                             <Tooltip title={storeTask.title}>
@@ -161,7 +183,7 @@ const TaskOverlayCmp = observer((): ReactElement => {
                   multiple
                   value={task.relations.blocks}
                 >
-                  {stores.tasksStore.tasks.map((storeTask) => {
+                  {stores.tasksStore.projects.personal.map((storeTask) => {
                     return (
                       <MenuItem sx={{ maxWidth: "320px" }} key={storeTask.id} value={storeTask.id}>
                         <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>{storeTask.title}</Box>
@@ -171,55 +193,18 @@ const TaskOverlayCmp = observer((): ReactElement => {
                 </Select>
               )}
             </List>
-            {/* <Accordion square disableGutters>
-              <AccordionSummary expandIcon={<ExpandMore />}>Relationen</AccordionSummary>
-              <AccordionDetails sx={{ p: 0 }}>
-                <List dense>
-                  <ListItem>
-                    <ListItemButton sx={{ flexGrow: 0 }} dense disableGutters onClick={() => handleRelationToggle("blocks")}>
-                      <ListItemIcon>
-                        <Checkbox checked={task.relations.blocks !== false} />
-                      </ListItemIcon>
-                    </ListItemButton>
-
-                    {task.relations.blocks === false ? (
-                      <ListItemText>blockiert</ListItemText>
-                    ) : (
-                      <>
-                        <Select
-                          size="small"
-                          label="blockiert"
-                          fullWidth
-                          sx={{ flexGrow: 1 }}
-                          onChange={(e) => handleRelationAdd("blocks", Number(e.target.value))}
-                          renderValue={(selected) => {
-                            return (
-                              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                                {stores.tasksStore.tasks
-                                  .filter((storeTask) => selected.includes(storeTask.id))
-                                  .map((storeTask) => (
-                                    <Chip key={storeTask.id} label={storeTask.id} />
-                                  ))}
-                              </Box>
-                            );
-                          }}
-                          multiple
-                          value={task.relations.blocks}
-                        >
-                          {stores.tasksStore.tasks.map((storeTask) => {
-                            return (
-                              <MenuItem key={storeTask.id} value={storeTask.id}>
-                                {storeTask.title}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </>
-                    )}
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion> */}
+            <FormControl>
+              <InputLabel id="select-label">Projekt auswählen</InputLabel>
+              <Select labelId="select-label" value={project} label="Projekt auswählen" onChange={(e) => setProject(e.target.value)}>
+                {Object.keys(stores.tasksStore.projects).map((projectName) => {
+                  return (
+                    <MenuItem key={projectName} value={projectName}>
+                      {projectName}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ pointerEvents: "auto" }}>
@@ -231,4 +216,4 @@ const TaskOverlayCmp = observer((): ReactElement => {
   );
 });
 
-export default TaskOverlayCmp;
+export default NewTaskOverlayCmp;

@@ -9,6 +9,7 @@ export interface Modules {
 export interface Settings {
   displayMode: "light" | "dark";
   modules: Modules;
+  activeProjects: number[];
 }
 
 const defaultSettings: Settings = {
@@ -19,6 +20,7 @@ const defaultSettings: Settings = {
     kanban: true,
     flow: true,
   },
+  activeProjects: [0],
 };
 
 export default defaultSettings;

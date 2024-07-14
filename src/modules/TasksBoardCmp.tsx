@@ -29,7 +29,6 @@ const TasksBoardCmp = observer((): ReactElement => {
   const stores = useStores();
   const theme = useTheme();
 
-  const [activeProjects, setActiveProjects] = useState<number[]>([stores.tasksStore.projects[0].id]);
   const [orderBy, setOrderBy] = useState<keyof Task>("id");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
@@ -37,8 +36,6 @@ const TasksBoardCmp = observer((): ReactElement => {
     if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id)) return;
     stores.tasksStore.setOpenTasks([...stores.tasksStore.openTasks, newTask]);
   };
-
-  console.log(theme);
 
   return (
     <Box
@@ -55,19 +52,19 @@ const TasksBoardCmp = observer((): ReactElement => {
           <Select
             sx={{ mr: "1rem", width: "400px" }}
             labelId="select-project-label"
-            value={activeProjects}
+            value={stores.settingsStore.activeProjects}
             label="Projekte auswählen"
             multiple
             renderValue={(selected) => {
               return selected.map((select) => <Chip sx={{ mx: "2px" }} label={stores.tasksStore.projects[select].alias} />);
             }}
-            onChange={(e) => setActiveProjects(e.target.value as number[])}
+            onChange={(e) => stores.settingsStore.setActiveProjects(e.target.value as number[])}
           >
             {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
               const project = { ...stores.tasksStore.projects[Number(projectStringId)] };
               return (
                 <MenuItem key={projectStringId} defaultChecked={project.id === 0} value={project.id}>
-                  <Checkbox checked={activeProjects.includes(project.id)} />
+                  <Checkbox checked={stores.settingsStore.activeProjects.includes(project.id)} />
                   <ListItemText>{project.alias}</ListItemText>
                 </MenuItem>
               );
@@ -79,10 +76,10 @@ const TasksBoardCmp = observer((): ReactElement => {
         </Button>
       </Toolbar>
       <Divider sx={{ m: "1rem 0" }} />
-      {activeProjects.length === 0 ? (
+      {stores.settingsStore.activeProjects.length === 0 ? (
         <Box>Keine Projekte ausgewählt</Box>
       ) : (
-        activeProjects.map((id) => {
+        stores.settingsStore.activeProjects.map((id) => {
           const project = stores.tasksStore.projects[id];
           return (
             <Table
@@ -110,6 +107,13 @@ const TasksBoardCmp = observer((): ReactElement => {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {project.tasks.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} sx={{ fontStyle: "italic" }}>
+                      Keine Tasks
+                    </TableCell>
+                  </TableRow>
+                )}
                 {project.tasks.map((task) => {
                   return (
                     <TableRow hover role="button" key={`tableRow-${task.id}`}>

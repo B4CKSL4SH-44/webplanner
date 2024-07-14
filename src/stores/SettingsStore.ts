@@ -26,6 +26,14 @@ export default class SettingStore {
     this.writeLsSettings(parsedSettings);
   };
 
+  public activeProjects: number[];
+  public setActiveProjects = (newIds: number[]) => {
+    this.activeProjects = [...newIds];
+    const lsSettings = this.getLsSettings();
+    lsSettings.activeProjects = this.activeProjects;
+    this.writeLsSettings(lsSettings);
+  };
+
   public static getInstance = () => {
     if (SettingStore.instance === undefined) {
       SettingStore.instance = new SettingStore();
@@ -36,11 +44,13 @@ export default class SettingStore {
   public constructor() {
     this.modules = defaultSettings.modules;
     this.displayMode = defaultSettings.displayMode;
+    this.activeProjects = defaultSettings.activeProjects;
     const lsSettings = localStorage.getItem("webPlannerSettings");
     if (lsSettings !== null) {
       const parsedSettings: Settings = JSON.parse(lsSettings);
       this.modules = parsedSettings.modules;
       this.displayMode = parsedSettings.displayMode;
+      this.activeProjects = parsedSettings.activeProjects;
     } else {
       localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
     }
@@ -51,6 +61,8 @@ export default class SettingStore {
       setModules: action,
       displayMode: observable,
       setDisplayMode: action,
+      activeProjects: observable,
+      setActiveProjects: action,
     });
   }
 

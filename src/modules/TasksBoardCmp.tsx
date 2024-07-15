@@ -1,4 +1,4 @@
-import { Add, OpenInNew } from "@mui/icons-material";
+import { Add, Edit, OpenInNew } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -33,7 +33,8 @@ const TasksBoardCmp = observer((): ReactElement => {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   const handleOpenTask = (newTask: Task) => {
-    if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id)) return;
+    if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id))
+      return;
     stores.tasksStore.setOpenTasks([...stores.tasksStore.openTasks, newTask]);
   };
 
@@ -56,22 +57,44 @@ const TasksBoardCmp = observer((): ReactElement => {
             label="Projekte auswählen"
             multiple
             renderValue={(selected) => {
-              return selected.map((select) => <Chip sx={{ mx: "2px" }} label={stores.tasksStore.projects[select].alias} />);
+              return selected.map((select) => (
+                <Chip
+                  sx={{ mx: "2px" }}
+                  label={stores.tasksStore.projects[select].alias}
+                />
+              ));
             }}
-            onChange={(e) => stores.settingsStore.setActiveProjects(e.target.value as number[])}
+            onChange={(e) =>
+              stores.settingsStore.setActiveProjects(e.target.value as number[])
+            }
           >
             {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
-              const project = { ...stores.tasksStore.projects[Number(projectStringId)] };
+              const project = {
+                ...stores.tasksStore.projects[Number(projectStringId)],
+              };
               return (
-                <MenuItem key={projectStringId} defaultChecked={project.id === 0} value={project.id}>
-                  <Checkbox checked={stores.settingsStore.activeProjects.includes(project.id)} />
+                <MenuItem
+                  key={projectStringId}
+                  defaultChecked={project.id === 0}
+                  value={project.id}
+                >
+                  <Checkbox
+                    checked={stores.settingsStore.activeProjects.includes(
+                      project.id
+                    )}
+                  />
                   <ListItemText>{project.alias}</ListItemText>
                 </MenuItem>
               );
             })}
           </Select>
         </FormControl>
-        <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
+        <Button
+          onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+          variant="contained"
+          color="success"
+          startIcon={<Add />}
+        >
           Projekt hinzufügen
         </Button>
       </Toolbar>
@@ -90,19 +113,36 @@ const TasksBoardCmp = observer((): ReactElement => {
               <TableHead
                 sx={{
                   "& .MuiTableRow-head": {
-                    backgroundColor: theme.palette.mode === "dark" ? theme.palette.action.hover : theme.palette.primary.light,
+                    backgroundColor:
+                      theme.palette.mode === "dark"
+                        ? theme.palette.action.hover
+                        : theme.palette.primary.light,
                   },
                 }}
               >
-                <TableRow sx={{ "& .MuiTableCell-root": { fontWeight: theme.typography.fontWeightBold } }}>
+                <TableRow
+                  sx={{
+                    "& .MuiTableCell-root": {
+                      fontWeight: theme.typography.fontWeightBold,
+                    },
+                  }}
+                >
                   <TableCell colSpan={4}>{project.alias}</TableCell>
                 </TableRow>
-                <TableRow sx={{ "& .MuiTableCell-root": { fontWeight: theme.typography.fontWeightBold } }}>
+                <TableRow
+                  sx={{
+                    "& .MuiTableCell-root": {
+                      fontWeight: theme.typography.fontWeightBold,
+                    },
+                  }}
+                >
                   <TableCell>ID</TableCell>
                   <TableCell>Titel</TableCell>
                   <TableCell>Beschreibung</TableCell>
                   <TableCell sortDirection={"asc"}>
-                    <TableSortLabel active={orderBy === "priority"}>Priorität</TableSortLabel>
+                    <TableSortLabel active={orderBy === "priority"}>
+                      Priorität
+                    </TableSortLabel>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -120,20 +160,48 @@ const TasksBoardCmp = observer((): ReactElement => {
                       <TableCell>
                         {task.id}
                         <IconButton
-                          disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
+                          disabled={stores.tasksStore.openTasks.some(
+                            (openTask) => openTask.id === task.id
+                          )}
                           onClick={() => handleOpenTask(task)}
                         >
                           <OpenInNew />
                         </IconButton>
+                        <IconButton
+                          onClick={() =>
+                            stores.tasksStore.setTaskOverlayState(task)
+                          }
+                        >
+                          <Edit />
+                        </IconButton>
                       </TableCell>
-                      <TableCell sx={{ whiteSpace: "wrap", overflowWrap: "anywhere" }}>{task.title}</TableCell>
-                      <TableCell sx={{ fontStyle: task.description.length === 0 ? "italic" : "inherit" }}>
-                        {task.description.length === 0 ? "(keine)" : task.description}
+                      <TableCell
+                        sx={{ whiteSpace: "wrap", overflowWrap: "anywhere" }}
+                      >
+                        {task.title}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          fontStyle:
+                            task.description.length === 0
+                              ? "italic"
+                              : "inherit",
+                        }}
+                      >
+                        {task.description.length === 0
+                          ? "(keine)"
+                          : task.description}
                       </TableCell>
                       <TableCell>
                         <Chip
                           sx={{ maxWidth: "fit-content" }}
-                          color={task.priority === "high" ? "error" : task.priority === "medium" ? "primary" : "success"}
+                          color={
+                            task.priority === "high"
+                              ? "error"
+                              : task.priority === "medium"
+                              ? "primary"
+                              : "success"
+                          }
                           label={task.priority}
                         />
                       </TableCell>

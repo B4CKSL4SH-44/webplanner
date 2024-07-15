@@ -29,14 +29,35 @@ export default class TasksStore {
   };
   public deleteTask = (task: Task) => {
     const lsProjects = this.getLsProjects();
-    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter((oldTask) => oldTask.id !== task.id);
+    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter(
+      (oldTask) => oldTask.id !== task.id
+    );
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
+  public updateTask = (taskToUpdate: Task) => {
+    console.log(taskToUpdate);
+    const updatedTasks = this.projects[taskToUpdate.project].tasks.map(
+      (task) => {
+        if (task.id === taskToUpdate.id) {
+          return taskToUpdate;
+        } else {
+          return task;
+        }
+      }
+    );
+    this.setProjects({
+      ...this.projects,
+      [taskToUpdate.project]: {
+        ...this.projects[taskToUpdate.project],
+        tasks: updatedTasks,
+      },
+    });
+  };
 
-  public isTaskOverlayActive: boolean = false;
-  public setTaskOverlayActive = (newBool: boolean) => {
-    this.isTaskOverlayActive = newBool;
+  public taskOverlayState: boolean | Task = false;
+  public setTaskOverlayState = (newValue: boolean | Task) => {
+    this.taskOverlayState = newValue;
   };
 
   public openTasks: Task[] = [];
@@ -49,7 +70,9 @@ export default class TasksStore {
     }
   };
   public closeTask = (task: Task) => {
-    const updatedTasks = this.openTasks.filter((openTask) => openTask.id !== task.id);
+    const updatedTasks = this.openTasks.filter(
+      (openTask) => openTask.id !== task.id
+    );
     this.setOpenTasks(updatedTasks);
   };
 
@@ -58,7 +81,10 @@ export default class TasksStore {
     if (lsProjects !== null) {
       this.projects = JSON.parse(lsProjects);
     } else {
-      localStorage.setItem("webPlannerProjects", JSON.stringify(defaultProjects));
+      localStorage.setItem(
+        "webPlannerProjects",
+        JSON.stringify(defaultProjects)
+      );
     }
     makeObservable(this, {
       projects: observable,
@@ -68,8 +94,8 @@ export default class TasksStore {
       setNewProjectOverlayActive: action,
       addTask: action,
       deleteTask: action,
-      isTaskOverlayActive: observable,
-      setTaskOverlayActive: action,
+      taskOverlayState: observable,
+      setTaskOverlayState: action,
       openTasks: observable,
       setOpenTasks: action,
     });

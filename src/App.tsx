@@ -18,12 +18,18 @@ const App = observer(() => {
   const stores = useStores();
 
   const [value, setValue] = useState<ModuleNames | null>(
-    (Object.keys(stores.settingsStore.modules) as ModuleNames[]).find((key) => stores.settingsStore.modules[key] === true) ?? null
+    (Object.keys(stores.settingsStore.modules) as ModuleNames[]).find(
+      (key) => stores.settingsStore.modules[key] === true
+    ) ?? null
   );
 
   useEffect(() => {
     if (value !== null && stores.settingsStore.modules[value] === false) {
-      setValue((Object.keys(stores.settingsStore.modules) as ModuleNames[]).find((key) => stores.settingsStore.modules[key] === true) ?? null);
+      setValue(
+        (Object.keys(stores.settingsStore.modules) as ModuleNames[]).find(
+          (key) => stores.settingsStore.modules[key] === true
+        ) ?? null
+      );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,22 +48,41 @@ const App = observer(() => {
     <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box flexGrow={1} width={"100%"} display={"flex"} flexDirection={"column"}>
+        <Box
+          flexGrow={1}
+          width={"100%"}
+          display={"flex"}
+          flexDirection={"column"}
+        >
           <HeaderCmp />
           <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
-            {stores.tasksStore.isTaskOverlayActive && <TaskOverlayCmp />}
-            {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp />}
+            {stores.tasksStore.taskOverlayState && <TaskOverlayCmp />}
+            {stores.tasksStore.newProjectOverlayActive && (
+              <NewProjectOverlayCmp />
+            )}
             {stores.tasksStore.openTasks.map((openTask) => (
               <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
             ))}
-            <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
+            <Drawer
+              anchor="right"
+              open={stores.settingsStore.settingsOpen}
+              onClose={() => stores.settingsStore.setSettingsOpen(false)}
+            >
               <SettingsCmp />
             </Drawer>
             <Tabs value={value} onChange={handleChange} variant="fullWidth">
               {(Object.keys(stores.settingsStore.modules) as ModuleNames[])
-                .filter((module) => stores.settingsStore.modules[module] === true)
+                .filter(
+                  (module) => stores.settingsStore.modules[module] === true
+                )
                 .map((module) => {
-                  return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
+                  return (
+                    <Tab
+                      key={`tab-${module}`}
+                      value={module}
+                      label={module.charAt(0).toUpperCase() + module.slice(1)}
+                    />
+                  );
                 })}
             </Tabs>
             <Divider />

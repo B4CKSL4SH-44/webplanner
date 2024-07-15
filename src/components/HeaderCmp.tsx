@@ -14,13 +14,16 @@ const HeaderCmp = observer((): ReactElement => {
           sx={{ mr: "1rem" }}
           color="info"
           size="small"
-          onClick={() => stores.tasksStore.setTaskOverlayActive(true)}
+          onClick={() => stores.tasksStore.setTaskOverlayState(true)}
           variant="contained"
           startIcon={<Send />}
         >
           Taskify!
         </Button>
-        <IconButton edge={"end"} onClick={() => stores.settingsStore.setSettingsOpen(true)}>
+        <IconButton
+          edge={"end"}
+          onClick={() => stores.settingsStore.setSettingsOpen(true)}
+        >
           <SettingsIcon />
         </IconButton>
       </Toolbar>

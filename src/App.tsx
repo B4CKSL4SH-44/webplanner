@@ -13,6 +13,7 @@ import TaskOverlayCmp from "tasks/NewTaskOverlayCmp";
 import TasksBoardCmp from "modules/TasksBoardCmp";
 import OpenTasksOverlayCmp from "tasks/OpenTasksOverlayCmp";
 import NewProjectOverlayCmp from "tasks/NewProjectOverlay";
+import TaskTimerCmp from "components/TimerCmp";
 
 const App = observer(() => {
   const stores = useStores();
@@ -63,6 +64,7 @@ const App = observer(() => {
             {stores.tasksStore.openTasks.map((openTask) => (
               <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
             ))}
+            {stores.tasksStore.taskTimer !== null && <TaskTimerCmp />}
             <Drawer
               anchor="right"
               open={stores.settingsStore.settingsOpen}

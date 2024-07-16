@@ -1,4 +1,4 @@
-import { Add, Edit, OpenInNew } from "@mui/icons-material";
+import { Add, Edit, OpenInNew, Timer } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -106,6 +106,7 @@ const TasksBoardCmp = observer((): ReactElement => {
           const project = stores.tasksStore.projects[id];
           return (
             <Table
+              key={`table-${id}`}
               sx={{
                 border: "1px solid rgba(0, 0, 0, 0.12)",
               }}
@@ -173,6 +174,12 @@ const TasksBoardCmp = observer((): ReactElement => {
                           }
                         >
                           <Edit />
+                        </IconButton>
+                        <IconButton
+                          disabled={stores.tasksStore.taskTimer !== null}
+                          onClick={() => stores.tasksStore.setTaskTimer(task)}
+                        >
+                          <Timer />
                         </IconButton>
                       </TableCell>
                       <TableCell

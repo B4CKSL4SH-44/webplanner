@@ -76,6 +76,11 @@ export default class TasksStore {
     this.setOpenTasks(updatedTasks);
   };
 
+  public taskTimer: Task | null = null;
+  public setTaskTimer = (newValue: Task | null) => {
+    this.taskTimer = newValue;
+  };
+
   private constructor() {
     const lsProjects = localStorage.getItem("webPlannerProjects");
     if (lsProjects !== null) {
@@ -98,6 +103,8 @@ export default class TasksStore {
       setTaskOverlayState: action,
       openTasks: observable,
       setOpenTasks: action,
+      taskTimer: observable,
+      setTaskTimer: action,
     });
   }
 

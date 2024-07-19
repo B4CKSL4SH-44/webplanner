@@ -33,8 +33,7 @@ const TasksBoardCmp = observer((): ReactElement => {
   const [order, setOrder] = useState<"asc" | "desc">("asc");
 
   const handleOpenTask = (newTask: Task) => {
-    if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id))
-      return;
+    if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id)) return;
     stores.tasksStore.setOpenTasks([...stores.tasksStore.openTasks, newTask]);
   };
 
@@ -44,6 +43,7 @@ const TasksBoardCmp = observer((): ReactElement => {
         padding: "1rem",
       }}
       flexGrow={1}
+      minHeight={0}
       display={"flex"}
       flexDirection={"column"}
     >
@@ -57,169 +57,123 @@ const TasksBoardCmp = observer((): ReactElement => {
             label="Projekte auswählen"
             multiple
             renderValue={(selected) => {
-              return selected.map((select) => (
-                <Chip
-                  sx={{ mx: "2px" }}
-                  label={stores.tasksStore.projects[select].alias}
-                />
-              ));
+              return selected.map((select) => <Chip sx={{ mx: "2px" }} label={stores.tasksStore.projects[select].alias} />);
             }}
-            onChange={(e) =>
-              stores.settingsStore.setActiveProjects(e.target.value as number[])
-            }
+            onChange={(e) => stores.settingsStore.setActiveProjects(e.target.value as number[])}
           >
             {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
               const project = {
                 ...stores.tasksStore.projects[Number(projectStringId)],
               };
               return (
-                <MenuItem
-                  key={projectStringId}
-                  defaultChecked={project.id === 0}
-                  value={project.id}
-                >
-                  <Checkbox
-                    checked={stores.settingsStore.activeProjects.includes(
-                      project.id
-                    )}
-                  />
+                <MenuItem key={projectStringId} defaultChecked={project.id === 0} value={project.id}>
+                  <Checkbox checked={stores.settingsStore.activeProjects.includes(project.id)} />
                   <ListItemText>{project.alias}</ListItemText>
                 </MenuItem>
               );
             })}
           </Select>
         </FormControl>
-        <Button
-          onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
-          variant="contained"
-          color="success"
-          startIcon={<Add />}
-        >
+        <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
           Projekt hinzufügen
         </Button>
       </Toolbar>
       <Divider sx={{ m: "1rem 0" }} />
-      {stores.settingsStore.activeProjects.length === 0 ? (
-        <Box>Keine Projekte ausgewählt</Box>
-      ) : (
-        stores.settingsStore.activeProjects.map((id) => {
-          const project = stores.tasksStore.projects[id];
-          return (
-            <Table
-              key={`table-${id}`}
-              sx={{
-                border: "1px solid rgba(0, 0, 0, 0.12)",
-              }}
-            >
-              <TableHead
+      <Box flexGrow={1} minHeight={0} overflow={"auto"} sx={{ border: "1px solid rgba(0, 0, 0, 0.12)", padding: "4px" }}>
+        {stores.settingsStore.activeProjects.length === 0 ? (
+          <Box>Keine Projekte ausgewählt</Box>
+        ) : (
+          stores.settingsStore.activeProjects.map((id) => {
+            const project = stores.tasksStore.projects[id];
+            return (
+              <Table
+                key={`table-${id}`}
                 sx={{
-                  "& .MuiTableRow-head": {
-                    backgroundColor:
-                      theme.palette.mode === "dark"
-                        ? theme.palette.action.hover
-                        : theme.palette.primary.light,
-                  },
+                  border: "1px solid rgba(0, 0, 0, 0.12)",
+                  mb: "1rem",
                 }}
               >
-                <TableRow
+                <TableHead
                   sx={{
-                    "& .MuiTableCell-root": {
-                      fontWeight: theme.typography.fontWeightBold,
+                    "& .MuiTableRow-head": {
+                      backgroundColor: theme.palette.mode === "dark" ? theme.palette.action.hover : theme.palette.primary.light,
                     },
                   }}
                 >
-                  <TableCell colSpan={4}>{project.alias}</TableCell>
-                </TableRow>
-                <TableRow
-                  sx={{
-                    "& .MuiTableCell-root": {
-                      fontWeight: theme.typography.fontWeightBold,
-                    },
-                  }}
-                >
-                  <TableCell>ID</TableCell>
-                  <TableCell>Titel</TableCell>
-                  <TableCell>Beschreibung</TableCell>
-                  <TableCell sortDirection={"asc"}>
-                    <TableSortLabel active={orderBy === "priority"}>
-                      Priorität
-                    </TableSortLabel>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {project.tasks.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={4} sx={{ fontStyle: "italic" }}>
-                      Keine Tasks
+                  <TableRow
+                    sx={{
+                      "& .MuiTableCell-root": {
+                        fontWeight: theme.typography.fontWeightBold,
+                      },
+                    }}
+                  >
+                    <TableCell colSpan={4}>{project.alias}</TableCell>
+                  </TableRow>
+                  <TableRow
+                    sx={{
+                      "& .MuiTableCell-root": {
+                        fontWeight: theme.typography.fontWeightBold,
+                      },
+                    }}
+                  >
+                    <TableCell>ID</TableCell>
+                    <TableCell>Titel</TableCell>
+                    <TableCell>Beschreibung</TableCell>
+                    <TableCell sortDirection={"asc"}>
+                      <TableSortLabel active={orderBy === "priority"}>Priorität</TableSortLabel>
                     </TableCell>
                   </TableRow>
-                )}
-                {project.tasks.map((task) => {
-                  return (
-                    <TableRow hover role="button" key={`tableRow-${task.id}`}>
-                      <TableCell>
-                        {task.id}
-                        <IconButton
-                          disabled={stores.tasksStore.openTasks.some(
-                            (openTask) => openTask.id === task.id
-                          )}
-                          onClick={() => handleOpenTask(task)}
-                        >
-                          <OpenInNew />
-                        </IconButton>
-                        <IconButton
-                          onClick={() =>
-                            stores.tasksStore.setTaskOverlayState(task)
-                          }
-                        >
-                          <Edit />
-                        </IconButton>
-                        <IconButton
-                          disabled={stores.tasksStore.taskTimer !== null}
-                          onClick={() => stores.tasksStore.setTaskTimer(task)}
-                        >
-                          <Timer />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell
-                        sx={{ whiteSpace: "wrap", overflowWrap: "anywhere" }}
-                      >
-                        {task.title}
-                      </TableCell>
-                      <TableCell
-                        sx={{
-                          fontStyle:
-                            task.description.length === 0
-                              ? "italic"
-                              : "inherit",
-                        }}
-                      >
-                        {task.description.length === 0
-                          ? "(keine)"
-                          : task.description}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          sx={{ maxWidth: "fit-content" }}
-                          color={
-                            task.priority === "high"
-                              ? "error"
-                              : task.priority === "medium"
-                              ? "primary"
-                              : "success"
-                          }
-                          label={task.priority}
-                        />
+                </TableHead>
+                <TableBody>
+                  {project.tasks.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={4} sx={{ fontStyle: "italic" }}>
+                        Keine Tasks
                       </TableCell>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          );
-        })
-      )}
+                  )}
+                  {project.tasks.map((task) => {
+                    return (
+                      <TableRow hover role="button" key={`tableRow-${task.id}`}>
+                        <TableCell>
+                          {task.id}
+                          <IconButton
+                            disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
+                            onClick={() => handleOpenTask(task)}
+                          >
+                            <OpenInNew />
+                          </IconButton>
+                          <IconButton onClick={() => stores.tasksStore.setTaskOverlayState(task)}>
+                            <Edit />
+                          </IconButton>
+                          <IconButton disabled={stores.tasksStore.taskTimer !== null} onClick={() => stores.tasksStore.setTaskTimer(task)}>
+                            <Timer />
+                          </IconButton>
+                        </TableCell>
+                        <TableCell sx={{ whiteSpace: "wrap", overflowWrap: "anywhere" }}>{task.title}</TableCell>
+                        <TableCell
+                          sx={{
+                            fontStyle: task.description.length === 0 ? "italic" : "inherit",
+                          }}
+                        >
+                          {task.description.length === 0 ? "(keine)" : task.description}
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            sx={{ maxWidth: "fit-content" }}
+                            color={task.priority === "high" ? "error" : task.priority === "medium" ? "primary" : "success"}
+                            label={task.priority}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            );
+          })
+        )}
+      </Box>
     </Box>
   );
 });

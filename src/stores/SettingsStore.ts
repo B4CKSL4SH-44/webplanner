@@ -34,6 +34,14 @@ export default class SettingStore {
     this.writeLsSettings(lsSettings);
   };
 
+  public kanbanProject: number;
+  public setKanbanProject = (newId: number) => {
+    this.kanbanProject = newId;
+    const lsSettings = this.getLsSettings();
+    lsSettings.kanbanProject = this.kanbanProject;
+    this.writeLsSettings(lsSettings);
+  };
+
   public static getInstance = () => {
     if (SettingStore.instance === undefined) {
       SettingStore.instance = new SettingStore();
@@ -45,12 +53,14 @@ export default class SettingStore {
     this.modules = defaultSettings.modules;
     this.displayMode = defaultSettings.displayMode;
     this.activeProjects = defaultSettings.activeProjects;
+    this.kanbanProject = defaultSettings.kanbanProject;
     const lsSettings = localStorage.getItem("webPlannerSettings");
     if (lsSettings !== null) {
       const parsedSettings: Settings = JSON.parse(lsSettings);
       this.modules = parsedSettings.modules;
       this.displayMode = parsedSettings.displayMode;
       this.activeProjects = parsedSettings.activeProjects;
+      this.kanbanProject = parsedSettings.kanbanProject;
     } else {
       localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
     }
@@ -63,6 +73,8 @@ export default class SettingStore {
       setDisplayMode: action,
       activeProjects: observable,
       setActiveProjects: action,
+      kanbanProject: observable,
+      setKanbanProject: action,
     });
   }
 

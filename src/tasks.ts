@@ -7,6 +7,7 @@ export interface Project {
   id: number;
   alias: string;
   tasks: Task[];
+  boards: { [index: number]: string };
 }
 
 export interface Task {
@@ -18,6 +19,7 @@ export interface Task {
   creator: string;
   assignees: string[];
   project: number;
+  board?: number;
 }
 
 export interface Relations {
@@ -27,13 +29,14 @@ export interface Relations {
 }
 
 export const defaultProjects: Projects = {
-  0: { id: 0, alias: "personal", tasks: [] },
+  0: { id: 0, alias: "personal", tasks: [], boards: { 0: "NONE" } },
 };
 
 export const defaultProject: Project = {
   id: -1,
   alias: "",
   tasks: [],
+  boards: { 0: "NONE", 1: "NEW" },
 };
 
 export const defaultTask: Task = {
@@ -49,4 +52,5 @@ export const defaultTask: Task = {
   creator: "",
   assignees: [],
   project: 0,
+  board: 0,
 };

@@ -13,6 +13,7 @@ import TasksBoardCmp from "modules/TasksBoardCmp";
 import OpenTasksOverlayCmp from "tasks/OpenTasksOverlayCmp";
 import NewProjectOverlayCmp from "tasks/NewProjectOverlay";
 import TaskTimerCmp from "components/TimerCmp";
+import KanbanCmp from "modules/Kanban/KanbanCmp";
 
 const App = observer(() => {
   const stores = useStores();
@@ -64,6 +65,7 @@ const App = observer(() => {
             <Divider />
             {value === "notebook" && <NoteBookCmp />}
             {value === "tasks" && <TasksBoardCmp />}
+            {value === "kanban" && <KanbanCmp />}
           </Box>
         </Box>
       </ThemeProvider>

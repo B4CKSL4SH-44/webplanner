@@ -15,6 +15,12 @@ export default class TasksStore {
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
+  public addBoard = (project: Project, board: string) => {
+    const sorted = Object.keys(this.projects[project.id].boards).sort((a, b) => Number(b) - Number(a));
+    const newId = Number(sorted[0]) + 1;
+    this.projects[project.id].boards[newId] = board;
+    this.setProjects(this.projects);
+  };
 
   public newProjectOverlayActive: boolean = false;
   public setNewProjectOverlayActive = (bool: boolean) => {
@@ -29,23 +35,18 @@ export default class TasksStore {
   };
   public deleteTask = (task: Task) => {
     const lsProjects = this.getLsProjects();
-    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter(
-      (oldTask) => oldTask.id !== task.id
-    );
+    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter((oldTask) => oldTask.id !== task.id);
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
   public updateTask = (taskToUpdate: Task) => {
-    console.log(taskToUpdate);
-    const updatedTasks = this.projects[taskToUpdate.project].tasks.map(
-      (task) => {
-        if (task.id === taskToUpdate.id) {
-          return taskToUpdate;
-        } else {
-          return task;
-        }
+    const updatedTasks = this.projects[taskToUpdate.project].tasks.map((task) => {
+      if (task.id === taskToUpdate.id) {
+        return taskToUpdate;
+      } else {
+        return task;
       }
-    );
+    });
     this.setProjects({
       ...this.projects,
       [taskToUpdate.project]: {
@@ -70,9 +71,7 @@ export default class TasksStore {
     }
   };
   public closeTask = (task: Task) => {
-    const updatedTasks = this.openTasks.filter(
-      (openTask) => openTask.id !== task.id
-    );
+    const updatedTasks = this.openTasks.filter((openTask) => openTask.id !== task.id);
     this.setOpenTasks(updatedTasks);
   };
 
@@ -85,11 +84,20 @@ export default class TasksStore {
     const lsProjects = localStorage.getItem("webPlannerProjects");
     if (lsProjects !== null) {
       this.projects = JSON.parse(lsProjects);
+      // Fixing breaking changes:
+      Object.keys(this.projects).forEach((key: string) => {
+        if (this.projects[Number(key)].boards === undefined) {
+          this.projects[Number(key)].boards = { 0: "NONE" };
+        }
+        this.projects[Number(key)].tasks.forEach((task, index) => {
+          if (task.board === undefined) {
+            this.projects[Number(key)].tasks[index].board = 0;
+          }
+        });
+      });
+      this.writeLsProjects(this.projects);
     } else {
-      localStorage.setItem(
-        "webPlannerProjects",
-        JSON.stringify(defaultProjects)
-      );
+      localStorage.setItem("webPlannerProjects", JSON.stringify(defaultProjects));
     }
     makeObservable(this, {
       projects: observable,

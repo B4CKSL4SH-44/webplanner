@@ -33,9 +33,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
 
   const isUpdate = typeof stores.tasksStore.taskOverlayState !== "boolean";
 
-  const [task, setTask] = useState<Task>(
-    isUpdate ? (stores.tasksStore.taskOverlayState as Task) : defaultTask
-  );
+  const [task, setTask] = useState<Task>(isUpdate ? (stores.tasksStore.taskOverlayState as Task) : defaultTask);
   const [project, setProject] = useState<number>(0);
   const [titleError, setTitleError] = useState<boolean>(false);
 
@@ -66,19 +64,14 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
       if (stores.tasksStore.projects[project].tasks.length === 0) {
         newId = 1;
       } else {
-        const sorted = stores.tasksStore.projects[project].tasks.sort(
-          (a, b) => b.id - a.id
-        );
+        const sorted = stores.tasksStore.projects[project].tasks.sort((a, b) => b.id - a.id);
         newId = sorted[0].id + 1;
       }
       stores.tasksStore.addTask({
         ...task,
         id: newId,
         project,
-        description:
-          task.description.replaceAll(" ", "").length === 0
-            ? ""
-            : task.description,
+        description: task.description.replaceAll(" ", "").length === 0 ? "" : task.description,
       });
     }
     // Bei Update
@@ -98,10 +91,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
     setTask(updatedTask);
   };
 
-  const handleRelationAdd = (
-    key: keyof Relations,
-    idList: number[] | string
-  ) => {
+  const handleRelationAdd = (key: keyof Relations, idList: number[] | string) => {
     if (task.relations[key] === false) return;
     if (typeof idList === "string") return;
     const updatedTask: Task = {
@@ -112,11 +102,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
   };
 
   return (
-    <Draggable
-      nodeRef={nodeRef}
-      handle="#draggable-dialog-button"
-      cancel={'[class*="MuiDialogContent-root"]'}
-    >
+    <Draggable nodeRef={nodeRef} handle="#draggable-dialog-button" cancel={'[class*="MuiDialogContent-root"]'}>
       <Dialog
         ref={nodeRef}
         sx={{ pointerEvents: "none" }}
@@ -127,12 +113,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
         hideBackdrop
         PaperProps={{ sx: { maxWidth: "300px" } }}
       >
-        <DialogTitle
-          sx={{ pointerEvents: "auto" }}
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-        >
+        <DialogTitle sx={{ pointerEvents: "auto" }} display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
           New Task
           <IconButton sx={{ cursor: "move" }} id="draggable-dialog-button">
             <DragHandle />
@@ -142,9 +123,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
           <FormControl sx={{ p: "1rem" }}>
             <TextField
               required
-              helperText={
-                titleError ? "Bitte geben Sie einen Titel ein" : undefined
-              }
+              helperText={titleError ? "Bitte geben Sie einen Titel ein" : undefined}
               error={titleError}
               sx={{ mb: "1rem" }}
               value={task.title}
@@ -159,10 +138,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
               multiline
             />
             <FormLabel id="input-label-priority">Priority</FormLabel>
-            <RadioGroup
-              sx={{ mb: "1rem" }}
-              aria-labelledby="input-label-priority"
-            >
+            <RadioGroup sx={{ mb: "1rem" }} aria-labelledby="input-label-priority">
               <ButtonGroup>
                 <Button
                   onClick={() => handleUpdateTask("priority", "high")}
@@ -175,9 +151,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                 <Button
                   onClick={() => handleUpdateTask("priority", "medium")}
                   size="small"
-                  variant={
-                    task.priority === "medium" ? "contained" : "outlined"
-                  }
+                  variant={task.priority === "medium" ? "contained" : "outlined"}
                   color="primary"
                 >
                   medium
@@ -214,16 +188,10 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                         }}
                       >
                         {stores.tasksStore.projects[0].tasks
-                          .filter((storeTask) =>
-                            selected.includes(storeTask.id)
-                          )
+                          .filter((storeTask) => selected.includes(storeTask.id))
                           .map((storeTask) => (
                             <Tooltip title={storeTask.title}>
-                              <Chip
-                                sx={{ maxWidth: "100px" }}
-                                key={storeTask.id}
-                                label={`#${storeTask.id}: ${storeTask.title}`}
-                              />
+                              <Chip sx={{ maxWidth: "100px" }} key={storeTask.id} label={`#${storeTask.id}: ${storeTask.title}`} />
                             </Tooltip>
                           ))}
                       </Box>
@@ -234,16 +202,8 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                 >
                   {stores.tasksStore.projects[0].tasks.map((storeTask) => {
                     return (
-                      <MenuItem
-                        sx={{ maxWidth: "320px" }}
-                        key={storeTask.id}
-                        value={storeTask.id}
-                      >
-                        <Box
-                          sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
-                        >
-                          {storeTask.title}
-                        </Box>
+                      <MenuItem sx={{ maxWidth: "320px" }} key={storeTask.id} value={storeTask.id}>
+                        <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>{storeTask.title}</Box>
                       </MenuItem>
                     );
                   })}
@@ -254,29 +214,43 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
               <InputLabel id="select-label">Projekt auswählen</InputLabel>
               <Select
                 disabled={isUpdate}
-                labelId="select-label"
+                labelId="select-label-board"
                 value={project}
                 label="Projekt auswählen"
                 onChange={(e) => setProject(Number(e.target.value))}
               >
-                {Object.keys(stores.tasksStore.projects).map(
-                  (projectStringId) => {
-                    const projectId = Number(projectStringId);
-                    return (
-                      <MenuItem key={projectId} value={projectId}>
-                        {stores.tasksStore.projects[projectId].alias}
-                      </MenuItem>
-                    );
-                  }
-                )}
+                {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
+                  const projectId = Number(projectStringId);
+                  return (
+                    <MenuItem key={projectId} value={projectId}>
+                      {stores.tasksStore.projects[projectId].alias}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <InputLabel id="select-label-board">Board auswählen</InputLabel>
+              <Select
+                labelId="select-label"
+                value={task.board}
+                label="Board auswählen"
+                onChange={(e) => setTask({ ...task, board: Number(e.target.value) })}
+              >
+                {Object.keys(stores.tasksStore.projects[0].boards).map((boardStringId) => {
+                  const boardId = Number(boardStringId);
+                  return (
+                    <MenuItem key={boardId} value={boardId}>
+                      {stores.tasksStore.projects[project].boards[boardId]}
+                    </MenuItem>
+                  );
+                })}
               </Select>
             </FormControl>
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ pointerEvents: "auto" }}>
-          <Button onClick={() => stores.tasksStore.setTaskOverlayState(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => stores.tasksStore.setTaskOverlayState(false)}>Cancel</Button>
           <Button onClick={handleSave}>Speichern</Button>
         </DialogActions>
       </Dialog>

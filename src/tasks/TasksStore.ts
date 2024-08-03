@@ -16,7 +16,9 @@ export default class TasksStore {
     this.writeLsProjects(lsProjects);
   };
   public addBoard = (project: Project, board: string) => {
-    const sorted = Object.keys(this.projects[project.id].boards).sort((a, b) => Number(b) - Number(a));
+    const sorted = Object.keys(this.projects[project.id].boards).sort(
+      (a, b) => Number(b) - Number(a)
+    );
     const newId = Number(sorted[0]) + 1;
     this.projects[project.id].boards[newId] = board;
     this.setProjects(this.projects);
@@ -35,18 +37,22 @@ export default class TasksStore {
   };
   public deleteTask = (task: Task) => {
     const lsProjects = this.getLsProjects();
-    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter((oldTask) => oldTask.id !== task.id);
+    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter(
+      (oldTask) => oldTask.id !== task.id
+    );
     this.projects = lsProjects;
     this.writeLsProjects(lsProjects);
   };
   public updateTask = (taskToUpdate: Task) => {
-    const updatedTasks = this.projects[taskToUpdate.project].tasks.map((task) => {
-      if (task.id === taskToUpdate.id) {
-        return taskToUpdate;
-      } else {
-        return task;
+    const updatedTasks = this.projects[taskToUpdate.project].tasks.map(
+      (task) => {
+        if (task.id === taskToUpdate.id) {
+          return taskToUpdate;
+        } else {
+          return task;
+        }
       }
-    });
+    );
     this.setProjects({
       ...this.projects,
       [taskToUpdate.project]: {
@@ -71,7 +77,9 @@ export default class TasksStore {
     }
   };
   public closeTask = (task: Task) => {
-    const updatedTasks = this.openTasks.filter((openTask) => openTask.id !== task.id);
+    const updatedTasks = this.openTasks.filter(
+      (openTask) => openTask.id !== task.id
+    );
     this.setOpenTasks(updatedTasks);
   };
 
@@ -93,11 +101,17 @@ export default class TasksStore {
           if (task.board === undefined) {
             this.projects[Number(key)].tasks[index].board = 0;
           }
+          if (task.state === undefined) {
+            this.projects[Number(key)].tasks[index].state = "open";
+          }
         });
       });
       this.writeLsProjects(this.projects);
     } else {
-      localStorage.setItem("webPlannerProjects", JSON.stringify(defaultProjects));
+      localStorage.setItem(
+        "webPlannerProjects",
+        JSON.stringify(defaultProjects)
+      );
     }
     makeObservable(this, {
       projects: observable,

@@ -20,6 +20,7 @@ export interface Task {
   assignees: string[];
   project: number;
   board?: number;
+  state: "open" | "closed";
 }
 
 export interface Relations {
@@ -53,4 +54,5 @@ export const defaultTask: Task = {
   assignees: [],
   project: 0,
   board: 0,
+  state: "open",
 };

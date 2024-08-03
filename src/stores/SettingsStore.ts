@@ -42,6 +42,14 @@ export default class SettingStore {
     this.writeLsSettings(lsSettings);
   };
 
+  public todoProject: number;
+  public setTodoProject = (id: number) => {
+    this.todoProject = id;
+    const lsSettings = this.getLsSettings();
+    lsSettings.todoProject = this.todoProject;
+    this.writeLsSettings(lsSettings);
+  };
+
   public static getInstance = () => {
     if (SettingStore.instance === undefined) {
       SettingStore.instance = new SettingStore();
@@ -54,6 +62,7 @@ export default class SettingStore {
     this.displayMode = defaultSettings.displayMode;
     this.activeProjects = defaultSettings.activeProjects;
     this.kanbanProject = defaultSettings.kanbanProject;
+    this.todoProject = defaultSettings.todoProject;
     const lsSettings = localStorage.getItem("webPlannerSettings");
     if (lsSettings !== null) {
       const parsedSettings: Settings = JSON.parse(lsSettings);
@@ -61,8 +70,12 @@ export default class SettingStore {
       this.displayMode = parsedSettings.displayMode;
       this.activeProjects = parsedSettings.activeProjects;
       this.kanbanProject = parsedSettings.kanbanProject;
+      this.todoProject = parsedSettings.todoProject ?? 0;
     } else {
-      localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
+      localStorage.setItem(
+        "webPlannerSettings",
+        JSON.stringify(defaultSettings)
+      );
     }
     makeObservable(this, {
       settingsOpen: observable,

@@ -30,7 +30,13 @@ const SettingsCmp = observer((): ReactElement => {
     stores.settingsStore.setModules(moduleSettings);
   };
 
-  const allModules: ModuleNames[] = ["notebook", "tasks", "kanban", "flow"];
+  const allModules: ModuleNames[] = [
+    "notebook",
+    "tasks",
+    "kanban",
+    "flow",
+    "todo",
+  ];
 
   // SSC: Das kommt dann natürlich in den LanguageStore :)
   const getText = (module: ModuleNames) => {
@@ -43,6 +49,8 @@ const SettingsCmp = observer((): ReactElement => {
         return "Kanban";
       case "flow":
         return "Flow";
+      case "todo":
+        return "Todo";
     }
   };
 
@@ -58,12 +66,19 @@ const SettingsCmp = observer((): ReactElement => {
       <Box display={"flex"} justifyContent={"space-between"}>
         <Toolbar sx={{ flexGrow: 1 }}>
           <Typography sx={{ flexGrow: 1 }}>Einstellungen</Typography>
-          <Paper sx={{ display: "flex", alignItems: "center", padding: "0 1rem" }}>
+          <Paper
+            sx={{ display: "flex", alignItems: "center", padding: "0 1rem" }}
+          >
             <LightMode />
-            <Switch checked={stores.settingsStore.displayMode === "dark"} onChange={(_e, newChecked) => handleSwitch(newChecked)} />
+            <Switch
+              checked={stores.settingsStore.displayMode === "dark"}
+              onChange={(_e, newChecked) => handleSwitch(newChecked)}
+            />
             <DarkMode />
           </Paper>
-          <IconButton onClick={() => stores.settingsStore.setSettingsOpen(false)}>
+          <IconButton
+            onClick={() => stores.settingsStore.setSettingsOpen(false)}
+          >
             <Close />
           </IconButton>
         </Toolbar>
@@ -75,9 +90,16 @@ const SettingsCmp = observer((): ReactElement => {
             {allModules.map((moduleName) => {
               return (
                 <ListItem key={moduleName}>
-                  <ListItemButton dense onClick={() => handleToggleModule(moduleName)}>
+                  <ListItemButton
+                    dense
+                    onClick={() => handleToggleModule(moduleName)}
+                  >
                     <ListItemIcon>
-                      <Checkbox checked={stores.settingsStore.modules[moduleName] === true} />
+                      <Checkbox
+                        checked={
+                          stores.settingsStore.modules[moduleName] === true
+                        }
+                      />
                     </ListItemIcon>
                     <ListItemText>{getText(moduleName)}</ListItemText>
                   </ListItemButton>

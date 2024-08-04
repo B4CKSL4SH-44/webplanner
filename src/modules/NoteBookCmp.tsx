@@ -18,6 +18,7 @@ const NoteBookCmp = observer((): ReactElement => {
     stores.noteBookStore.addNotebook(newNotebookTitle);
     setNewNotebookTitle("");
     setAddNotebookActive(false);
+    setActiveNotebook(stores.noteBookStore.notebooks.find((notebook) => notebook.position === stores.noteBookStore.notebooks.length - 1)!.id);
   };
 
   const moveLeft = (notebookToMoveLeft: Notebook) => {
@@ -76,8 +77,16 @@ const NoteBookCmp = observer((): ReactElement => {
                 <Tab
                   sx={
                     activeNotebook === notebook.id
-                      ? { border: "1px solid rgba(0, 0, 0, 0.12)", borderRadius: "12px 12px 0 0", flexDirection: "row" }
-                      : { backgroundColor: theme.palette.action.disabled, borderRadius: "12px 12px 0 0", border: "1px solid rgba(0, 0, 0, 0.12)" }
+                      ? {
+                          border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.12)" : "1px solid " + theme.palette.action.disabled,
+                          borderRadius: "12px 12px 0 0",
+                          flexDirection: "row",
+                        }
+                      : {
+                          backgroundColor: theme.palette.action.disabled,
+                          borderRadius: "12px 12px 0 0",
+                          border: theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.12)" : "1px solid " + theme.palette.action.disabled,
+                        }
                   }
                   label={
                     activeNotebook === notebook.id ? (

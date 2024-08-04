@@ -36,6 +36,11 @@ export default class NoteBookStore {
     };
     this.setNotebooks([...this.notebooks, newNotebook]);
   };
+  public deleteNotebook = (notebookToDelete: Notebook) => {
+    const updatedNotebooks = this.notebooks.filter((notebook) => notebook.id !== notebookToDelete.id);
+    updatedNotebooks.sort((a, b) => a.position - b.position).map((notebook, index) => ({ ...notebook, position: index }));
+    this.setNotebooks(updatedNotebooks);
+  };
 
   private constructor() {
     this.notebooks = [defaultNotebook];

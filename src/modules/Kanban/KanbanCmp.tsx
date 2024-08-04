@@ -51,7 +51,6 @@ const KanbanCmp = observer((): ReactElement => {
   const project = stores.tasksStore.projects[stores.settingsStore.kanbanProject];
   useEffect(() => {
     Object.keys(project.boards).forEach((key) => {
-      const board = project.boards[Number(key)];
       if (orders[Number(key)] === undefined) {
         setOrders({ ...orders, [Number(key)]: project.tasks.filter((task) => task.board === Number(key)).map((task, index) => index) });
       }

@@ -1,6 +1,6 @@
 import { useEditor } from "@tiptap/react";
 import { useState, type ReactElement } from "react";
-import { Box, Button, IconButton, Tabs, Tooltip, useTheme } from "@mui/material";
+import { Box, Button, Tooltip, useTheme } from "@mui/material";
 import {
   MenuButtonBold,
   MenuButtonBulletedList,

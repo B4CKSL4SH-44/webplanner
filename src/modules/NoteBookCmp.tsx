@@ -1,8 +1,8 @@
-import { Box, Button, ButtonGroup, Card, IconButton, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, IconButton, Tab, Tabs, TextField, Typography, useTheme } from "@mui/material";
 import { useState, type ReactElement } from "react";
 import useStores from "Store";
 import EditorCmp from "./EditorCmp";
-import { Add, ArrowBackIos, Check, Close, NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { Add, Close, NavigateBefore, NavigateNext } from "@mui/icons-material";
 import { observer } from "mobx-react";
 import type { Notebook } from "./NoteBookStore";
 
@@ -11,13 +11,11 @@ const NoteBookCmp = observer((): ReactElement => {
   const theme = useTheme();
 
   const [activeNotebook, setActiveNotebook] = useState<string>(stores.noteBookStore.notebooks.find((notebook) => notebook.position === 0)!.id);
-  const [addNotebookActive, setAddNotebookActive] = useState<boolean>(false);
   const [newNotebookTitle, setNewNotebookTitle] = useState<string>("");
 
   const handleAddNotebook = () => {
     stores.noteBookStore.addNotebook(newNotebookTitle);
     setNewNotebookTitle("");
-    setAddNotebookActive(false);
     setActiveNotebook(stores.noteBookStore.notebooks.find((notebook) => notebook.position === stores.noteBookStore.notebooks.length - 1)!.id);
   };
 
@@ -104,14 +102,7 @@ const NoteBookCmp = observer((): ReactElement => {
               );
             })}
 
-          <Tab
-            sx={{ minHeight: "" }}
-            value="NEWNOTEBOOK"
-            iconPosition="start"
-            icon={<Add />}
-            label="Neues Notebook"
-            onClick={() => setAddNotebookActive(true)}
-          />
+          <Tab sx={{ minHeight: "" }} value="NEWNOTEBOOK" iconPosition="start" icon={<Add />} label="Neues Notebook" />
         </Tabs>
       </Box>
       {stores.noteBookStore.notebooks.map((notebook) => {

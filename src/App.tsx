@@ -15,7 +15,6 @@ import NewProjectOverlayCmp from "tasks/NewProjectOverlay";
 import TaskTimerCmp from "components/TimerCmp";
 import KanbanCmp from "modules/Kanban/KanbanCmp";
 import TodoCmp from "modules/TodoCmp";
-import CustomDialog from "components/CustomDialog";
 
 const App = observer(() => {
   const stores = useStores();

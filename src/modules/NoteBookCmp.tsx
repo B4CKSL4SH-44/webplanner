@@ -4,7 +4,7 @@ import Color from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
-import { useEditor } from '@tiptap/react';
+import { Extension, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import {
     MenuButtonBold,
@@ -29,7 +29,7 @@ const NoteBookCmp = (): ReactElement => {
     const theme = useTheme();
 
     const editor = useEditor({
-        extensions: [StarterKit, Color, Underline, TextStyle, Highlight],
+        extensions: [StarterKit as Extension, Color, Underline, TextStyle, Highlight],
         content: stores.noteBookStore.content,
         onUpdate: () => stores.noteBookStore.setContent(editor?.getHTML() as string),
     });

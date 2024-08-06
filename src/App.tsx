@@ -19,20 +19,20 @@ import TodoCmp from "modules/TodoCmp";
 const App = observer(() => {
   const stores = useStores();
 
-  const [value, setValue] = useState<ModuleNames | null>(
-    (Object.keys(stores.settingsStore.modules) as ModuleNames[]).find((key) => stores.settingsStore.modules[key] === true) ?? null
+  const [activeModule, setActiveValue] = useState<ModuleNames | null>(
+    stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null
   );
 
   useEffect(() => {
-    if (value !== null && stores.settingsStore.modules[value] === false) {
-      setValue((Object.keys(stores.settingsStore.modules) as ModuleNames[]).find((key) => stores.settingsStore.modules[key] === true) ?? null);
+    if (activeModule !== null && stores.settingsStore.modules.find((module) => module.name === activeModule)!.active === false) {
+      setActiveValue(stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stores.settingsStore.modules]);
 
   const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
-    setValue(newValue);
+    setActiveValue(newValue);
   };
 
   const theme = createTheme({
@@ -56,18 +56,18 @@ const App = observer(() => {
             <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
               <SettingsCmp />
             </Drawer>
-            <Tabs value={value} onChange={handleChange} variant="fullWidth">
-              {(Object.keys(stores.settingsStore.modules) as ModuleNames[])
-                .filter((module) => stores.settingsStore.modules[module] === true)
+            <Tabs value={activeModule} onChange={handleChange} variant="fullWidth">
+              {stores.settingsStore.modules
+                .filter((module) => module.active === true)
                 .map((module) => {
-                  return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
+                  return <Tab key={`tab-${module}`} value={module} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
                 })}
             </Tabs>
             <Divider />
-            {value === "notebook" && <NoteBookCmp />}
-            {value === "tasks" && <TasksBoardCmp />}
-            {value === "kanban" && <KanbanCmp />}
-            {value === "todo" && <TodoCmp />}
+            {activeModule === "notebook" && <NoteBookCmp />}
+            {activeModule === "tasks" && <TasksBoardCmp />}
+            {activeModule === "kanban" && <KanbanCmp />}
+            {activeModule === "todo" && <TodoCmp />}
           </Box>
         </Box>
       </ThemeProvider>

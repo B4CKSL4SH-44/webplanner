@@ -1,4 +1,4 @@
-import { Close, DarkMode, ExpandMore, LightMode } from "@mui/icons-material";
+import { Close, DarkMode, DeleteForever, ExpandMore, LightMode } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -15,6 +15,9 @@ import {
   Toolbar,
   Paper,
   IconButton,
+  Button,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { type ReactElement } from "react";
 import { type ModuleNames } from "../settings";
@@ -24,19 +27,15 @@ import useStores from "Store";
 const SettingsCmp = observer((): ReactElement => {
   const stores = useStores();
 
-  const handleToggleModule = (module: ModuleNames) => {
-    let moduleSettings = { ...stores.settingsStore.modules };
-    moduleSettings[module] = !moduleSettings[module];
-    stores.settingsStore.setModules(moduleSettings);
+  const handleToggleModule = (moduleName: ModuleNames) => {
+    const newModules = stores.settingsStore.modules.map((module) => {
+      if (module.name === moduleName) {
+        return { ...module, active: !module.active };
+      }
+      return module;
+    });
+    stores.settingsStore.setModules(newModules);
   };
-
-  const allModules: ModuleNames[] = [
-    "notebook",
-    "tasks",
-    "kanban",
-    "flow",
-    "todo",
-  ];
 
   // SSC: Das kommt dann natürlich in den LanguageStore :)
   const getText = (module: ModuleNames) => {
@@ -61,24 +60,20 @@ const SettingsCmp = observer((): ReactElement => {
       stores.settingsStore.setDisplayMode("light");
     }
   };
+
+  const activeModules = stores.settingsStore.modules.filter((module) => module.active === true);
+
   return (
     <Box width={400}>
       <Box display={"flex"} justifyContent={"space-between"}>
         <Toolbar sx={{ flexGrow: 1 }}>
           <Typography sx={{ flexGrow: 1 }}>Einstellungen</Typography>
-          <Paper
-            sx={{ display: "flex", alignItems: "center", padding: "0 1rem" }}
-          >
+          <Paper sx={{ display: "flex", alignItems: "center", padding: "0 1rem" }}>
             <LightMode />
-            <Switch
-              checked={stores.settingsStore.displayMode === "dark"}
-              onChange={(_e, newChecked) => handleSwitch(newChecked)}
-            />
+            <Switch checked={stores.settingsStore.displayMode === "dark"} onChange={(_e, newChecked) => handleSwitch(newChecked)} />
             <DarkMode />
           </Paper>
-          <IconButton
-            onClick={() => stores.settingsStore.setSettingsOpen(false)}
-          >
+          <IconButton onClick={() => stores.settingsStore.setSettingsOpen(false)}>
             <Close />
           </IconButton>
         </Toolbar>
@@ -87,21 +82,14 @@ const SettingsCmp = observer((): ReactElement => {
         <AccordionSummary expandIcon={<ExpandMore />}>Module</AccordionSummary>
         <AccordionDetails>
           <List>
-            {allModules.map((moduleName) => {
+            {stores.settingsStore.modules.map((module) => {
               return (
-                <ListItem key={moduleName}>
-                  <ListItemButton
-                    dense
-                    onClick={() => handleToggleModule(moduleName)}
-                  >
+                <ListItem key={module.name}>
+                  <ListItemButton dense onClick={() => handleToggleModule(module.name)}>
                     <ListItemIcon>
-                      <Checkbox
-                        checked={
-                          stores.settingsStore.modules[moduleName] === true
-                        }
-                      />
+                      <Checkbox checked={module.active === true} />
                     </ListItemIcon>
-                    <ListItemText>{getText(moduleName)}</ListItemText>
+                    <ListItemText>{getText(module.name)}</ListItemText>
                   </ListItemButton>
                 </ListItem>
               );
@@ -109,6 +97,25 @@ const SettingsCmp = observer((): ReactElement => {
           </List>
         </AccordionDetails>
       </Accordion>
+      <Accordion disableGutters sx={{ margin: "4px" }}>
+        <AccordionSummary expandIcon={<ExpandMore />}>Modulreihenfolge</AccordionSummary>
+        <AccordionDetails>
+          <List>
+            {activeModules.map((module, index) => {
+              return (
+                <Select value={stores.settingsStore.modules.find((storeModule) => storeModule.position === index)?.name}>
+                  {activeModules.map((activeModule) => {
+                    return <MenuItem>{getText(activeModule.name)}</MenuItem>;
+                  })}
+                </Select>
+              );
+            })}
+          </List>
+        </AccordionDetails>
+      </Accordion>
+      <Button variant="contained" color="error" startIcon={<DeleteForever />} onClick={() => stores.settingsStore.reset()}>
+        Zurücksetzen
+      </Button>
     </Box>
   );
 });

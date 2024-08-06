@@ -1,5 +1,5 @@
 import { action, makeObservable, observable } from "mobx";
-import type { Modules, Settings } from "settings";
+import type { Module, Settings } from "settings";
 import defaultSettings from "settings";
 
 export default class SettingStore {
@@ -10,8 +10,8 @@ export default class SettingStore {
     this.settingsOpen = newOpen;
   };
 
-  public modules: Modules;
-  public setModules = (newModules: Modules) => {
+  public modules: Module[];
+  public setModules = (newModules: Module[]) => {
     this.modules = { ...newModules };
     const parsedSettings = this.getLsSettings();
     parsedSettings.modules = this.modules;
@@ -50,6 +50,11 @@ export default class SettingStore {
     this.writeLsSettings(lsSettings);
   };
 
+  public reset = () => {
+    localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
+    window.location.reload();
+  };
+
   public static getInstance = () => {
     if (SettingStore.instance === undefined) {
       SettingStore.instance = new SettingStore();
@@ -72,10 +77,7 @@ export default class SettingStore {
       this.kanbanProject = parsedSettings.kanbanProject;
       this.todoProject = parsedSettings.todoProject ?? 0;
     } else {
-      localStorage.setItem(
-        "webPlannerSettings",
-        JSON.stringify(defaultSettings)
-      );
+      localStorage.setItem("webPlannerSettings", JSON.stringify(defaultSettings));
     }
     makeObservable(this, {
       settingsOpen: observable,

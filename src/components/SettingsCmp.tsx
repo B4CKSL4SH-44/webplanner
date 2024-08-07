@@ -35,7 +35,7 @@ const SettingsCmp = observer((): ReactElement => {
     const allModules: ModuleNames[] = ['notebook', 'tasks', 'kanban', 'flow'];
 
     // SSC: Das kommt dann natürlich in den LanguageStore :)
-    const getText = (module: ModuleNames) => {
+    const getText = (module: ModuleNames): string => {
         switch (module) {
             case 'notebook':
                 return 'Notizen';
@@ -45,6 +45,8 @@ const SettingsCmp = observer((): ReactElement => {
                 return 'Kanban';
             case 'flow':
                 return 'Flow';
+            default:
+                return '';
         }
     };
 

@@ -24,7 +24,7 @@ const SettingsCmp = observer((): ReactElement => {
   const stores = useStores();
 
   const handleToggleModule = (module: ModuleNames) => {
-    let moduleSettings = stores.settingsStore.modules;
+    const moduleSettings = stores.settingsStore.modules;
     moduleSettings[module] = !moduleSettings[module];
     stores.settingsStore.setModules(moduleSettings);
   };

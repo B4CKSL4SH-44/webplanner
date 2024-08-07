@@ -73,9 +73,8 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                 project,
                 description: task.description.replaceAll(' ', '').length === 0 ? '' : task.description,
             });
-        }
-        // Bei Update
-        else {
+        } else {
+            // Bei Update
             stores.tasksStore.updateTask(task);
         }
         stores.tasksStore.setTaskOverlayState(false);

@@ -46,7 +46,7 @@ const SettingsCmp = observer((): ReactElement => {
             case 'flow':
                 return 'Flow';
             default:
-                return '';
+                return 'Notizen';
         }
     };
 

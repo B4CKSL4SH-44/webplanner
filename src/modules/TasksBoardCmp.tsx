@@ -31,7 +31,9 @@ const TasksBoardCmp = observer((): ReactElement => {
     const stores = useStores();
     const theme = useTheme();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [orderBy, setOrderBy] = useState<keyof Task>('id');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
     const handleOpenTask = (newTask: Task) => {

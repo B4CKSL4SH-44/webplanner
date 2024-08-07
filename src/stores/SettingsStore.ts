@@ -13,33 +13,33 @@ export default class SettingStore {
     public modules: Modules;
     public setModules = (newModules: Modules) => {
         this.modules = { ...newModules };
-        const parsedSettings = this.getLsSettings();
+        const parsedSettings = SettingStore.getLsSettings();
         parsedSettings.modules = this.modules;
-        this.writeLsSettings(parsedSettings);
+        SettingStore.writeLsSettings(parsedSettings);
     };
 
     public displayMode: 'light' | 'dark';
     public setDisplayMode = (newMode: 'light' | 'dark') => {
         this.displayMode = newMode;
-        const parsedSettings = this.getLsSettings();
+        const parsedSettings = SettingStore.getLsSettings();
         parsedSettings.displayMode = this.displayMode;
-        this.writeLsSettings(parsedSettings);
+        SettingStore.writeLsSettings(parsedSettings);
     };
 
     public activeProjects: number[];
     public setActiveProjects = (newIds: number[]) => {
         this.activeProjects = [...newIds];
-        const lsSettings = this.getLsSettings();
+        const lsSettings = SettingStore.getLsSettings();
         lsSettings.activeProjects = this.activeProjects;
-        this.writeLsSettings(lsSettings);
+        SettingStore.writeLsSettings(lsSettings);
     };
 
     public kanbanProject: number;
     public setKanbanProject = (newId: number) => {
         this.kanbanProject = newId;
-        const lsSettings = this.getLsSettings();
+        const lsSettings = SettingStore.getLsSettings();
         lsSettings.kanbanProject = this.kanbanProject;
-        this.writeLsSettings(lsSettings);
+        SettingStore.writeLsSettings(lsSettings);
     };
 
     public static getInstance = () => {
@@ -78,12 +78,12 @@ export default class SettingStore {
         });
     }
 
-    private getLsSettings = (): Settings => {
+    private static getLsSettings = (): Settings => {
         const lsSettings = localStorage.getItem('webPlannerSettings') as string;
         return JSON.parse(lsSettings);
     };
 
-    private writeLsSettings = (newSettings: Settings) => {
+    private static writeLsSettings = (newSettings: Settings) => {
         localStorage.setItem('webPlannerSettings', JSON.stringify(newSettings));
     };
 }

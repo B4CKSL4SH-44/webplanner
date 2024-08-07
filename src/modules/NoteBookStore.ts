@@ -6,7 +6,7 @@ export default class NoteBookStore {
     public content: string = '';
     public setContent = (newContent: string) => {
         this.content = newContent;
-        this.writeLsContent(this.content);
+        NoteBookStore.writeLsContent(this.content);
     };
 
     private constructor() {
@@ -29,12 +29,12 @@ export default class NoteBookStore {
         return NoteBookStore.instance;
     };
 
-    private getLsContent = (): string => {
+    private static getLsContent = (): string => {
         const lsContent = localStorage.getItem('webPlannerContent') as string;
         return lsContent;
     };
 
-    private writeLsContent = (newContent: string): void => {
+    private static writeLsContent = (newContent: string): void => {
         localStorage.setItem('webPlannerContent', newContent);
     };
 }

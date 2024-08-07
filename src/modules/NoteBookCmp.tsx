@@ -1,4 +1,11 @@
+import { Send } from '@mui/icons-material';
 import { Box, Button, useTheme } from '@mui/material';
+import Color from '@tiptap/extension-color';
+import Highlight from '@tiptap/extension-highlight';
+import TextStyle from '@tiptap/extension-text-style';
+import Underline from '@tiptap/extension-underline';
+import { Extension, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import {
     MenuButtonBold,
     MenuButtonBulletedList,
@@ -14,22 +21,15 @@ import {
     RichTextEditorProvider,
     RichTextField,
 } from 'mui-tiptap';
-import StarterKit from '@tiptap/starter-kit';
-import Color from '@tiptap/extension-color';
 import type { ReactElement } from 'react';
 import useStores from 'Store';
-import { useEditor } from '@tiptap/react';
-import Underline from '@tiptap/extension-underline';
-import TextStyle from '@tiptap/extension-text-style';
-import Highlight from '@tiptap/extension-highlight';
-import { Send } from '@mui/icons-material';
 
 const NoteBookCmp = (): ReactElement => {
     const stores = useStores();
     const theme = useTheme();
 
     const editor = useEditor({
-        extensions: [StarterKit, Color, Underline, TextStyle, Highlight],
+        extensions: [StarterKit as Extension, Color, Underline, TextStyle, Highlight],
         content: stores.noteBookStore.content,
         onUpdate: () => stores.noteBookStore.setContent(editor?.getHTML() as string),
     });

@@ -9,13 +9,13 @@ export default class TasksStore {
     public projects: Projects = defaultProjects;
     public setProjects = (newProjects: Projects) => {
         this.projects = newProjects;
-        this.writeLsProjects(this.projects);
+        TasksStore.writeLsProjects(this.projects);
     };
     public addProject = (newProject: Project) => {
-        const lsProjects = this.getLsProjects();
+        const lsProjects = TasksStore.getLsProjects();
         lsProjects[newProject.id] = newProject;
         this.projects = lsProjects;
-        this.writeLsProjects(lsProjects);
+        TasksStore.writeLsProjects(lsProjects);
     };
     public addBoard = (project: Project, board: string) => {
         const sorted = Object.keys(this.projects[project.id].boards).sort((a, b) => Number(b) - Number(a));
@@ -30,16 +30,16 @@ export default class TasksStore {
     };
 
     public addTask = (newTask: Task) => {
-        const lsProjects = this.getLsProjects();
+        const lsProjects = TasksStore.getLsProjects();
         lsProjects[newTask.project].tasks.push(newTask);
         this.projects = lsProjects;
-        this.writeLsProjects(lsProjects);
+        TasksStore.writeLsProjects(lsProjects);
     };
     public deleteTask = (task: Task) => {
-        const lsProjects = this.getLsProjects();
+        const lsProjects = TasksStore.getLsProjects();
         lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter((oldTask) => oldTask.id !== task.id);
         this.projects = lsProjects;
-        this.writeLsProjects(lsProjects);
+        TasksStore.writeLsProjects(lsProjects);
     };
     public updateTask = (taskToUpdate: Task) => {
         const updatedTasks = this.projects[taskToUpdate.project].tasks.map((task) => {
@@ -96,7 +96,7 @@ export default class TasksStore {
                     }
                 });
             });
-            this.writeLsProjects(this.projects);
+            TasksStore.writeLsProjects(this.projects);
         } else {
             localStorage.setItem('webPlannerProjects', JSON.stringify(defaultProjects));
         }
@@ -124,12 +124,12 @@ export default class TasksStore {
         return TasksStore.instance;
     };
 
-    private getLsProjects = (): Projects => {
+    private static getLsProjects = (): Projects => {
         const lsProjects = localStorage.getItem('webPlannerProjects') as string;
         return JSON.parse(lsProjects) as Projects;
     };
 
-    private writeLsProjects = (newProjects: Projects): void => {
+    private static writeLsProjects = (newProjects: Projects): void => {
         localStorage.setItem('webPlannerProjects', JSON.stringify(newProjects));
     };
 }

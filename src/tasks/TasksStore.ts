@@ -1,39 +1,110 @@
 import { action, makeObservable, observable } from "mobx";
-import type { Task } from "tasks";
+import { defaultProjects, type Project, type Projects, type Task } from "tasks";
 
 export default class TasksStore {
   private static instance: TasksStore;
 
-  public tasks: Task[] = [];
-  public setTasks = (newTasks: Task[]) => {
-    this.tasks = newTasks;
-    this.writeLsTasks(this.tasks);
+  public projects: Projects = defaultProjects;
+  public setProjects = (newProjects: Projects) => {
+    this.projects = newProjects;
+    this.writeLsProjects(this.projects);
   };
-  public addTask = (newTask: Task) => {
-    const lsTasks = this.getLsTasks();
-    lsTasks.push(newTask);
-    this.tasks = lsTasks;
-    this.writeLsTasks(lsTasks);
+  public addProject = (newProject: Project) => {
+    const lsProjects = this.getLsProjects();
+    lsProjects[newProject.id] = newProject;
+    this.projects = lsProjects;
+    this.writeLsProjects(lsProjects);
   };
 
-  public isTaskOverlayActive: boolean = false;
-  public setTaskOverlayActive = (newBool: boolean) => {
-    this.isTaskOverlayActive = newBool;
+  public newProjectOverlayActive: boolean = false;
+  public setNewProjectOverlayActive = (bool: boolean) => {
+    this.newProjectOverlayActive = bool;
+  };
+
+  public addTask = (newTask: Task) => {
+    const lsProjects = this.getLsProjects();
+    lsProjects[newTask.project].tasks.push(newTask);
+    this.projects = lsProjects;
+    this.writeLsProjects(lsProjects);
+  };
+  public deleteTask = (task: Task) => {
+    const lsProjects = this.getLsProjects();
+    lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter(
+      (oldTask) => oldTask.id !== task.id
+    );
+    this.projects = lsProjects;
+    this.writeLsProjects(lsProjects);
+  };
+  public updateTask = (taskToUpdate: Task) => {
+    console.log(taskToUpdate);
+    const updatedTasks = this.projects[taskToUpdate.project].tasks.map(
+      (task) => {
+        if (task.id === taskToUpdate.id) {
+          return taskToUpdate;
+        } else {
+          return task;
+        }
+      }
+    );
+    this.setProjects({
+      ...this.projects,
+      [taskToUpdate.project]: {
+        ...this.projects[taskToUpdate.project],
+        tasks: updatedTasks,
+      },
+    });
+  };
+
+  public taskOverlayState: boolean | Task = false;
+  public setTaskOverlayState = (newValue: boolean | Task) => {
+    this.taskOverlayState = newValue;
+  };
+
+  public openTasks: Task[] = [];
+  public setOpenTasks = (newTasks: Task[]) => {
+    this.openTasks = newTasks;
+  };
+  public addOpenTask = (task: Task) => {
+    if (!this.openTasks.some((openTask) => openTask.id === task.id)) {
+      this.setOpenTasks([...this.openTasks, task]);
+    }
+  };
+  public closeTask = (task: Task) => {
+    const updatedTasks = this.openTasks.filter(
+      (openTask) => openTask.id !== task.id
+    );
+    this.setOpenTasks(updatedTasks);
+  };
+
+  public taskTimer: Task | null = null;
+  public setTaskTimer = (newValue: Task | null) => {
+    this.taskTimer = newValue;
   };
 
   private constructor() {
-    const lsTasks = localStorage.getItem("webPlannerTasks");
-    if (lsTasks !== null) {
-      this.tasks = JSON.parse(lsTasks);
+    const lsProjects = localStorage.getItem("webPlannerProjects");
+    if (lsProjects !== null) {
+      this.projects = JSON.parse(lsProjects);
     } else {
-      localStorage.setItem("webPlannerTasks", "[]");
+      localStorage.setItem(
+        "webPlannerProjects",
+        JSON.stringify(defaultProjects)
+      );
     }
     makeObservable(this, {
-      tasks: observable,
-      setTasks: action,
+      projects: observable,
+      setProjects: action,
+      addProject: action,
+      newProjectOverlayActive: observable,
+      setNewProjectOverlayActive: action,
       addTask: action,
-      isTaskOverlayActive: observable,
-      setTaskOverlayActive: action,
+      deleteTask: action,
+      taskOverlayState: observable,
+      setTaskOverlayState: action,
+      openTasks: observable,
+      setOpenTasks: action,
+      taskTimer: observable,
+      setTaskTimer: action,
     });
   }
 
@@ -44,12 +115,12 @@ export default class TasksStore {
     return TasksStore.instance;
   };
 
-  private getLsTasks = (): Task[] => {
-    const lsTasks = localStorage.getItem("webPlannerTasks") as string;
-    return JSON.parse(lsTasks) as Task[];
+  private getLsProjects = (): Projects => {
+    const lsProjects = localStorage.getItem("webPlannerProjects") as string;
+    return JSON.parse(lsProjects) as Projects;
   };
 
-  private writeLsTasks = (newTasks: Task[]): void => {
-    localStorage.setItem("webPlannerTasks", JSON.stringify(newTasks));
+  private writeLsProjects = (newProjects: Projects): void => {
+    localStorage.setItem("webPlannerProjects", JSON.stringify(newProjects));
   };
 }

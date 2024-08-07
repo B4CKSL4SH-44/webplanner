@@ -1,3 +1,14 @@
+export interface Projects {
+  0: Project;
+  [projectId: number]: Project;
+}
+
+export interface Project {
+  id: number;
+  alias: string;
+  tasks: Task[];
+}
+
 export interface Task {
   id: number;
   title: string;
@@ -6,6 +17,7 @@ export interface Task {
   relations: Relations;
   creator: string;
   assignees: string[];
+  project: number;
 }
 
 export interface Relations {
@@ -13,6 +25,16 @@ export interface Relations {
   follows: number[] | false;
   relation: number[] | false;
 }
+
+export const defaultProjects: Projects = {
+  0: { id: 0, alias: "personal", tasks: [] },
+};
+
+export const defaultProject: Project = {
+  id: -1,
+  alias: "",
+  tasks: [],
+};
 
 export const defaultTask: Task = {
   id: -1,
@@ -26,48 +48,5 @@ export const defaultTask: Task = {
   },
   creator: "",
   assignees: [],
+  project: 0,
 };
-
-const tasks: Task[] = [
-  {
-    id: 1,
-    title: "Erster Task",
-    description: "Lorem ipsum",
-    priority: "high",
-    relations: {
-      blocks: [],
-      follows: [],
-      relation: [],
-    },
-    creator: "Simon",
-    assignees: [],
-  },
-  {
-    id: 2,
-    title: "Zweiter Task",
-    description: "Lorem ipsum",
-    priority: "low",
-    relations: {
-      blocks: [],
-      follows: [],
-      relation: [],
-    },
-    creator: "Simon",
-    assignees: [],
-  },
-  {
-    id: 3,
-    title: "Dritter Task",
-    description: "Lorem ipsum",
-    priority: "medium",
-    relations: {
-      blocks: [],
-      follows: [],
-      relation: [],
-    },
-    creator: "Simon",
-    assignees: [],
-  },
-];
-
-export default tasks;

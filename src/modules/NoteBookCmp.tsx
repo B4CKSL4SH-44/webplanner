@@ -75,7 +75,7 @@ const NoteBookCmp = (): ReactElement => {
               <MenuButtonBulletedList />
               <Box flexGrow={1} display={"flex"} justifyContent={"flex-end"}>
                 <Button
-                  onClick={() => stores.tasksStore.setTaskOverlayActive(true)}
+                  onClick={() => stores.tasksStore.setTaskOverlayState(true)}
                   sx={{ alignSelf: "flex-end" }}
                   variant="contained"
                   startIcon={<Send />}

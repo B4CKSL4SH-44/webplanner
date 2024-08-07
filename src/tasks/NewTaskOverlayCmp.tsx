@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   IconButton,
+  InputLabel,
   List,
   ListItemButton,
   ListItemText,
@@ -23,36 +24,68 @@ import {
 } from "@mui/material";
 import useStores from "Store";
 import { observer } from "mobx-react";
-import { useState, type ReactElement } from "react";
+import { useRef, useState, type ReactElement } from "react";
 import Draggable from "react-draggable";
 import { defaultTask, type Relations, type Task } from "tasks";
 
-const TaskOverlayCmp = observer((): ReactElement => {
+const NewTaskOverlayCmp = observer((): ReactElement => {
   const stores = useStores();
 
-  const [task, setTask] = useState<Task>(defaultTask);
+  const isUpdate = typeof stores.tasksStore.taskOverlayState !== "boolean";
+
+  const [task, setTask] = useState<Task>(
+    isUpdate ? (stores.tasksStore.taskOverlayState as Task) : defaultTask
+  );
+  const [project, setProject] = useState<number>(0);
+  const [titleError, setTitleError] = useState<boolean>(false);
+
+  const nodeRef = useRef(null);
 
   const handleUpdateTask = (key: keyof Task, value: string) => {
+    if (titleError) {
+      setTitleError(false);
+    }
     const updatedTask = { ...task, [key]: value };
     setTask(updatedTask);
   };
 
   const handleClose = (event: any, reason: string) => {
     if (reason && reason === "backdropClick") return;
-    stores.tasksStore.setTaskOverlayActive(false);
+    stores.tasksStore.setTaskOverlayState(false);
   };
 
   const handleSave = () => {
-    let newId;
-    if (stores.tasksStore.tasks.length === 0) {
-      newId = 1;
-    } else {
-      const sorted = stores.tasksStore.tasks.sort((a, b) => b.id - a.id);
-      console.log(sorted);
-      newId = sorted[0].id + 1;
+    //Titel muss gesetzt sein
+    if (task.title.replaceAll(" ", "").length === 0) {
+      setTitleError(true);
+      return;
     }
-    stores.tasksStore.addTask({ ...task, id: newId });
-    stores.tasksStore.setTaskOverlayActive(false);
+    // Bei Neu:
+    if (!isUpdate) {
+      let newId;
+      if (stores.tasksStore.projects[project].tasks.length === 0) {
+        newId = 1;
+      } else {
+        const sorted = stores.tasksStore.projects[project].tasks.sort(
+          (a, b) => b.id - a.id
+        );
+        newId = sorted[0].id + 1;
+      }
+      stores.tasksStore.addTask({
+        ...task,
+        id: newId,
+        project,
+        description:
+          task.description.replaceAll(" ", "").length === 0
+            ? ""
+            : task.description,
+      });
+    }
+    // Bei Update
+    else {
+      stores.tasksStore.updateTask(task);
+    }
+    stores.tasksStore.setTaskOverlayState(false);
   };
 
   const handleRelationToggle = (key: keyof Relations) => {
@@ -65,25 +98,41 @@ const TaskOverlayCmp = observer((): ReactElement => {
     setTask(updatedTask);
   };
 
-  const handleRelationAdd = (key: keyof Relations, idList: number[] | string) => {
+  const handleRelationAdd = (
+    key: keyof Relations,
+    idList: number[] | string
+  ) => {
     if (task.relations[key] === false) return;
     if (typeof idList === "string") return;
-    const updatedTask: Task = { ...task, relations: { ...task.relations, [key]: [...idList] } };
+    const updatedTask: Task = {
+      ...task,
+      relations: { ...task.relations, [key]: [...idList] },
+    };
     setTask(updatedTask);
   };
 
   return (
-    <Draggable handle="#draggable-dialog-button" cancel={'[class*="MuiDialogContent-root"]'}>
+    <Draggable
+      nodeRef={nodeRef}
+      handle="#draggable-dialog-button"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
       <Dialog
+        ref={nodeRef}
         sx={{ pointerEvents: "none" }}
         disablePortal
         disableEnforceFocus
-        open={stores.tasksStore.isTaskOverlayActive}
+        open={stores.tasksStore.taskOverlayState !== false}
         onClose={handleClose}
         hideBackdrop
         PaperProps={{ sx: { maxWidth: "300px" } }}
       >
-        <DialogTitle sx={{ pointerEvents: "auto" }} display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
+        <DialogTitle
+          sx={{ pointerEvents: "auto" }}
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
           New Task
           <IconButton sx={{ cursor: "move" }} id="draggable-dialog-button">
             <DragHandle />
@@ -93,6 +142,10 @@ const TaskOverlayCmp = observer((): ReactElement => {
           <FormControl sx={{ p: "1rem" }}>
             <TextField
               required
+              helperText={
+                titleError ? "Bitte geben Sie einen Titel ein" : undefined
+              }
+              error={titleError}
               sx={{ mb: "1rem" }}
               value={task.title}
               onChange={(e) => handleUpdateTask("title", e.target.value)}
@@ -106,7 +159,10 @@ const TaskOverlayCmp = observer((): ReactElement => {
               multiline
             />
             <FormLabel id="input-label-priority">Priority</FormLabel>
-            <RadioGroup sx={{ mb: "1rem" }} aria-labelledby="input-label-priority">
+            <RadioGroup
+              sx={{ mb: "1rem" }}
+              aria-labelledby="input-label-priority"
+            >
               <ButtonGroup>
                 <Button
                   onClick={() => handleUpdateTask("priority", "high")}
@@ -119,7 +175,9 @@ const TaskOverlayCmp = observer((): ReactElement => {
                 <Button
                   onClick={() => handleUpdateTask("priority", "medium")}
                   size="small"
-                  variant={task.priority === "medium" ? "contained" : "outlined"}
+                  variant={
+                    task.priority === "medium" ? "contained" : "outlined"
+                  }
                   color="primary"
                 >
                   medium
@@ -147,12 +205,25 @@ const TaskOverlayCmp = observer((): ReactElement => {
                   onChange={(e) => handleRelationAdd("blocks", e.target.value)}
                   renderValue={(selected) => {
                     return (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, maxWidth: "300px" }}>
-                        {stores.tasksStore.tasks
-                          .filter((storeTask) => selected.includes(storeTask.id))
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 0.5,
+                          maxWidth: "300px",
+                        }}
+                      >
+                        {stores.tasksStore.projects[0].tasks
+                          .filter((storeTask) =>
+                            selected.includes(storeTask.id)
+                          )
                           .map((storeTask) => (
                             <Tooltip title={storeTask.title}>
-                              <Chip sx={{ maxWidth: "100px" }} key={storeTask.id} label={`#${storeTask.id}: ${storeTask.title}`} />
+                              <Chip
+                                sx={{ maxWidth: "100px" }}
+                                key={storeTask.id}
+                                label={`#${storeTask.id}: ${storeTask.title}`}
+                              />
                             </Tooltip>
                           ))}
                       </Box>
@@ -161,69 +232,51 @@ const TaskOverlayCmp = observer((): ReactElement => {
                   multiple
                   value={task.relations.blocks}
                 >
-                  {stores.tasksStore.tasks.map((storeTask) => {
+                  {stores.tasksStore.projects[0].tasks.map((storeTask) => {
                     return (
-                      <MenuItem sx={{ maxWidth: "320px" }} key={storeTask.id} value={storeTask.id}>
-                        <Box sx={{ overflow: "hidden", textOverflow: "ellipsis" }}>{storeTask.title}</Box>
+                      <MenuItem
+                        sx={{ maxWidth: "320px" }}
+                        key={storeTask.id}
+                        value={storeTask.id}
+                      >
+                        <Box
+                          sx={{ overflow: "hidden", textOverflow: "ellipsis" }}
+                        >
+                          {storeTask.title}
+                        </Box>
                       </MenuItem>
                     );
                   })}
                 </Select>
               )}
             </List>
-            {/* <Accordion square disableGutters>
-              <AccordionSummary expandIcon={<ExpandMore />}>Relationen</AccordionSummary>
-              <AccordionDetails sx={{ p: 0 }}>
-                <List dense>
-                  <ListItem>
-                    <ListItemButton sx={{ flexGrow: 0 }} dense disableGutters onClick={() => handleRelationToggle("blocks")}>
-                      <ListItemIcon>
-                        <Checkbox checked={task.relations.blocks !== false} />
-                      </ListItemIcon>
-                    </ListItemButton>
-
-                    {task.relations.blocks === false ? (
-                      <ListItemText>blockiert</ListItemText>
-                    ) : (
-                      <>
-                        <Select
-                          size="small"
-                          label="blockiert"
-                          fullWidth
-                          sx={{ flexGrow: 1 }}
-                          onChange={(e) => handleRelationAdd("blocks", Number(e.target.value))}
-                          renderValue={(selected) => {
-                            return (
-                              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                                {stores.tasksStore.tasks
-                                  .filter((storeTask) => selected.includes(storeTask.id))
-                                  .map((storeTask) => (
-                                    <Chip key={storeTask.id} label={storeTask.id} />
-                                  ))}
-                              </Box>
-                            );
-                          }}
-                          multiple
-                          value={task.relations.blocks}
-                        >
-                          {stores.tasksStore.tasks.map((storeTask) => {
-                            return (
-                              <MenuItem key={storeTask.id} value={storeTask.id}>
-                                {storeTask.title}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </>
-                    )}
-                  </ListItem>
-                </List>
-              </AccordionDetails>
-            </Accordion> */}
+            <FormControl>
+              <InputLabel id="select-label">Projekt auswählen</InputLabel>
+              <Select
+                disabled={isUpdate}
+                labelId="select-label"
+                value={project}
+                label="Projekt auswählen"
+                onChange={(e) => setProject(Number(e.target.value))}
+              >
+                {Object.keys(stores.tasksStore.projects).map(
+                  (projectStringId) => {
+                    const projectId = Number(projectStringId);
+                    return (
+                      <MenuItem key={projectId} value={projectId}>
+                        {stores.tasksStore.projects[projectId].alias}
+                      </MenuItem>
+                    );
+                  }
+                )}
+              </Select>
+            </FormControl>
           </FormControl>
         </DialogContent>
         <DialogActions sx={{ pointerEvents: "auto" }}>
-          <Button onClick={() => stores.tasksStore.setTaskOverlayActive(false)}>Cancel</Button>
+          <Button onClick={() => stores.tasksStore.setTaskOverlayState(false)}>
+            Cancel
+          </Button>
           <Button onClick={handleSave}>Speichern</Button>
         </DialogActions>
       </Dialog>
@@ -231,4 +284,4 @@ const TaskOverlayCmp = observer((): ReactElement => {
   );
 });
 
-export default TaskOverlayCmp;
+export default NewTaskOverlayCmp;

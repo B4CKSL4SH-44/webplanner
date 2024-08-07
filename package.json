@@ -3,39 +3,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.16.0",
     "@mui/material": "^5.16.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/node": "^16.18.101",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "eslint-config-baral": "git+https://git/git/DevPool/ESLintConfig.git#36bcd381348c794734da4404f2f2e1c327d32e4e",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@testing-library/jest-dom": "^5.17.0"
   },
   "scripts": {
     "start-client": "PORT=3000 react-scripts start",
     "build-client": "PORT=3000 react-scripts build",
     "test-client": "PORT=3000 react-scripts test",
     "eject-client": "PORT=3000 react-scripts eject",
-    "lint": "eslint -c ./src/*.ts --ext .ts,.tsx",
-    "lint-fix": "eslint -c ./src/.ts -c ./src/.tsx --fix",
-    "lint-quiet": "eslint  -c ./src/.ts -c ./src/.tsx --quiet",
     "start-server": "bun run index.ts",
-    "start-dev": "bun --watch run index.ts"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "start-dev": "bun --watch run index.ts",
+    "lint": "eslint -c .eslintrc.json --ext .ts,.tsx ./src",
+    "lint-fix": "eslint -c .eslintrc.json --ext .ts,.tsx --fix ./src",
+    "lint-quiet": "eslint -c .eslintrc.json --ext .ts,.tsx --quiet ./src"
   },
   "browserslist": {
     "production": [
@@ -52,6 +39,24 @@
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/node": "^16.18.101",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "6.19.1",
+    "@typescript-eslint/parser": "6.19.1",
+    "eslint": "8.56.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-airbnb-typescript": "17.1.0",
+    "eslint-plugin-react-hooks": "4.6.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "resolutions": {
+    "@typescript-eslint/typescript-estree": "8.0.1"
   }
 }

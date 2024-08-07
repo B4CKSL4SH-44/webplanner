@@ -1,3 +1,93 @@
 {
-    "extends": "baral"
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "extends": [
+        "airbnb",
+        "airbnb-typescript",
+        "plugin:react-hooks/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react"
+    ],
+    "rules": {
+        "@typescript-eslint/indent": ["warn", 4],
+        "react/jsx-indent": ["warn", 4],
+        "react/jsx-indent-props": ["warn", 4],
+        "max-len": "off",
+        "no-underscore-dangle": "off",
+        "@typescript-eslint/naming-convention": [
+            "warn",
+            {
+                "format": ["camelCase", "PascalCase"],
+                "selector": ["variableLike"],
+                "leadingUnderscore": "allow",
+                "trailingUnderscore": "forbid"
+            }
+        ],
+        "import/no-cycle": "off",
+        "import/no-unresolved": [
+            "warn",
+            {
+                "caseSensitiveStrict": true
+            }
+        ],
+        "no-plusplus": "off",
+        "no-nested-ternary": "off",
+        "react/jsx-props-no-spreading": [
+            "error",
+            {
+                "custom": "ignore"
+            }
+        ],
+        "react/destructuring-assignment": [
+            "error",
+            "always"
+        ],
+        "react/require-default-props": "off",
+        "no-param-reassign": "off",
+        "react/react-in-jsx-scope": "off",
+        "react/jsx-uses-react": "off",
+        "arrow-body-style": "off",
+        "react/sort-comp": [
+            "warn",
+            {
+                "order": [
+                    "static-variables",
+                    "instance-variables",
+                    "static-methods",
+                    "lifecycle",
+                    "/^handle.+$/",
+                    "/^on.+$/",
+                    "getters",
+                    "setters",
+                    "/^(get|set)(?!(InitialState$|DefaultProps$|ChildContext$)).+$/",
+                    "instance-methods",
+                    "everything-else",
+                    "rendering"
+                ]
+            }
+        ],
+        "@typescript-eslint/no-require-imports": "error",
+        "no-continue": "off",
+        "react/function-component-definition": "off",
+        "@typescript-eslint/consistent-type-imports": [
+            "error",
+            {
+                "fixStyle": "inline-type-imports"
+            }
+        ]
+    }
 }
+

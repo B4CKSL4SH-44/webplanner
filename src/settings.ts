@@ -1,3 +1,5 @@
+import type { PaletteMode } from "@mui/material";
+
 export type ModuleNames = "notebook" | "tasks" | "kanban" | "flow";
 
 export interface Modules {
@@ -7,10 +9,12 @@ export interface Modules {
   flow: boolean;
 }
 export interface Settings {
+  displayMode: PaletteMode;
   modules: Modules;
 }
 
-const defaultSettings = {
+const defaultSettings: Settings = {
+  displayMode: "light",
   modules: {
     notebook: true,
     tasks: true,

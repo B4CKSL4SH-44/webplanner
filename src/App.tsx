@@ -1,20 +1,20 @@
 import "./App.css";
-import { Box, Drawer, IconButton, Tab, Tabs, Typography, CssBaseline, AppBar, Toolbar, Divider } from "@mui/material";
+import { Box, Drawer, Tab, Tabs, CssBaseline, Divider } from "@mui/material";
 import NoteBookCmp from "./modules/NoteBookCmp";
 import { useState } from "react";
-import SettingsIcon from "@mui/icons-material/Settings";
 import { type ModuleNames } from "./settings";
 import SettingsCmp from "./components/SettingsCmp";
 import { observer } from "mobx-react";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@emotion/react";
 import useStores from "Store";
+import HeaderCmp from "components/HeaderCmp";
+import TaskOverlayCmp from "tasks/TaskOverlayCmp";
 
 const App = observer(() => {
   const stores = useStores();
 
   const [value, setValue] = useState<ModuleNames>("notebook");
-  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
 
   const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
     setValue(newValue);
@@ -30,16 +30,10 @@ const App = observer(() => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box flexGrow={1} width={"100%"} display={"flex"} flexDirection={"column"}>
-          <AppBar position="static">
-            <Toolbar>
-              <Typography sx={{ flexGrow: 1 }}>WebConductor</Typography>
-              <IconButton edge={"end"} onClick={() => setSettingsOpen(true)}>
-                <SettingsIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
+          <HeaderCmp />
           <Box flexGrow={1} display={"flex"} flexDirection={"column"}>
-            <Drawer anchor="right" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
+            {stores.tasksStore.isTaskOverlayActive && <TaskOverlayCmp />}
+            <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
               <SettingsCmp />
             </Drawer>
             <Tabs value={value} onChange={handleChange} variant="fullWidth">

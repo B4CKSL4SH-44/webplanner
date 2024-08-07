@@ -1,9 +1,39 @@
-const tasks = [
+export interface Task {
+  id: number;
+  title: string;
+  description: string;
+  priority: "high" | "medium" | "low";
+  relations: Relations;
+  creator: string;
+  assignees: string[];
+}
+
+export interface Relations {
+  blocks: number[] | false;
+  follows: number[] | false;
+  relation: number[] | false;
+}
+
+export const defaultTask: Task = {
+  id: -1,
+  title: "",
+  description: "",
+  priority: "medium",
+  relations: {
+    blocks: false,
+    follows: false,
+    relation: false,
+  },
+  creator: "",
+  assignees: [],
+};
+
+const tasks: Task[] = [
   {
     id: 1,
     title: "Erster Task",
-    desription: "Lorem ipsum",
-    severity: "high",
+    description: "Lorem ipsum",
+    priority: "high",
     relations: {
       blocks: [],
       follows: [],
@@ -15,8 +45,8 @@ const tasks = [
   {
     id: 2,
     title: "Zweiter Task",
-    desription: "Lorem ipsum",
-    severity: "low",
+    description: "Lorem ipsum",
+    priority: "low",
     relations: {
       blocks: [],
       follows: [],
@@ -28,8 +58,8 @@ const tasks = [
   {
     id: 3,
     title: "Dritter Task",
-    desription: "Lorem ipsum",
-    severity: "normal",
+    description: "Lorem ipsum",
+    priority: "medium",
     relations: {
       blocks: [],
       follows: [],

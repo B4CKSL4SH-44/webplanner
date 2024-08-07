@@ -1,4 +1,4 @@
-import { DarkMode, ExpandMore, LightMode } from "@mui/icons-material";
+import { Close, DarkMode, ExpandMore, LightMode } from "@mui/icons-material";
 import {
   Accordion,
   AccordionDetails,
@@ -14,6 +14,7 @@ import {
   Switch,
   Toolbar,
   Paper,
+  IconButton,
 } from "@mui/material";
 import { type ReactElement } from "react";
 import { type ModuleNames } from "../settings";
@@ -62,9 +63,12 @@ const SettingsCmp = observer((): ReactElement => {
             <Switch checked={stores.settingsStore.displayMode === "dark"} onChange={(_e, newChecked) => handleSwitch(newChecked)} />
             <DarkMode />
           </Paper>
+          <IconButton onClick={() => stores.settingsStore.setSettingsOpen(false)}>
+            <Close />
+          </IconButton>
         </Toolbar>
       </Box>
-      <Accordion sx={{ margin: "4px" }}>
+      <Accordion disableGutters sx={{ margin: "4px" }}>
         <AccordionSummary expandIcon={<ExpandMore />}>Module</AccordionSummary>
         <AccordionDetails>
           <List>

@@ -31,12 +31,12 @@ const KanbanCmp = observer((): ReactElement => {
     const [newBoardTitle, setNewBoardTitle] = useState<string>('');
 
     const [orders, setOrders] = useState<{ [boardId: number]: number[] }>({});
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isDragging, setIsDragging] = useState<number | undefined>(undefined);
 
     const project = stores.tasksStore.projects[stores.settingsStore.kanbanProject];
 
     const handleDrop = (e: DropResult) => {
-        console.log(e);
         setIsDragging(undefined);
         const taskId = Number(e.draggableId);
         const boardId = Number(e.destination?.droppableId);
@@ -52,13 +52,12 @@ const KanbanCmp = observer((): ReactElement => {
         stores.tasksStore.addBoard(stores.tasksStore.projects[stores.settingsStore.kanbanProject], newBoardTitle);
     };
 
-  const project = stores.tasksStore.projects[stores.settingsStore.kanbanProject];
-  useEffect(() => {
-    Object.keys(project.boards).forEach((key) => {
-      if (orders[Number(key)] === undefined) {
-        setOrders({ ...orders, [Number(key)]: project.tasks.filter((task) => task.board === Number(key)).map((task, index) => index) });
-      }
-    });
+    useEffect(() => {
+        Object.keys(project.boards).forEach((key) => {
+            if (orders[Number(key)] === undefined) {
+                setOrders({ ...orders, [Number(key)]: project.tasks.filter((task) => task.board === Number(key)).map((task, index) => index) });
+            }
+        });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stores.tasksStore.projects]);
 
@@ -83,12 +82,12 @@ const KanbanCmp = observer((): ReactElement => {
                         onChange={(e) => stores.settingsStore.setKanbanProject(Number(e.target.value))}
                     >
                         {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
-                            const project = {
+                            const projectSelect = {
                                 ...stores.tasksStore.projects[Number(projectStringId)],
                             };
                             return (
-                                <MenuItem key={projectStringId} value={project.id}>
-                                    <ListItemText>{project.alias}</ListItemText>
+                                <MenuItem key={projectStringId} value={projectSelect.id}>
+                                    <ListItemText>{projectSelect.alias}</ListItemText>
                                 </MenuItem>
                             );
                         })}

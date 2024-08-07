@@ -46,8 +46,8 @@ const NewProjectOverlayCmp = observer((): ReactElement => {
             id: newId,
         });
         stores.tasksStore.setNewProjectOverlayActive(false);
-      stores.settingsStore.setActiveProjects([...stores.settingsStore.activeProjects, newId]);
-  };
+        stores.settingsStore.setActiveProjects([...stores.settingsStore.activeProjects, newId]);
+    };
 
     return (
         <Draggable nodeRef={nodeRef} handle="#draggable-dialog-button" cancel={'[class*="MuiDialogContent-root"]'}>

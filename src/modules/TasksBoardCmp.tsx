@@ -73,8 +73,8 @@ const TasksBoardCmp = observer((): ReactElement => {
                                 <MenuItem key={projectStringId} defaultChecked={project.id === 0} value={project.id}>
                                     <Checkbox checked={stores.settingsStore.activeProjects.includes(project.id)} />
                                     <ListItemText>{project.alias}</ListItemText>
-                                  <Chip label={project.tasks.length} />
-                </MenuItem>
+                                    <Chip label={project.tasks.length} />
+                                </MenuItem>
                             );
                         })}
                     </Select>

@@ -1,3 +1,4 @@
+import type { PaletteMode } from "@mui/material";
 import { action, makeObservable, observable } from 'mobx';
 import type { Modules, Settings } from 'settings';
 import defaultSettings from 'settings';
@@ -18,13 +19,13 @@ export default class SettingStore {
         SettingStore.writeLsSettings(parsedSettings);
     };
 
-    public displayMode: 'light' | 'dark';
-    public setDisplayMode = (newMode: 'light' | 'dark') => {
-        this.displayMode = newMode;
-        const parsedSettings = SettingStore.getLsSettings();
+    public displayMode: PaletteMode;
+  public setDisplayMode = (newMode: PaletteMode) => {
+    this.displayMode = newMode;
+    const parsedSettings = SettingStore.getLsSettings();
         parsedSettings.displayMode = this.displayMode;
         SettingStore.writeLsSettings(parsedSettings);
-    };
+  };
 
     public activeProjects: number[];
     public setActiveProjects = (newIds: number[]) => {

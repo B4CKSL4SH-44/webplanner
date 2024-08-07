@@ -1,5 +1,5 @@
 import {
-    Close, DarkMode, ExpandMore, LightMode,
+    Close, DarkMode, DeleteForever, ExpandMore, LightMode,
 } from '@mui/icons-material';
 import {
     Accordion,
@@ -17,22 +17,31 @@ import {
     Switch,
     Toolbar,
     Typography,
+    Button,
+    Select,
+    MenuItem,
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { type ReactElement } from 'react';
 import useStores from 'Store';
+import SettingStore from 'stores/SettingsStore';
 import { type ModuleNames } from '../settings';
 
 const SettingsCmp = observer((): ReactElement => {
     const stores = useStores();
 
-    const handleToggleModule = (module: ModuleNames) => {
-        const moduleSettings = { ...stores.settingsStore.modules };
-        moduleSettings[module] = !moduleSettings[module];
-        stores.settingsStore.setModules(moduleSettings);
+    const handleToggleModule = (moduleName: ModuleNames) => {
+        const newModules = stores.settingsStore.modules.map((module) => {
+            if (module.name === moduleName) {
+                return { ...module, active: !module.active };
+            }
+            return module;
+        });
+        stores.settingsStore.setModules(newModules);
     };
 
     const allModules: ModuleNames[] = ['notebook', 'tasks', 'kanban', 'flow'];
+    const activeModules = stores.settingsStore.modules.filter((module) => module.active === true);
 
     // SSC: Das kommt dann natürlich in den LanguageStore :)
     const getText = (module: ModuleNames): string => {
@@ -45,6 +54,8 @@ const SettingsCmp = observer((): ReactElement => {
                 return 'Kanban';
             case 'flow':
                 return 'Flow';
+            case 'todo':
+                return 'Todo';
             default:
                 return 'Notizen';
         }
@@ -81,7 +92,7 @@ const SettingsCmp = observer((): ReactElement => {
                                 <ListItem key={moduleName}>
                                     <ListItemButton dense onClick={() => handleToggleModule(moduleName)}>
                                         <ListItemIcon>
-                                            <Checkbox checked={stores.settingsStore.modules[moduleName] === true} />
+                                            <Checkbox checked={stores.settingsStore.modules.find((module) => module.name === moduleName)?.active === true} />
                                         </ListItemIcon>
                                         <ListItemText>{getText(moduleName)}</ListItemText>
                                     </ListItemButton>
@@ -91,6 +102,25 @@ const SettingsCmp = observer((): ReactElement => {
                     </List>
                 </AccordionDetails>
             </Accordion>
+            <Accordion disableGutters sx={{ margin: '4px' }}>
+                <AccordionSummary expandIcon={<ExpandMore />}>Modulreihenfolge</AccordionSummary>
+                <AccordionDetails>
+                    <List>
+                        {activeModules.map((module, index) => {
+                            return (
+                                <Select value={stores.settingsStore.modules.find((storeModule) => storeModule.position === index)?.name}>
+                                    {activeModules.map((activeModule) => {
+                                        return <MenuItem>{getText(activeModule.name)}</MenuItem>;
+                                    })}
+                                </Select>
+                            );
+                        })}
+                    </List>
+                </AccordionDetails>
+            </Accordion>
+            <Button variant="contained" color="error" startIcon={<DeleteForever />} onClick={() => SettingStore.reset()}>
+                Zurücksetzen
+            </Button>
         </Box>
     );
 });

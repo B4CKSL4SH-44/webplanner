@@ -1,6 +1,6 @@
-import type { PaletteMode } from "@mui/material";
+import type { PaletteMode } from '@mui/material';
 import { action, makeObservable, observable } from 'mobx';
-import type { Modules, Settings } from 'settings';
+import type { Module, Settings } from 'settings';
 import defaultSettings from 'settings';
 
 export default class SettingStore {
@@ -11,8 +11,8 @@ export default class SettingStore {
         this.settingsOpen = newOpen;
     };
 
-    public modules: Modules;
-    public setModules = (newModules: Modules) => {
+    public modules: Module[];
+    public setModules = (newModules: Module[]) => {
         this.modules = { ...newModules };
         const parsedSettings = SettingStore.getLsSettings();
         parsedSettings.modules = this.modules;
@@ -20,12 +20,12 @@ export default class SettingStore {
     };
 
     public displayMode: PaletteMode;
-  public setDisplayMode = (newMode: PaletteMode) => {
-    this.displayMode = newMode;
-    const parsedSettings = SettingStore.getLsSettings();
+    public setDisplayMode = (newMode: PaletteMode) => {
+        this.displayMode = newMode;
+        const parsedSettings = SettingStore.getLsSettings();
         parsedSettings.displayMode = this.displayMode;
         SettingStore.writeLsSettings(parsedSettings);
-  };
+    };
 
     public activeProjects: number[];
     public setActiveProjects = (newIds: number[]) => {
@@ -43,6 +43,19 @@ export default class SettingStore {
         SettingStore.writeLsSettings(lsSettings);
     };
 
+    public todoProject: number;
+    public setTodoProject = (id: number) => {
+        this.todoProject = id;
+        const lsSettings = SettingStore.getLsSettings();
+        lsSettings.todoProject = this.todoProject;
+        SettingStore.writeLsSettings(lsSettings);
+    };
+
+    public static reset = () => {
+        localStorage.setItem('webPlannerSettings', JSON.stringify(defaultSettings));
+        window.location.reload();
+    };
+
     public static getInstance = () => {
         if (SettingStore.instance === undefined) {
             SettingStore.instance = new SettingStore();
@@ -55,6 +68,7 @@ export default class SettingStore {
         this.displayMode = defaultSettings.displayMode;
         this.activeProjects = defaultSettings.activeProjects;
         this.kanbanProject = defaultSettings.kanbanProject;
+        this.todoProject = defaultSettings.todoProject;
         const lsSettings = localStorage.getItem('webPlannerSettings');
         if (lsSettings !== null) {
             const parsedSettings: Settings = JSON.parse(lsSettings);
@@ -62,6 +76,7 @@ export default class SettingStore {
             this.displayMode = parsedSettings.displayMode;
             this.activeProjects = parsedSettings.activeProjects;
             this.kanbanProject = parsedSettings.kanbanProject;
+            this.todoProject = parsedSettings.todoProject ?? 0;
         } else {
             localStorage.setItem('webPlannerSettings', JSON.stringify(defaultSettings));
         }

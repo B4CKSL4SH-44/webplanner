@@ -94,6 +94,9 @@ export default class TasksStore {
                     if (task.board === undefined) {
                         this.projects[Number(key)].tasks[index].board = 0;
                     }
+                    if (task.state === undefined) {
+                        this.projects[Number(key)].tasks[index].state = 'open';
+                    }
                 });
             });
             TasksStore.writeLsProjects(this.projects);

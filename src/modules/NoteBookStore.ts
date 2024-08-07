@@ -1,24 +1,58 @@
 import { action, makeObservable, observable } from 'mobx';
 
+export interface Notebook {
+    id: string;
+    position: number;
+    title: string;
+    content: string;
+}
+
+const defaultNotebook: Notebook = {
+    id: crypto.randomUUID(),
+    position: 0,
+    title: 'Notebook',
+    content: '',
+};
+
 export default class NoteBookStore {
     private static instance: NoteBookStore;
 
-    public content: string = '';
-    public setContent = (newContent: string) => {
-        this.content = newContent;
-        NoteBookStore.writeLsContent(this.content);
+    public notebooks: Notebook[];
+    public setNotebooks = (newNotebooks: Notebook[]) => {
+        this.notebooks = newNotebooks;
+        NoteBookStore.writeLsNotebooks(this.notebooks);
+    };
+    public updateNotebookContent = (updatedNotebook: Notebook) => {
+        this.notebooks.find((notebook) => notebook.id === updatedNotebook.id)!.content = updatedNotebook.content;
+        this.setNotebooks([...this.notebooks]);
+    };
+    public addNotebook = (title: string) => {
+        const newPosition = this.notebooks.length;
+        const newNotebook: Notebook = {
+            title,
+            id: crypto.randomUUID(),
+            content: '',
+            position: newPosition,
+        };
+        this.setNotebooks([...this.notebooks, newNotebook]);
+    };
+    public deleteNotebook = (notebookToDelete: Notebook) => {
+        const updatedNotebooks = this.notebooks.filter((notebook) => notebook.id !== notebookToDelete.id);
+        updatedNotebooks.sort((a, b) => a.position - b.position).map((notebook, index) => ({ ...notebook, position: index }));
+        this.setNotebooks(updatedNotebooks);
     };
 
     private constructor() {
-        const lsContent = localStorage.getItem('webPlannerContent');
-        if (lsContent !== null) {
-            this.content = lsContent;
+        this.notebooks = [defaultNotebook];
+        const lsNotebooks = localStorage.getItem('webPlannerNotebook');
+        if (lsNotebooks !== null) {
+            this.notebooks = JSON.parse(lsNotebooks);
         } else {
-            localStorage.setItem('webPlannerContent', '');
+            localStorage.setItem('webPlannerNotebook', JSON.stringify([defaultNotebook]));
         }
         makeObservable(this, {
-            content: observable,
-            setContent: action,
+            notebooks: observable,
+            setNotebooks: action,
         });
     }
 
@@ -29,12 +63,12 @@ export default class NoteBookStore {
         return NoteBookStore.instance;
     };
 
-    private static getLsContent = (): string => {
-        const lsContent = localStorage.getItem('webPlannerContent') as string;
-        return lsContent;
+    private static getLsNotebooks = (): Notebook[] => {
+        const lsNotebooks = localStorage.getItem('webPlannerNotebook') as string;
+        return JSON.parse(lsNotebooks) as Notebook[];
     };
 
-    private static writeLsContent = (newContent: string): void => {
-        localStorage.setItem('webPlannerContent', newContent);
+    private static writeLsNotebooks = (newNotebooks: Notebook[]): void => {
+        localStorage.setItem('webPlannerNotebook', JSON.stringify(newNotebooks));
     };
 }

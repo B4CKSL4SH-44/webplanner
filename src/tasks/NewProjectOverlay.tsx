@@ -46,6 +46,7 @@ const NewProjectOverlayCmp = observer((): ReactElement => {
             id: newId,
         });
         stores.tasksStore.setNewProjectOverlayActive(false);
+        stores.settingsStore.setActiveProjects([...stores.settingsStore.activeProjects, newId]);
     };
 
     return (

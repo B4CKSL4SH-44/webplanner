@@ -1,25 +1,40 @@
-import { ThemeProvider } from '@emotion/react';
-import SettingsIcon from '@mui/icons-material/Settings';
-import {
-    AppBar, Box, CssBaseline, Divider, Drawer, IconButton, Tab, Tabs, Toolbar, Typography,
-} from '@mui/material';
-import { createTheme } from '@mui/material/styles';
-import { observer } from 'mobx-react';
-import { useState } from 'react';
-import useStores from 'Store';
 import './App.css';
+import {
+    Box, Drawer, Tab, Tabs, CssBaseline, Divider, createTheme,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
+import { observer } from 'mobx-react';
+import { ThemeProvider } from '@emotion/react';
+import useStores from 'Store';
+import HeaderCmp from 'components/HeaderCmp';
+import TaskOverlayCmp from 'tasks/NewTaskOverlayCmp';
+import TasksBoardCmp from 'modules/TasksBoardCmp';
+import OpenTasksOverlayCmp from 'tasks/OpenTasksOverlayCmp';
+import NewProjectOverlayCmp from 'tasks/NewProjectOverlay';
+import TaskTimerCmp from 'components/TimerCmp';
+import KanbanCmp from 'modules/Kanban/KanbanCmp';
+import TodoCmp from 'modules/TodoCmp';
 import SettingsCmp from './components/SettingsCmp';
-import NoteBookCmp from './modules/NoteBookCmp';
 import { type ModuleNames } from './settings';
+import NoteBookCmp from './modules/NoteBookCmp';
 
 const App = observer(() => {
     const stores = useStores();
 
-    const [value, setValue] = useState<ModuleNames>('notebook');
-    const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+    const [activeModule, setActiveValue] = useState<ModuleNames | null>(
+        stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null,
+    );
+
+    useEffect(() => {
+        if (activeModule !== null && stores.settingsStore.modules.find((module) => module.name === activeModule)!.active === false) {
+            setActiveValue(stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null);
+        }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [stores.settingsStore.modules]);
 
     const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
-        setValue(newValue);
+        setActiveValue(newValue);
     };
 
     const theme = createTheme({
@@ -28,31 +43,33 @@ const App = observer(() => {
         },
     });
     return (
-        <Box>
+        <Box flexGrow={1} minHeight={0} display="flex" flexDirection="column">
             <ThemeProvider theme={theme}>
                 <CssBaseline />
-                <Box height="100%" width="100%">
-                    <AppBar position="static">
-                        <Toolbar>
-                            <Typography sx={{ flexGrow: 1 }}>WebConductor</Typography>
-                            <IconButton edge="end" onClick={() => setSettingsOpen(true)}>
-                                <SettingsIcon />
-                            </IconButton>
-                        </Toolbar>
-                    </AppBar>
-                    <Box>
-                        <Drawer anchor="right" open={settingsOpen} onClose={() => setSettingsOpen(false)}>
+                <Box flexGrow={1} minHeight={0} width="100%" display="flex" flexDirection="column">
+                    <HeaderCmp />
+                    <Box flexGrow={1} minHeight={0} display="flex" flexDirection="column">
+                        {stores.tasksStore.taskOverlayState && <TaskOverlayCmp />}
+                        {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp />}
+                        {stores.tasksStore.openTasks.map((openTask) => (
+                            <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
+                        ))}
+                        {stores.tasksStore.taskTimer !== null && <TaskTimerCmp />}
+                        <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
                             <SettingsCmp />
                         </Drawer>
-                        <Tabs value={value} onChange={handleChange} variant="fullWidth">
-                            {(Object.keys(stores.settingsStore.modules) as ModuleNames[])
-                                .filter((module) => stores.settingsStore.modules[module] === true)
+                        <Tabs value={activeModule} onChange={handleChange} variant="fullWidth">
+                            {stores.settingsStore.modules
+                                .filter((module) => module.active === true)
                                 .map((module) => {
-                                    return <Tab key={`tab-${module}`} value={module} label={module.charAt(0).toUpperCase() + module.slice(1)} />;
+                                    return <Tab key={`tab-${module}`} value={module} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
                                 })}
                         </Tabs>
-                        <Divider sx={{ mb: '1rem' }} />
-                        {value === 'notebook' && <NoteBookCmp />}
+                        <Divider />
+                        {activeModule === 'notebook' && <NoteBookCmp />}
+                        {activeModule === 'tasks' && <TasksBoardCmp />}
+                        {activeModule === 'kanban' && <KanbanCmp />}
+                        {activeModule === 'todo' && <TodoCmp />}
                     </Box>
                 </Box>
             </ThemeProvider>

@@ -45,6 +45,8 @@ const SettingsCmp = observer((): ReactElement => {
                 return 'Kanban';
             case 'flow':
                 return 'Flow';
+            default:
+                return 'Notizen';
         }
     };
 

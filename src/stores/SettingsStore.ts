@@ -1,3 +1,4 @@
+import type { PaletteMode } from "@mui/material";
 import { action, makeObservable, observable } from "mobx";
 import type { Modules, Settings } from "settings";
 import defaultSettings from "settings";
@@ -18,8 +19,8 @@ export default class SettingStore {
     this.writeLsSettings(parsedSettings);
   };
 
-  public displayMode: "light" | "dark";
-  public setDisplayMode = (newMode: "light" | "dark") => {
+  public displayMode: PaletteMode;
+  public setDisplayMode = (newMode: PaletteMode) => {
     this.displayMode = newMode;
     const parsedSettings = this.getLsSettings();
     parsedSettings.displayMode = this.displayMode;

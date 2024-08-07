@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from 'mobx';
 
 export interface Notebook {
   id: string;
@@ -15,7 +15,7 @@ const defaultNotebook: Notebook = {
 };
 
 export default class NoteBookStore {
-  private static instance: NoteBookStore;
+    private static instance: NoteBookStore;
 
   public notebooks: Notebook[];
   public setNotebooks = (newNotebooks: Notebook[]) => {
@@ -56,19 +56,19 @@ export default class NoteBookStore {
     });
   }
 
-  public static getInstance = () => {
-    if (NoteBookStore.instance === undefined) {
-      NoteBookStore.instance = new NoteBookStore();
-    }
-    return NoteBookStore.instance;
-  };
+    public static getInstance = () => {
+        if (NoteBookStore.instance === undefined) {
+            NoteBookStore.instance = new NoteBookStore();
+        }
+        return NoteBookStore.instance;
+    };
 
-  private getLsNotebooks = (): Notebook[] => {
-    const lsNotebooks = localStorage.getItem("webPlannerNotebook") as string;
-    return JSON.parse(lsNotebooks) as Notebook[];
-  };
+    private static getLsNotebooks = (): Notebook[] => {
+        const lsNotebooks = localStorage.getItem('webPlannerNotebook') as string;
+        return JSON.parse(lsNotebooks) as Notebook[];
+    };
 
-  private writeLsNotebooks = (newNotebooks: Notebook[]): void => {
-    localStorage.setItem("webPlannerNotebook", JSON.stringify(newNotebooks));
-  };
+    private static writeLsNotebooks = (newNotebooks: Notebook[]): void => {
+        localStorage.setItem('webPlannerNotebook', JSON.stringify(newNotebooks));
+    };
 }

@@ -1,0 +1,28 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them and build a production build
+
+name: webplanner build
+
+on:
+  push:
+    branches: [ "SBR_Github_Action" ]
+  pull_request:
+    branches: [ "SBR_Github_Action" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/cache@v3
+      with:
+        key: key
+        path: ~/.bun/install/cache
+    - uses: oven-sh/setup-bun@v2
+    - run: bun install
+    - run: bun run build

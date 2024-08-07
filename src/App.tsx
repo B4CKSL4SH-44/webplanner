@@ -17,7 +17,7 @@ import KanbanCmp from "modules/Kanban/KanbanCmp";
 import TodoCmp from "modules/TodoCmp";
 
 const App = observer(() => {
-  const stores = useStores();
+    const stores = useStores();
 
   const [activeModule, setActiveValue] = useState<ModuleNames | null>(
     stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null

@@ -34,10 +34,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start-client": "PORT=3000 react-scripts start",
-    "build-client": "PORT=3000 react-scripts build",
-    "test-client": "PORT=3000 react-scripts test",
-    "eject-client": "PORT=3000 react-scripts eject",
+    "start-client": "PORT=4000 react-scripts start",
+    "build-client": "PORT=4000 react-scripts build",
+    "test-client": "PORT=4000 react-scripts test",
+    "eject-client": "PORT=4000 react-scripts eject",
     "start-server": "bun run index.ts",
     "start-dev": "bun --watch run index.ts",
     "lint": "eslint -c .eslintrc.json --ext .ts,.tsx ./src",

@@ -61,7 +61,7 @@ const TasksBoardCmp = observer((): ReactElement => {
                         label="Projekte auswählen"
                         multiple
                         renderValue={(selected) => {
-                            return selected.map((select) => <Chip sx={{ mx: '2px' }} label={stores.tasksStore.projects[select].alias} />);
+                            return selected.map((select) => <Chip key={`chip-${stores.tasksStore.projects[select].alias}`} sx={{ mx: '2px' }} label={stores.tasksStore.projects[select].alias} />);
                         }}
                         onChange={(e) => stores.settingsStore.setActiveProjects(e.target.value as number[])}
                     >

@@ -62,7 +62,7 @@ const App = observer(() => {
                             {stores.settingsStore.modules
                                 .filter((module) => module.active === true)
                                 .map((module) => {
-                                    return <Tab key={`tab-${module}`} value={module} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
+                                    return <Tab key={`tab-${module.name}`} value={module.name} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
                                 })}
                         </Tabs>
                         <Divider />

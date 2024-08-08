@@ -77,6 +77,7 @@ const NoteBookCmp = observer((): ReactElement => {
                         .map((notebook) => {
                             return (
                                 <Tab
+                                    key={`notebook-tab-${notebook.id}`}
                                     sx={
                                         activeNotebook === notebook.id
                                             ? {
@@ -110,7 +111,7 @@ const NoteBookCmp = observer((): ReactElement => {
                 </Tabs>
             </Box>
             {stores.noteBookStore.notebooks.map((notebook) => {
-                return activeNotebook === notebook.id ? <EditorCmp notebook={notebook} /> : null;
+                return activeNotebook === notebook.id ? <EditorCmp key={`editor-${notebook.id}`} notebook={notebook} /> : null;
             })}
             {activeNotebook === 'NEWNOTEBOOK' && (
                 <Card sx={{

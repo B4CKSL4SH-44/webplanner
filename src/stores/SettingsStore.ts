@@ -15,7 +15,7 @@ export default class SettingStore {
     public modules: Module[];
 
     public setModules = (newModules: Module[]) => {
-        this.modules = { ...newModules };
+        this.modules = [...newModules];
         const parsedSettings = SettingStore.getLsSettings();
         parsedSettings.modules = this.modules;
         SettingStore.writeLsSettings(parsedSettings);

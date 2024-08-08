@@ -40,7 +40,7 @@ const SettingsCmp = observer((): ReactElement => {
         stores.settingsStore.setModules(newModules);
     };
 
-    const allModules: ModuleNames[] = ['notebook', 'tasks', 'kanban', 'flow'];
+    const allModules: ModuleNames[] = ['notebook', 'tasks', 'kanban', 'flow', 'todo'];
     const activeModules = stores.settingsStore.modules.filter((module) => module.active === true);
 
     // SSC: Das kommt dann natürlich in den LanguageStore :)

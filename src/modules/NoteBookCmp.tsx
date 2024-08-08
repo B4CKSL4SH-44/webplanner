@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import { Box, TextField, Typography } from '@mui/material';
-
-const NoteBookCmp = () => {
-    return (
-        <Box height="100%">
-            <Typography>Notebook</Typography>
-            <TextField sx={{ height: '100%', width: '100%' }} />
-        </Box>
-    );
-};
-=======
 import {
     Box, Button, Card, IconButton, Tab, Tabs, TextField, Typography, useTheme,
 } from '@mui/material';
@@ -152,6 +140,5 @@ const NoteBookCmp = observer((): ReactElement => {
         </Box>
     );
 });
->>>>>>> origin/develop
 
 export default NoteBookCmp;

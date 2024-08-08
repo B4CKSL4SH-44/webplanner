@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-export type ModuleNames = 'notebook' | 'tasks' | 'kanban' | 'flow';
-
-export interface Modules {
-    notebook: boolean;
-    tasks: boolean;
-    kanban: boolean;
-    flow: boolean;
-}
-export interface Settings {
-    modules: Modules;
-}
-
-const defaultSettings = {
-    modules: {
-        notebook: true,
-        tasks: true,
-        kanban: true,
-        flow: true,
-    },
-=======
 import type { PaletteMode } from '@mui/material';
 
 export type ModuleNames = 'notebook' | 'tasks' | 'kanban' | 'flow' | 'todo';
@@ -48,7 +27,6 @@ const defaultSettings: Settings = {
     activeProjects: [0],
     kanbanProject: 0,
     todoProject: 0,
->>>>>>> origin/develop
 };
 
 export default defaultSettings;

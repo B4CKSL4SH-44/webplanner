@@ -1,5 +1,5 @@
 import {
-    Add, Check, Close, Edit,
+    Add, Check, CheckBox, CheckBoxOutlineBlank, Close, Edit,
 } from '@mui/icons-material';
 import {
     Box,
@@ -20,6 +20,7 @@ import {
     TextField,
     Toolbar,
     Typography,
+    useTheme,
 } from '@mui/material';
 
 import { observer } from 'mobx-react';
@@ -29,13 +30,19 @@ import useStores from '../Store';
 
 const TodoCmp = observer((): ReactElement => {
     const stores = useStores();
+    const theme = useTheme();
 
     const [addModeActive, setAddModeActive] = useState<boolean>(false);
     const [newTodoTitle, setNewTodoTitle] = useState<string>('');
+    const [showClosed, setShowClosed] = useState<boolean>(true);
+
+    const activeTodos = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state !== 'closed');
+    const closedTodos = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state === 'closed');
 
     const handleToggle = (id: number) => {
-        const taskToUpdate = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.find((task) => task.id === id);
-        if (taskToUpdate !== undefined) {
+        const storeTaskToUpdate = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.find((task) => task.id === id);
+        if (storeTaskToUpdate !== undefined) {
+            const taskToUpdate = { ...storeTaskToUpdate };
             taskToUpdate.state = taskToUpdate.state === 'closed' ? 'open' : 'closed';
             stores.tasksStore.updateTask(taskToUpdate);
         }
@@ -47,7 +54,7 @@ const TodoCmp = observer((): ReactElement => {
         if (stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.length === 0) {
             newId = 1;
         } else {
-            const sorted = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.sort((a, b) => b.id - a.id);
+            const sorted = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.slice().sort((a, b) => b.id - a.id);
             newId = sorted[0].id + 1;
         }
         const newTask: Task = defaultTask;
@@ -91,9 +98,13 @@ const TodoCmp = observer((): ReactElement => {
                         })}
                     </Select>
                 </FormControl>
-                <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
-                    Projekt hinzufügen
-                </Button>
+                <ButtonGroup>
+
+                    <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
+                        Projekt hinzufügen
+                    </Button>
+                    <Button startIcon={showClosed ? <CheckBox /> : <CheckBoxOutlineBlank />} onClick={() => setShowClosed(!showClosed)} variant="contained" color="info">zeige erledigte</Button>
+                </ButtonGroup>
             </Toolbar>
             <Box flexGrow={1} minHeight={0} overflow="auto" sx={{ border: '1px solid rgba(0, 0, 0, 0.12)', padding: '4px' }}>
                 <List>
@@ -101,10 +112,32 @@ const TodoCmp = observer((): ReactElement => {
                         <Typography fontStyle="italic">Keine offenen Todos</Typography>
                     )}
                     <Divider />
-                    {stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.map((task) => {
+                    {showClosed
+                    && (
+                        <>
+                            {closedTodos.map((task) => {
+                                return (
+                                    <>
+                                        <ListItem sx={{ backgroundColor: theme.palette.grey[200], color: theme.palette.text.disabled }} key={`${task.id}-${task.title}`}>
+                                            <ListItemButton onClick={() => handleToggle(task.id)} dense>
+                                                <ListItemIcon>
+                                                    <Checkbox edge="start" checked={task.state === 'closed'} tabIndex={-1} disableRipple />
+                                                </ListItemIcon>
+                                                <ListItemText primary={task.title} />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        <Divider />
+                                    </>
+                                );
+                            })}
+                            <Divider />
+                            <Divider />
+                        </>
+                    )}
+                    {activeTodos.map((task) => {
                         return (
                             <>
-                                <ListItem>
+                                <ListItem key={`${task.id}-${task.title}`}>
                                     <ListItemButton onClick={() => handleToggle(task.id)} dense>
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={task.state === 'closed'} tabIndex={-1} disableRipple />
@@ -116,6 +149,7 @@ const TodoCmp = observer((): ReactElement => {
                             </>
                         );
                     })}
+
                     {!addModeActive ? (
                         <ListItem>
                             <ListItemButton onClick={() => setAddModeActive(true)} dense>
@@ -132,6 +166,7 @@ const TodoCmp = observer((): ReactElement => {
                             </ListItemIcon>
                             <TextField
                                 onChange={(e) => setNewTodoTitle(e.target.value)}
+                                onKeyDown={(event) => { if (event.key === 'Enter') { handleNewTodo(); } }}
                                 autoFocus
                                 size="small"
                                 InputProps={{

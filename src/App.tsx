@@ -61,6 +61,7 @@ const App = observer(() => {
                         <Tabs value={activeModule} onChange={handleChange} variant="fullWidth">
                             {stores.settingsStore.modules
                                 .filter((module) => module.active === true)
+                                .sort((a, b) => a.position - b.position)
                                 .map((module) => {
                                     return <Tab key={`tab-${module.name}`} value={module.name} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
                                 })}

@@ -20,6 +20,8 @@ import {
     Button,
     Select,
     MenuItem,
+    FormControl,
+    InputLabel,
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { type ReactElement } from 'react';
@@ -34,6 +36,20 @@ const SettingsCmp = observer((): ReactElement => {
         const newModules = stores.settingsStore.modules.map((module) => {
             if (module.name === moduleName) {
                 return { ...module, active: !module.active };
+            }
+            return module;
+        });
+        stores.settingsStore.setModules(newModules);
+    };
+
+    const handlePositionChange = (moduleName: ModuleNames, newPosition: number) => {
+        const selectedModule = stores.settingsStore.modules.find((module) => module.name === moduleName);
+        const newModules = stores.settingsStore.modules.map((module) => {
+            if (module.name === moduleName) {
+                return { ...module, position: newPosition };
+            }
+            if (module.position === newPosition && selectedModule !== undefined) {
+                return { ...module, position: selectedModule.position };
             }
             return module;
         });
@@ -106,15 +122,25 @@ const SettingsCmp = observer((): ReactElement => {
                 <AccordionSummary expandIcon={<ExpandMore />}>Modulreihenfolge</AccordionSummary>
                 <AccordionDetails>
                     <List>
-                        {activeModules.map((module, index) => {
+                        {activeModules.map((module) => {
+                            const availablePositions: string[] = [];
+                            for (let i = 0; i < activeModules.length; i++) {
+                                availablePositions.push((i + 1).toString());
+                            }
                             return (
-                                <Select value={stores.settingsStore.modules.find((storeModule) => storeModule.position === index)?.name}>
-                                    {activeModules.map((activeModule) => {
-                                        return <MenuItem>{getText(activeModule.name)}</MenuItem>;
-                                    })}
-                                </Select>
+                                <ListItem key={module.name}>
+                                    <FormControl>
+                                        <InputLabel id={module.name}>{module.name}</InputLabel>
+                                        <Select onChange={(event) => handlePositionChange(module.name, Number(event.target.value))} sx={{ width: '200px' }} labelId={module.name} label={module.name} value={module.position}>
+                                            {availablePositions.map((position) => {
+                                                return <MenuItem key={`${module.name}-${position}`} value={Number(position) - 1}>{position}</MenuItem>;
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                </ListItem>
                             );
                         })}
+
                     </List>
                 </AccordionDetails>
             </Accordion>

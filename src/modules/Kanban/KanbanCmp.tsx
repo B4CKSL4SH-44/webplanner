@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { useEffect, useState, type ReactElement } from 'react';
-import useStores from 'Store';
+import useStores from '../../Store';
 
 const KanbanCmp = observer((): ReactElement => {
     const stores = useStores();

@@ -1,4 +1,4 @@
-import { useEditor } from '@tiptap/react';
+import { type Extension, useEditor } from '@tiptap/react';
 import { useState, type ReactElement } from 'react';
 import {
     Box, Button, Tooltip, useTheme,
@@ -20,13 +20,13 @@ import {
 } from 'mui-tiptap';
 import StarterKit from '@tiptap/starter-kit';
 import Color from '@tiptap/extension-color';
-import useStores from 'Store';
 import Underline from '@tiptap/extension-underline';
 import TextStyle from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import { DeleteForever, Send } from '@mui/icons-material';
-import CustomDialog from 'components/CustomDialog';
+import useStores from '../Store';
 import type { Notebook } from './NoteBookStore';
+import CustomDialog from '../components/CustomDialog';
 
 interface EditorProps {
     notebook: Notebook;
@@ -41,7 +41,7 @@ const EditorCmp = (props: EditorProps): ReactElement => {
     const [deleteNoteBookActive, setDeleteNotebookActive] = useState<boolean>(false);
 
     const editor = useEditor({
-        extensions: [StarterKit, Color, Underline, TextStyle, Highlight],
+        extensions: [StarterKit as Extension, Color, Underline, TextStyle, Highlight],
         content: notebook.content,
         onUpdate: () => stores.noteBookStore.updateNotebookContent({ ...notebook, content: editor?.getHTML() as string }),
     });

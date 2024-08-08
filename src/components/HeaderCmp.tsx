@@ -4,7 +4,7 @@ import {
 import { Send, Settings as SettingsIcon } from '@mui/icons-material';
 import { observer } from 'mobx-react';
 import type { ReactElement } from 'react';
-import useStores from 'Store';
+import useStores from '../Store';
 
 const HeaderCmp = observer((): ReactElement => {
     const stores = useStores();

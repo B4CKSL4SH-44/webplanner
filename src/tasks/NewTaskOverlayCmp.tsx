@@ -22,11 +22,11 @@ import {
     TextField,
     Tooltip,
 } from '@mui/material';
-import useStores from 'Store';
 import { observer } from 'mobx-react';
 import { useRef, useState, type ReactElement } from 'react';
 import Draggable from 'react-draggable';
-import { defaultTask, type Relations, type Task } from 'tasks';
+import { defaultTask, type Relations, type Task } from '../tasks';
+import useStores from '../Store';
 
 const NewTaskOverlayCmp = observer((): ReactElement => {
     const stores = useStores();

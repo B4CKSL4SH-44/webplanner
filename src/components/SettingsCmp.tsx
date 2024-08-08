@@ -23,8 +23,8 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { type ReactElement } from 'react';
-import useStores from 'Store';
-import SettingStore from 'stores/SettingsStore';
+import useStores from '../Store';
+import SettingStore from '../stores/SettingsStore';
 import { type ModuleNames } from '../settings';
 
 const SettingsCmp = observer((): ReactElement => {

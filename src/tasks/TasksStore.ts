@@ -1,22 +1,25 @@
 import { action, makeObservable, observable } from 'mobx';
 import {
     defaultProjects, type Project, type Projects, type Task,
-} from 'tasks';
+} from '../tasks';
 
 export default class TasksStore {
     private static instance: TasksStore;
 
     public projects: Projects = defaultProjects;
+
     public setProjects = (newProjects: Projects) => {
         this.projects = newProjects;
         TasksStore.writeLsProjects(this.projects);
     };
+
     public addProject = (newProject: Project) => {
         const lsProjects = TasksStore.getLsProjects();
         lsProjects[newProject.id] = newProject;
         this.projects = lsProjects;
         TasksStore.writeLsProjects(lsProjects);
     };
+
     public addBoard = (project: Project, board: string) => {
         const sorted = Object.keys(this.projects[project.id].boards).sort((a, b) => Number(b) - Number(a));
         const newId = Number(sorted[0]) + 1;
@@ -25,6 +28,7 @@ export default class TasksStore {
     };
 
     public newProjectOverlayActive: boolean = false;
+
     public setNewProjectOverlayActive = (bool: boolean) => {
         this.newProjectOverlayActive = bool;
     };
@@ -35,12 +39,14 @@ export default class TasksStore {
         this.projects = lsProjects;
         TasksStore.writeLsProjects(lsProjects);
     };
+
     public deleteTask = (task: Task) => {
         const lsProjects = TasksStore.getLsProjects();
         lsProjects[task.project].tasks = lsProjects[task.project].tasks.filter((oldTask) => oldTask.id !== task.id);
         this.projects = lsProjects;
         TasksStore.writeLsProjects(lsProjects);
     };
+
     public updateTask = (taskToUpdate: Task) => {
         const updatedTasks = this.projects[taskToUpdate.project].tasks.map((task) => {
             if (task.id === taskToUpdate.id) {
@@ -58,25 +64,30 @@ export default class TasksStore {
     };
 
     public taskOverlayState: boolean | Task = false;
+
     public setTaskOverlayState = (newValue: boolean | Task) => {
         this.taskOverlayState = newValue;
     };
 
     public openTasks: Task[] = [];
+
     public setOpenTasks = (newTasks: Task[]) => {
         this.openTasks = newTasks;
     };
+
     public addOpenTask = (task: Task) => {
         if (!this.openTasks.some((openTask) => openTask.id === task.id)) {
             this.setOpenTasks([...this.openTasks, task]);
         }
     };
+
     public closeTask = (task: Task) => {
         const updatedTasks = this.openTasks.filter((openTask) => openTask.id !== task.id);
         this.setOpenTasks(updatedTasks);
     };
 
     public taskTimer: Task | null = null;
+
     public setTaskTimer = (newValue: Task | null) => {
         this.taskTimer = newValue;
     };

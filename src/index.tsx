@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+<<<<<<< HEAD
 import { ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
@@ -24,3 +25,10 @@ root.render(
         </ThemeProvider>
     </React.StrictMode>,
 );
+=======
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+
+root.render(<App />);
+>>>>>>> origin/develop

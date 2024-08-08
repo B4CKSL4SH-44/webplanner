@@ -18,14 +18,17 @@ export default class NoteBookStore {
     private static instance: NoteBookStore;
 
     public notebooks: Notebook[];
+
     public setNotebooks = (newNotebooks: Notebook[]) => {
         this.notebooks = newNotebooks;
         NoteBookStore.writeLsNotebooks(this.notebooks);
     };
+
     public updateNotebookContent = (updatedNotebook: Notebook) => {
         this.notebooks.find((notebook) => notebook.id === updatedNotebook.id)!.content = updatedNotebook.content;
         this.setNotebooks([...this.notebooks]);
     };
+
     public addNotebook = (title: string) => {
         const newPosition = this.notebooks.length;
         const newNotebook: Notebook = {
@@ -36,6 +39,7 @@ export default class NoteBookStore {
         };
         this.setNotebooks([...this.notebooks, newNotebook]);
     };
+
     public deleteNotebook = (notebookToDelete: Notebook) => {
         const updatedNotebooks = this.notebooks.filter((notebook) => notebook.id !== notebookToDelete.id);
         updatedNotebooks.sort((a, b) => a.position - b.position).map((notebook, index) => ({ ...notebook, position: index }));

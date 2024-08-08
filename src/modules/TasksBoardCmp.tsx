@@ -24,8 +24,8 @@ import {
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { useState, type ReactElement } from 'react';
-import useStores from 'Store';
-import type { Task } from 'tasks';
+import type { Task } from '../tasks';
+import useStores from '../Store';
 
 const TasksBoardCmp = observer((): ReactElement => {
     const stores = useStores();

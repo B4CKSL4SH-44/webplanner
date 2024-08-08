@@ -2,9 +2,9 @@ import { Pause, PlayArrow, Stop } from '@mui/icons-material';
 import {
     Alert, Box, IconButton, Snackbar, Typography,
 } from '@mui/material';
-import useStores from 'Store';
 import { observer } from 'mobx-react';
 import { useEffect, useState, type ReactElement } from 'react';
+import useStores from '../Store';
 
 const TaskTimerCmp = observer((): ReactElement => {
     const stores = useStores();

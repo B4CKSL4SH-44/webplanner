@@ -2,11 +2,11 @@ import { DragHandle } from '@mui/icons-material';
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, TextField,
 } from '@mui/material';
-import useStores from 'Store';
 import { observer } from 'mobx-react';
 import { useRef, useState, type ReactElement } from 'react';
 import Draggable from 'react-draggable';
-import { defaultProject, type Project } from 'tasks';
+import { defaultProject, type Project } from '../tasks';
+import useStores from '../Store';
 
 const NewProjectOverlayCmp = observer((): ReactElement => {
     const stores = useStores();

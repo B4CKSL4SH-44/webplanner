@@ -1,29 +1,29 @@
 {
-    "editor.tabSize": 4,
-    "editor.insertSpaces": true,
-    "eslint.validate": [
-      "typescript",
-      "typescriptreact"
-    ],
-    "[typescript]": {
-      "editor.formatOnSave": false,
-      "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-      }
-    },
-    "[typescriptreact]": {
-      "editor.formatOnSave": false,
-      "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-      }
-    },
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "eslint.validate": [
+    "typescript",
+    "typescriptreact"
+  ],
+  "[typescript]": {
     "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit"
-    },
-    "[typescript][typescriptreact]": {
-      "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
-      }
+    }
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    }
+  },
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[typescript][typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
     }
   }
+}

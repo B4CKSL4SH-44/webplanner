@@ -21,10 +21,11 @@ import {
     Toolbar,
     Typography,
 } from '@mui/material';
-import useStores from 'Store';
+
 import { observer } from 'mobx-react';
 import { useState, type ReactElement } from 'react';
-import { defaultTask, type Task } from 'tasks';
+import { defaultTask, type Task } from '../tasks';
+import useStores from '../Store';
 
 const TodoCmp = observer((): ReactElement => {
     const stores = useStores();

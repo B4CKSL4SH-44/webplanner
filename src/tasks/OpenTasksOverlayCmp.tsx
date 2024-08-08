@@ -2,11 +2,11 @@ import { DeleteForever, DragHandle } from '@mui/icons-material';
 import {
     Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton,
 } from '@mui/material';
-import useStores from 'Store';
 import { observer } from 'mobx-react';
 import { useRef, type ReactElement } from 'react';
 import Draggable from 'react-draggable';
-import { type Task } from 'tasks';
+import useStores from '../Store';
+import { type Task } from '../tasks';
 
 const OpenTasksOverlayCmp = observer((props: { task: Task }): ReactElement => {
     const { task } = props;

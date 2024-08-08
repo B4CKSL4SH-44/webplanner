@@ -2,11 +2,11 @@ import {
     Box, Button, Card, IconButton, Tab, Tabs, TextField, Typography, useTheme,
 } from '@mui/material';
 import { useState, type ReactElement } from 'react';
-import useStores from 'Store';
 import {
     Add, Close, NavigateBefore, NavigateNext,
 } from '@mui/icons-material';
 import { observer } from 'mobx-react';
+import useStores from '../Store';
 import EditorCmp from './EditorCmp';
 import type { Notebook } from './NoteBookStore';
 

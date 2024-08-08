@@ -1,17 +1,19 @@
 import type { PaletteMode } from '@mui/material';
 import { action, makeObservable, observable } from 'mobx';
-import type { Module, Settings } from 'settings';
-import defaultSettings from 'settings';
+import type { Module, Settings } from '../settings';
+import defaultSettings from '../settings';
 
 export default class SettingStore {
     private static instance: SettingStore | undefined;
 
     public settingsOpen: boolean = false;
+
     public setSettingsOpen = (newOpen: boolean) => {
         this.settingsOpen = newOpen;
     };
 
     public modules: Module[];
+
     public setModules = (newModules: Module[]) => {
         this.modules = { ...newModules };
         const parsedSettings = SettingStore.getLsSettings();
@@ -20,6 +22,7 @@ export default class SettingStore {
     };
 
     public displayMode: PaletteMode;
+
     public setDisplayMode = (newMode: PaletteMode) => {
         this.displayMode = newMode;
         const parsedSettings = SettingStore.getLsSettings();
@@ -28,6 +31,7 @@ export default class SettingStore {
     };
 
     public activeProjects: number[];
+
     public setActiveProjects = (newIds: number[]) => {
         this.activeProjects = [...newIds];
         const lsSettings = SettingStore.getLsSettings();
@@ -36,6 +40,7 @@ export default class SettingStore {
     };
 
     public kanbanProject: number;
+
     public setKanbanProject = (newId: number) => {
         this.kanbanProject = newId;
         const lsSettings = SettingStore.getLsSettings();
@@ -44,6 +49,7 @@ export default class SettingStore {
     };
 
     public todoProject: number;
+
     public setTodoProject = (id: number) => {
         this.todoProject = id;
         const lsSettings = SettingStore.getLsSettings();

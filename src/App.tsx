@@ -64,7 +64,7 @@ const App = observer(() => {
                                 .filter((module) => module.active === true)
                                 .sort((a, b) => a.position - b.position)
                                 .map((module) => {
-                                    return <Tab sx={{ minWidth: 'fit-content', flex: 1 }} key={`tab-${module.name}`} value={module.name} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
+                                    return <Tab sx={{ minWidth: 'fit-content', flex: 1 }} key={`tab-${module.name}`} value={module.name} label={module.name} />;
                                 })}
                         </Tabs>
                         <Divider />

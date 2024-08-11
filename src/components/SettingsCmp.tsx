@@ -124,9 +124,7 @@ const SettingsCmp = observer((): ReactElement => {
                     <List>
                         {activeModules.map((module) => {
                             const availablePositions: string[] = [];
-                            for (let i = 0; i < activeModules.length; i++) {
-                                availablePositions.push((i + 1).toString());
-                            }
+                            activeModules.forEach((_, index) => { availablePositions.push((index + 1).toString()); });
                             return (
                                 <ListItem key={module.name}>
                                     <FormControl>

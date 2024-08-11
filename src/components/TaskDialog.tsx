@@ -28,7 +28,7 @@ const TaskDialog = observer((props: { task: Task, onClose: ()=>void }): ReactEle
             content={(
                 <>
                     {!editDescription
-                        ? <Typography onClick={() => setEditDescription(true)} variant="body1" fontStyle={task.description === '' ? 'italic' : 'inherit'}>{task.description === '' ? 'keine Beschreibung' : task.description}</Typography>
+                        ? <Typography onClick={() => setEditDescription(true)} fontStyle={task.description === '' ? 'italic' : 'inherit'}>{task.description === '' ? 'keine Beschreibung' : task.description}</Typography>
                         : <CustomTextField value={task.description} onCancel={() => setEditDescription(false)} onSave={(v) => handleSave({ ...task, description: v })} />}
                     <Typography>test</Typography>
                 </>

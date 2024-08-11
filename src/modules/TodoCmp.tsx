@@ -66,7 +66,6 @@ const TodoCmp = observer((): ReactElement => {
         setNewTodoTitle('');
         setAddModeActive(false);
     };
-
     return (
         <Box
             sx={{
@@ -104,13 +103,16 @@ const TodoCmp = observer((): ReactElement => {
                         })}
                     </Select>
                 </FormControl>
-                <ButtonGroup>
 
+                <ButtonGroup sx={{
+                    display: {
+                        xs: 'none', sm: 'none', md: 'inline-flex', lg: 'inline-flex',
+                    },
+                }}
+                >
                     <Button
                         sx={{
-                            display: {
-                                xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
-                            },
+                            whiteSpace: 'nowrap',
                         }}
                         onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
                         variant="contained"
@@ -121,21 +123,7 @@ const TodoCmp = observer((): ReactElement => {
                     </Button>
                     <Button
                         sx={{
-                            display: {
-                                xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none',
-                            },
-                        }}
-                        variant="contained"
-                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
-                        color="success"
-                    >
-                        <PlaylistAdd />
-                    </Button>
-                    <Button
-                        sx={{
-                            display: {
-                                xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
-                            },
+                            whiteSpace: 'nowrap',
                         }}
                         startIcon={showClosed ? <CheckCircle /> : <CheckCircleOutline />}
                         onClick={() => setShowClosed(!showClosed)}
@@ -144,12 +132,23 @@ const TodoCmp = observer((): ReactElement => {
                     >
                         zeige erledigte
                     </Button>
+                </ButtonGroup>
+
+                <ButtonGroup sx={{
+                    display: {
+                        xs: 'inline-flex', sm: 'inline-flex', md: 'none', lg: 'none',
+                    },
+                }}
+                >
                     <Button
-                        sx={{
-                            display: {
-                                xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none',
-                            },
-                        }}
+                        variant="contained"
+                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        color="success"
+                    >
+                        <PlaylistAdd />
+                    </Button>
+
+                    <Button
                         variant="contained"
                         onClick={() => setShowClosed(!showClosed)}
                         color="info"
@@ -157,6 +156,7 @@ const TodoCmp = observer((): ReactElement => {
                         {showClosed ? <CheckCircle /> : <CheckCircleOutline />}
                     </Button>
                 </ButtonGroup>
+
             </Toolbar>
             <Box flexGrow={1} minHeight={0} overflow="auto" sx={{ border: '1px solid rgba(0, 0, 0, 0.12)', padding: '4px' }}>
                 <List>
@@ -170,7 +170,7 @@ const TodoCmp = observer((): ReactElement => {
                             {closedTodos.map((task) => {
                                 return (
                                     <>
-                                        <ListItem sx={{ backgroundColor: theme.palette.grey[200], color: theme.palette.text.disabled }} key={`${task.id}-${task.title}`}>
+                                        <ListItem sx={{ backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[900], color: theme.palette.text.disabled }} key={`${task.id}-${task.title}`}>
                                             <ListItemButton onClick={() => handleToggle(task.id)} dense>
                                                 <ListItemIcon>
                                                     <Checkbox edge="start" checked={task.state === 'closed'} tabIndex={-1} disableRipple />

@@ -97,6 +97,8 @@ export default class SettingStore {
             setActiveProjects: action,
             kanbanProject: observable,
             setKanbanProject: action,
+            todoProject: observable,
+            setTodoProject: action,
         });
     }
 

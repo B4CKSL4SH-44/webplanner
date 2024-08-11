@@ -1,5 +1,6 @@
 import {
-    Add, Edit, OpenInNew, Timer,
+    Edit, OpenInNew, PlaylistAdd, Timer,
+    VisibilityOff,
 } from '@mui/icons-material';
 import {
     Box,
@@ -20,12 +21,14 @@ import {
     TableRow,
     TableSortLabel,
     Toolbar,
+    Tooltip,
     useTheme,
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { useState, type ReactElement } from 'react';
-import type { Task } from '../tasks';
+import type { Project, Task } from '../tasks';
 import useStores from '../Store';
+import TaskDialog from '../components/TaskDialog';
 
 const TasksBoardCmp = observer((): ReactElement => {
     const stores = useStores();
@@ -36,9 +39,17 @@ const TasksBoardCmp = observer((): ReactElement => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
+    const [taskDialogOpen, setTaskDialogOpen] = useState<null | Task>(null);
+
     const handleOpenTask = (newTask: Task) => {
         if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id)) return;
         stores.tasksStore.setOpenTasks([...stores.tasksStore.openTasks, newTask]);
+    };
+
+    const hideProject = (projectToHide: Project) => {
+        const allProjects = [...stores.settingsStore.activeProjects];
+        const updatedProjects = allProjects.filter((projectId) => projectId !== projectToHide.id);
+        stores.settingsStore.setActiveProjects(updatedProjects);
     };
 
     return (
@@ -52,14 +63,19 @@ const TasksBoardCmp = observer((): ReactElement => {
             flexDirection="column"
         >
             <Toolbar>
-                <FormControl>
+                <FormControl sx={{ maxWidth: '50%' }}>
                     <InputLabel id="select-project-label">Projekte auswählen</InputLabel>
                     <Select
-                        sx={{ mr: '1rem', width: '400px' }}
+                        sx={{
+                            mr: '1rem',
+                            maxWidth: '300px',
+                        }}
                         labelId="select-project-label"
                         value={stores.settingsStore.activeProjects}
                         label="Projekte auswählen"
                         multiple
+                        size="small"
+                        autoWidth
                         renderValue={(selected) => {
                             return selected.map((select) => <Chip key={`chip-${stores.tasksStore.projects[select].alias}`} sx={{ mx: '2px' }} label={stores.tasksStore.projects[select].alias} />);
                         }}
@@ -79,8 +95,30 @@ const TasksBoardCmp = observer((): ReactElement => {
                         })}
                     </Select>
                 </FormControl>
-                <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
+                <Button
+                    sx={{
+                        display: {
+                            xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
+                        },
+                    }}
+                    onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                    variant="contained"
+                    color="success"
+                    startIcon={<PlaylistAdd />}
+                >
                     Projekt hinzufügen
+                </Button>
+                <Button
+                    sx={{
+                        display: {
+                            xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none',
+                        },
+                    }}
+                    variant="contained"
+                    onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                    color="success"
+                >
+                    <PlaylistAdd />
                 </Button>
             </Toolbar>
             <Divider sx={{ m: '1rem 0' }} />
@@ -93,10 +131,12 @@ const TasksBoardCmp = observer((): ReactElement => {
                         return (
                             <Table
                                 key={`table-${id}`}
+                                size="small"
                                 sx={{
                                     border: '1px solid rgba(0, 0, 0, 0.12)',
                                     mb: '1rem',
                                 }}
+
                             >
                                 <TableHead
                                     sx={{
@@ -112,7 +152,14 @@ const TasksBoardCmp = observer((): ReactElement => {
                                             },
                                         }}
                                     >
-                                        <TableCell colSpan={4}>{project.alias}</TableCell>
+                                        <TableCell colSpan={3}>{project.alias}</TableCell>
+                                        <TableCell colSpan={1}>
+                                            <Tooltip title="ausblenden">
+                                                <Button color="success" size="small" variant="contained" onClick={() => hideProject(project)}>
+                                                    <VisibilityOff />
+                                                </Button>
+                                            </Tooltip>
+                                        </TableCell>
                                     </TableRow>
                                     <TableRow
                                         sx={{
@@ -121,7 +168,7 @@ const TasksBoardCmp = observer((): ReactElement => {
                                             },
                                         }}
                                     >
-                                        <TableCell>ID</TableCell>
+                                        <TableCell sx={{ width: '150px' }}>ID</TableCell>
                                         <TableCell>Titel</TableCell>
                                         <TableCell>Beschreibung</TableCell>
                                         <TableCell sortDirection="asc">
@@ -139,19 +186,20 @@ const TasksBoardCmp = observer((): ReactElement => {
                                     )}
                                     {project.tasks.map((task) => {
                                         return (
-                                            <TableRow hover role="button" key={`tableRow-${task.id}`}>
-                                                <TableCell>
+                                            <TableRow hover role="button" key={`tableRow-${task.id}`} onClick={() => { setTaskDialogOpen(task); }}>
+                                                <TableCell sx={{ width: '150px' }}>
                                                     {task.id}
                                                     <IconButton
+                                                        size="small"
                                                         disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
                                                         onClick={() => handleOpenTask(task)}
                                                     >
                                                         <OpenInNew />
                                                     </IconButton>
-                                                    <IconButton onClick={() => stores.tasksStore.setTaskOverlayState(task)}>
+                                                    <IconButton size="small" onClick={() => stores.tasksStore.setTaskOverlayState(task)}>
                                                         <Edit />
                                                     </IconButton>
-                                                    <IconButton disabled={stores.tasksStore.taskTimer !== null} onClick={() => stores.tasksStore.setTaskTimer(task)}>
+                                                    <IconButton size="small" disabled={stores.tasksStore.taskTimer !== null} onClick={() => stores.tasksStore.setTaskTimer(task)}>
                                                         <Timer />
                                                     </IconButton>
                                                 </TableCell>
@@ -177,6 +225,9 @@ const TasksBoardCmp = observer((): ReactElement => {
                             </Table>
                         );
                     })
+                )}
+                {taskDialogOpen !== null && (
+                    <TaskDialog task={taskDialogOpen} onClose={() => setTaskDialogOpen(null)} />
                 )}
             </Box>
         </Box>

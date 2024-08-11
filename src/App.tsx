@@ -50,7 +50,7 @@ const App = observer(() => {
                     <HeaderCmp />
                     <Box flexGrow={1} minHeight={0} display="flex" flexDirection="column">
                         {stores.tasksStore.taskOverlayState && <TaskOverlayCmp />}
-                        {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp />}
+                        {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp activeModule={activeModule} />}
                         {stores.tasksStore.openTasks.map((openTask) => (
                             <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
                         ))}
@@ -58,7 +58,7 @@ const App = observer(() => {
                         <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
                             <SettingsCmp />
                         </Drawer>
-                        <Tabs centered allowScrollButtonsMobile value={activeModule} onChange={handleChange} variant="scrollable" scrollButtons="auto">
+                        <Tabs allowScrollButtonsMobile value={activeModule} onChange={handleChange} variant="scrollable" scrollButtons="auto">
                             {stores.settingsStore.modules
                                 .filter((module) => module.active === true)
                                 .sort((a, b) => a.position - b.position)

@@ -1,5 +1,6 @@
 import {
-    Add, Check, CheckBox, CheckBoxOutlineBlank, Close, Edit,
+    Check, CheckCircle, CheckCircleOutline, Close, Edit,
+    PlaylistAdd,
 } from '@mui/icons-material';
 import {
     Box,
@@ -80,10 +81,15 @@ const TodoCmp = observer((): ReactElement => {
                 <FormControl>
                     <InputLabel id="select-project-label">Projekt auswählen</InputLabel>
                     <Select
-                        sx={{ mr: '1rem', width: '400px' }}
+                        sx={{
+                            mr: '1rem',
+                            maxWidth: '300px',
+                        }}
                         labelId="select-project-label"
                         value={stores.settingsStore.todoProject}
                         label="Projekt auswählen"
+                        size="small"
+                        autoWidth
                         onChange={(e) => stores.settingsStore.setTodoProject(Number(e.target.value))}
                     >
                         {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
@@ -100,10 +106,56 @@ const TodoCmp = observer((): ReactElement => {
                 </FormControl>
                 <ButtonGroup>
 
-                    <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
+                    <Button
+                        sx={{
+                            display: {
+                                xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
+                            },
+                        }}
+                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        variant="contained"
+                        color="success"
+                        startIcon={<PlaylistAdd />}
+                    >
                         Projekt hinzufügen
                     </Button>
-                    <Button startIcon={showClosed ? <CheckBox /> : <CheckBoxOutlineBlank />} onClick={() => setShowClosed(!showClosed)} variant="contained" color="info">zeige erledigte</Button>
+                    <Button
+                        sx={{
+                            display: {
+                                xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none',
+                            },
+                        }}
+                        variant="contained"
+                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        color="success"
+                    >
+                        <PlaylistAdd />
+                    </Button>
+                    <Button
+                        sx={{
+                            display: {
+                                xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
+                            },
+                        }}
+                        startIcon={showClosed ? <CheckCircle /> : <CheckCircleOutline />}
+                        onClick={() => setShowClosed(!showClosed)}
+                        variant="contained"
+                        color="info"
+                    >
+                        zeige erledigte
+                    </Button>
+                    <Button
+                        sx={{
+                            display: {
+                                xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none',
+                            },
+                        }}
+                        variant="contained"
+                        onClick={() => setShowClosed(!showClosed)}
+                        color="info"
+                    >
+                        {showClosed ? <CheckCircle /> : <CheckCircleOutline />}
+                    </Button>
                 </ButtonGroup>
             </Toolbar>
             <Box flexGrow={1} minHeight={0} overflow="auto" sx={{ border: '1px solid rgba(0, 0, 0, 0.12)', padding: '4px' }}>

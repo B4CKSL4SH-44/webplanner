@@ -58,12 +58,12 @@ const App = observer(() => {
                         <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
                             <SettingsCmp />
                         </Drawer>
-                        <Tabs value={activeModule} onChange={handleChange} variant="fullWidth">
+                        <Tabs centered allowScrollButtonsMobile value={activeModule} onChange={handleChange} variant="scrollable" scrollButtons="auto">
                             {stores.settingsStore.modules
                                 .filter((module) => module.active === true)
                                 .sort((a, b) => a.position - b.position)
                                 .map((module) => {
-                                    return <Tab key={`tab-${module.name}`} value={module.name} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
+                                    return <Tab sx={{ minWidth: 'fit-content', flex: 1 }} key={`tab-${module.name}`} value={module.name} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
                                 })}
                         </Tabs>
                         <Divider />

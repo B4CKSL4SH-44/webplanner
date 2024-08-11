@@ -21,20 +21,21 @@ import NoteBookCmp from './modules/NoteBookCmp';
 const App = observer(() => {
     const stores = useStores();
 
-    const [activeModule, setActiveValue] = useState<ModuleNames | null>(
-        stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null,
+    // Get the first active module
+    const [activeModule, setActiveModule] = useState<ModuleNames | null>(
+        stores.settingsStore.modules.slice().sort((a, b) => a.position - b.position).find((module) => module.active === true)?.name ?? null,
     );
 
     useEffect(() => {
         if (activeModule !== null && stores.settingsStore.modules.find((module) => module.name === activeModule)!.active === false) {
-            setActiveValue(stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null);
+            setActiveModule(stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null);
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stores.settingsStore.modules]);
 
     const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
-        setActiveValue(newValue);
+        setActiveModule(newValue);
     };
 
     const theme = createTheme({

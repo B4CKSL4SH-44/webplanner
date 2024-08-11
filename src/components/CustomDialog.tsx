@@ -6,7 +6,7 @@ import type { ReactElement, ReactNode } from 'react';
 type ButtonColor = 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 
 interface CustomDialogProps {
-    title: string;
+    title: string | ReactNode;
     content: string | ReactNode;
     actionCancel: () => void;
     actionCancelText: string;

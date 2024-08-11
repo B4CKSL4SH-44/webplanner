@@ -6,9 +6,9 @@ import type { Task } from '../tasks';
 import CustomTextField from './CustomTextField';
 import useStores from '../Store';
 
-const TaskDialog = observer((props: { task: Task, onClose: ()=>void }): ReactElement => {
+const TaskDialog = observer((props: { task: Task, onClose: ()=>void, onBack: ()=>void }): ReactElement => {
     const stores = useStores();
-    const { task, onClose } = props;
+    const { task, onClose, onBack } = props;
     const [editTitle, setEditTitle] = useState<boolean>(false);
     const [editDescription, setEditDescription] = useState<boolean>(false);
 
@@ -19,12 +19,12 @@ const TaskDialog = observer((props: { task: Task, onClose: ()=>void }): ReactEle
     };
     return (
         <CustomDialog
-            actionCancel={onClose}
+            actionCancel={onBack}
             actionCancelColor="success"
-            actionCancelText="test"
-            actionConfirm={() => {}}
+            actionCancelText="zurück"
+            actionConfirm={onClose}
             actionConfirmColor="error"
-            actionConfirmText="abbrechen"
+            actionConfirmText="Task schliessen"
             content={(
                 <>
                     {!editDescription

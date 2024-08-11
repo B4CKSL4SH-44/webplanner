@@ -1,10 +1,13 @@
 import {
+    CheckCircle,
+    CheckCircleOutline,
     Edit, OpenInNew, PlaylistAdd, Timer,
     VisibilityOff,
 } from '@mui/icons-material';
 import {
     Box,
     Button,
+    ButtonGroup,
     Checkbox,
     Chip,
     Divider,
@@ -40,6 +43,7 @@ const TasksBoardCmp = observer((): ReactElement => {
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
 
     const [taskDialogOpen, setTaskDialogOpen] = useState<null | Task>(null);
+    const [showClosed, setShowClosed] = useState<boolean>(false);
 
     const handleOpenTask = (newTask: Task) => {
         if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id)) return;
@@ -50,6 +54,14 @@ const TasksBoardCmp = observer((): ReactElement => {
         const allProjects = [...stores.settingsStore.activeProjects];
         const updatedProjects = allProjects.filter((projectId) => projectId !== projectToHide.id);
         stores.settingsStore.setActiveProjects(updatedProjects);
+    };
+
+    const handleCloseTask = () => {
+        if (taskDialogOpen !== null) {
+            const updatedTask: Task = { ...taskDialogOpen, state: 'closed' };
+            setTaskDialogOpen(null);
+            stores.tasksStore.updateTask(updatedTask);
+        }
     };
 
     return (
@@ -95,31 +107,60 @@ const TasksBoardCmp = observer((): ReactElement => {
                         })}
                     </Select>
                 </FormControl>
-                <Button
-                    sx={{
-                        display: {
-                            xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
-                        },
-                    }}
-                    onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
-                    variant="contained"
-                    color="success"
-                    startIcon={<PlaylistAdd />}
+                <ButtonGroup sx={{
+                    display: {
+                        xs: 'none', sm: 'none', md: 'inline-flex', lg: 'inline-flex',
+                    },
+                }}
                 >
-                    Projekt hinzufügen
-                </Button>
-                <Button
-                    sx={{
-                        display: {
-                            xs: 'inline-flex', sm: 'none', md: 'none', lg: 'none',
-                        },
-                    }}
-                    variant="contained"
-                    onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
-                    color="success"
+
+                    <Button
+                        sx={{
+                            display: {
+                                xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
+                            },
+                        }}
+                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        variant="contained"
+                        color="success"
+                        startIcon={<PlaylistAdd />}
+                    >
+                        Projekt hinzufügen
+                    </Button>
+                    <Button
+                        sx={{
+                            whiteSpace: 'nowrap',
+                        }}
+                        startIcon={showClosed ? <CheckCircle /> : <CheckCircleOutline />}
+                        onClick={() => setShowClosed(!showClosed)}
+                        variant="contained"
+                        color="info"
+                    >
+                        zeige erledigte
+                    </Button>
+                </ButtonGroup>
+                <ButtonGroup sx={{
+                    display: {
+                        xs: 'inline-flex', sm: 'inline-flex', md: 'none', lg: 'none',
+                    },
+                }}
                 >
-                    <PlaylistAdd />
-                </Button>
+
+                    <Button
+                        variant="contained"
+                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        color="success"
+                    >
+                        <PlaylistAdd />
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => setShowClosed(!showClosed)}
+                        color="info"
+                    >
+                        {showClosed ? <CheckCircle /> : <CheckCircleOutline />}
+                    </Button>
+                </ButtonGroup>
             </Toolbar>
             <Divider sx={{ m: '1rem 0' }} />
             <Box flexGrow={1} minHeight={0} overflow="auto" sx={{ border: '1px solid rgba(0, 0, 0, 0.12)', padding: '4px' }}>
@@ -128,6 +169,8 @@ const TasksBoardCmp = observer((): ReactElement => {
                 ) : (
                     stores.settingsStore.activeProjects.map((id) => {
                         const project = stores.tasksStore.projects[id];
+                        const activeTasks = project.tasks.filter((task) => task.state !== 'closed');
+                        const closedTasks = project.tasks.filter((task) => task.state === 'closed');
                         return (
                             <Table
                                 key={`table-${id}`}
@@ -184,7 +227,7 @@ const TasksBoardCmp = observer((): ReactElement => {
                                             </TableCell>
                                         </TableRow>
                                     )}
-                                    {project.tasks.map((task) => {
+                                    {activeTasks.map((task) => {
                                         return (
                                             <TableRow hover role="button" key={`tableRow-${task.id}`} onClick={() => { setTaskDialogOpen(task); }}>
                                                 <TableCell sx={{ width: '150px' }}>
@@ -221,13 +264,68 @@ const TasksBoardCmp = observer((): ReactElement => {
                                             </TableRow>
                                         );
                                     })}
+                                    {showClosed && closedTasks.map((task) => {
+                                        return (
+                                            <TableRow
+                                                sx={{ backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[900] }}
+                                                hover
+                                                role="button"
+                                                key={`tableRow-${task.id}`}
+                                                onClick={() => { setTaskDialogOpen(task); }}
+                                            >
+                                                <TableCell sx={{ width: '150px', color: theme.palette.text.disabled }}>
+                                                    {task.id}
+                                                    <IconButton
+                                                        sx={{ color: theme.palette.text.disabled }}
+                                                        size="small"
+                                                        disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
+                                                        onClick={() => handleOpenTask(task)}
+                                                    >
+                                                        <OpenInNew />
+                                                    </IconButton>
+                                                    <IconButton
+                                                        sx={{ color: theme.palette.text.disabled }}
+                                                        size="small"
+                                                        onClick={() => stores.tasksStore.setTaskOverlayState(task)}
+                                                    >
+                                                        <Edit />
+                                                    </IconButton>
+                                                    <IconButton
+                                                        sx={{ color: theme.palette.text.disabled }}
+                                                        size="small"
+                                                        disabled={stores.tasksStore.taskTimer !== null}
+                                                        onClick={() => stores.tasksStore.setTaskTimer(task)}
+                                                    >
+                                                        <Timer />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell sx={{ whiteSpace: 'wrap', overflowWrap: 'anywhere', color: theme.palette.text.disabled }}>{task.title}</TableCell>
+                                                <TableCell
+                                                    sx={{
+                                                        fontStyle: task.description.length === 0 ? 'italic' : 'inherit',
+                                                        color: theme.palette.text.disabled,
+                                                    }}
+                                                >
+                                                    {task.description.length === 0 ? '(keine)' : task.description}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        disabled
+                                                        sx={{ maxWidth: 'fit-content' }}
+                                                        color={task.priority === 'high' ? 'error' : task.priority === 'medium' ? 'primary' : 'success'}
+                                                        label={task.priority}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
                                 </TableBody>
                             </Table>
                         );
                     })
                 )}
                 {taskDialogOpen !== null && (
-                    <TaskDialog task={taskDialogOpen} onClose={() => setTaskDialogOpen(null)} />
+                    <TaskDialog task={taskDialogOpen} onBack={() => setTaskDialogOpen(null)} onClose={handleCloseTask} />
                 )}
             </Box>
         </Box>

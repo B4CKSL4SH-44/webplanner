@@ -1,13 +1,13 @@
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
 } from '@mui/material';
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 type ButtonColor = 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
 
 interface CustomDialogProps {
-    title: string;
-    content: string;
+    title: string | ReactNode;
+    content: string | ReactNode;
     actionCancel: () => void;
     actionCancelText: string;
     actionCancelColor: ButtonColor;

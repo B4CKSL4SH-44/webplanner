@@ -21,20 +21,21 @@ import NoteBookCmp from './modules/NoteBookCmp';
 const App = observer(() => {
     const stores = useStores();
 
-    const [activeModule, setActiveValue] = useState<ModuleNames | null>(
-        stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null,
+    // Get the first active module
+    const [activeModule, setActiveModule] = useState<ModuleNames | null>(
+        stores.settingsStore.modules.slice().sort((a, b) => a.position - b.position).find((module) => module.active === true)?.name ?? null,
     );
 
     useEffect(() => {
         if (activeModule !== null && stores.settingsStore.modules.find((module) => module.name === activeModule)!.active === false) {
-            setActiveValue(stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null);
+            setActiveModule(stores.settingsStore.modules.find((module) => module.active === true)?.name ?? null);
         }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [stores.settingsStore.modules]);
 
     const handleChange = (e: React.SyntheticEvent, newValue: ModuleNames) => {
-        setActiveValue(newValue);
+        setActiveModule(newValue);
     };
 
     const theme = createTheme({
@@ -50,7 +51,7 @@ const App = observer(() => {
                     <HeaderCmp />
                     <Box flexGrow={1} minHeight={0} display="flex" flexDirection="column">
                         {stores.tasksStore.taskOverlayState && <TaskOverlayCmp />}
-                        {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp />}
+                        {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp activeModule={activeModule} />}
                         {stores.tasksStore.openTasks.map((openTask) => (
                             <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
                         ))}
@@ -58,11 +59,12 @@ const App = observer(() => {
                         <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
                             <SettingsCmp />
                         </Drawer>
-                        <Tabs value={activeModule} onChange={handleChange} variant="fullWidth">
+                        <Tabs allowScrollButtonsMobile value={activeModule} onChange={handleChange} variant="scrollable" scrollButtons="auto">
                             {stores.settingsStore.modules
                                 .filter((module) => module.active === true)
+                                .sort((a, b) => a.position - b.position)
                                 .map((module) => {
-                                    return <Tab key={`tab-${module}`} value={module} label={module.name.charAt(0).toUpperCase() + module.name.slice(1)} />;
+                                    return <Tab sx={{ minWidth: 'fit-content', flex: 1 }} key={`tab-${module.name}`} value={module.name} label={module.name} />;
                                 })}
                         </Tabs>
                         <Divider />

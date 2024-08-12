@@ -7,8 +7,10 @@ import { useRef, useState, type ReactElement } from 'react';
 import Draggable from 'react-draggable';
 import { defaultProject, type Project } from '../tasks';
 import useStores from '../Store';
+import type { ModuleNames } from '../settings';
 
-const NewProjectOverlayCmp = observer((): ReactElement => {
+const NewProjectOverlayCmp = observer((props: { activeModule: ModuleNames | null }): ReactElement => {
+    const { activeModule } = props;
     const stores = useStores();
 
     const [project, setProject] = useState<Project>(defaultProject);
@@ -29,7 +31,8 @@ const NewProjectOverlayCmp = observer((): ReactElement => {
         stores.tasksStore.setNewProjectOverlayActive(false);
     };
 
-    const handleSave = () => {
+    const handleSave = (e: React.KeyboardEvent | React.MouseEvent) => {
+        e.preventDefault();
         if (project.alias.replaceAll(' ', '').length === 0) {
             setTitleError(true);
             return;
@@ -46,7 +49,19 @@ const NewProjectOverlayCmp = observer((): ReactElement => {
             id: newId,
         });
         stores.tasksStore.setNewProjectOverlayActive(false);
-        stores.settingsStore.setActiveProjects([...stores.settingsStore.activeProjects, newId]);
+        // Adds new project to the active module's selection
+        switch (activeModule) {
+            case 'tasks':
+                stores.settingsStore.setActiveProjects([...stores.settingsStore.activeProjects, newId]);
+                break;
+            case 'todo':
+                stores.settingsStore.setTodoProject(newId);
+                break;
+            case 'kanban':
+                stores.settingsStore.setKanbanProject(newId);
+                break;
+            default: break;
+        }
     };
 
     return (
@@ -70,19 +85,21 @@ const NewProjectOverlayCmp = observer((): ReactElement => {
                 <DialogContent sx={{ pointerEvents: 'auto' }}>
                     <FormControl sx={{ p: '1rem' }}>
                         <TextField
+                            autoFocus
                             required
                             helperText={titleError ? 'Bitte geben Sie einen Titel ein' : undefined}
                             error={titleError}
                             sx={{ mb: '1rem' }}
                             value={project.alias}
                             onChange={(e) => handleUpdateProjectAlias(e.target.value)}
+                            onKeyDown={(event) => { if (event.key === 'Enter') { handleSave(event); } }}
                             label="Titel (Pflichtfeld)"
                         />
                     </FormControl>
                 </DialogContent>
                 <DialogActions sx={{ pointerEvents: 'auto' }}>
                     <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(false)}>Cancel</Button>
-                    <Button onClick={handleSave}>Speichern</Button>
+                    <Button onClick={(e) => handleSave(e)}>Speichern</Button>
                 </DialogActions>
             </Dialog>
         </Draggable>

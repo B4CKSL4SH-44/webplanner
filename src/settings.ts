@@ -13,6 +13,20 @@ export interface Settings {
     activeProjects: number[];
     kanbanProject: number;
     todoProject: number;
+    notebookSettings: NotebookSettings
+}
+
+export interface NotebookSettings {
+    tabs: boolean
+    fontSize: boolean
+    bold: boolean
+    italic: boolean
+    underline: boolean
+    strikeThrough: boolean
+    textColor: boolean
+    highlight: boolean
+    sortedList: boolean
+    unSortedList: boolean
 }
 
 const defaultSettings: Settings = {
@@ -27,6 +41,18 @@ const defaultSettings: Settings = {
     activeProjects: [0],
     kanbanProject: 0,
     todoProject: 0,
+    notebookSettings: {
+        tabs: true,
+        fontSize: true,
+        bold: true,
+        italic: true,
+        underline: true,
+        strikeThrough: true,
+        textColor: true,
+        highlight: true,
+        sortedList: true,
+        unSortedList: true,
+    },
 };
 
 export default defaultSettings;

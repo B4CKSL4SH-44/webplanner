@@ -235,14 +235,14 @@ const TasksBoardCmp = observer((): ReactElement => {
                                                     <IconButton
                                                         size="small"
                                                         disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
-                                                        onClick={() => handleOpenTask(task)}
+                                                        onClick={(e) => { e.stopPropagation(); handleOpenTask(task); }}
                                                     >
                                                         <OpenInNew />
                                                     </IconButton>
-                                                    <IconButton size="small" onClick={() => stores.tasksStore.setTaskOverlayState(task)}>
+                                                    <IconButton size="small" onClick={(e) => { e.stopPropagation(); stores.tasksStore.setTaskOverlayState(task); }}>
                                                         <Edit />
                                                     </IconButton>
-                                                    <IconButton size="small" disabled={stores.tasksStore.taskTimer !== null} onClick={() => stores.tasksStore.setTaskTimer(task)}>
+                                                    <IconButton size="small" disabled={stores.tasksStore.taskTimer !== null} onClick={(e) => { e.stopPropagation(); stores.tasksStore.setTaskTimer(task); }}>
                                                         <Timer />
                                                     </IconButton>
                                                 </TableCell>

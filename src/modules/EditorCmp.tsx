@@ -24,6 +24,7 @@ import Underline from '@tiptap/extension-underline';
 import TextStyle from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import { DeleteForever, Send } from '@mui/icons-material';
+import { observer } from 'mobx-react';
 import useStores from '../Store';
 import type { Notebook } from './NoteBookStore';
 import CustomDialog from '../components/CustomDialog';
@@ -32,11 +33,13 @@ interface EditorProps {
     notebook: Notebook;
 }
 
-const EditorCmp = (props: EditorProps): ReactElement => {
+const EditorCmp = observer((props: EditorProps): ReactElement => {
     const { notebook } = props;
 
     const stores = useStores();
     const theme = useTheme();
+
+    const { notebookSettings } = stores.settingsStore;
 
     const [deleteNoteBookActive, setDeleteNotebookActive] = useState<boolean>(false);
 
@@ -51,18 +54,22 @@ const EditorCmp = (props: EditorProps): ReactElement => {
                 <RichTextField
                     controls={(
                         <MenuControlsContainer>
-                            <MenuSelectHeading />
-                            <MenuDivider />
-                            <MenuButtonBold />
-                            <MenuButtonItalic />
-                            <MenuButtonUnderline />
-                            <MenuButtonStrikethrough />
-                            <MenuDivider />
-                            <MenuButtonTextColor defaultTextColor={theme.palette.text.primary} />
-                            <MenuButtonHighlightColor />
-                            <MenuDivider />
-                            <MenuButtonOrderedList />
-                            <MenuButtonBulletedList />
+                            {notebookSettings.fontSize && (
+                                <>
+                                    <MenuSelectHeading />
+                                    <MenuDivider />
+                                </>
+                            )}
+                            {notebookSettings.bold && <MenuButtonBold />}
+                            {notebookSettings.italic && <MenuButtonItalic />}
+                            {notebookSettings.underline && <MenuButtonUnderline />}
+                            {notebookSettings.strikeThrough && <MenuButtonStrikethrough />}
+                            {(notebookSettings.bold || notebookSettings.italic || notebookSettings.underline || notebookSettings.strikeThrough) && <MenuDivider />}
+                            {notebookSettings.textColor && <MenuButtonTextColor defaultTextColor={theme.palette.text.primary} />}
+                            {notebookSettings.highlight && <MenuButtonHighlightColor />}
+                            {(notebookSettings.textColor || notebookSettings.highlight) && <MenuDivider />}
+                            {notebookSettings.sortedList && <MenuButtonOrderedList />}
+                            {notebookSettings.unSortedList && <MenuButtonBulletedList />}
                             <Box flexGrow={1} display="flex" justifyContent="flex-end">
                                 <Button
                                     onClick={() => stores.tasksStore.setTaskOverlayState(true)}
@@ -72,11 +79,13 @@ const EditorCmp = (props: EditorProps): ReactElement => {
                                 >
                                     Taskify!
                                 </Button>
-                                <Tooltip title="Notebook löschen">
-                                    <Button sx={{ ml: '1rem' }} variant="contained" color="error" onClick={() => setDeleteNotebookActive(true)}>
-                                        <DeleteForever />
-                                    </Button>
-                                </Tooltip>
+                                {notebookSettings.tabs && (
+                                    <Tooltip title="Notebook löschen">
+                                        <Button sx={{ ml: '1rem' }} variant="contained" color="error" onClick={() => setDeleteNotebookActive(true)}>
+                                            <DeleteForever />
+                                        </Button>
+                                    </Tooltip>
+                                )}
                             </Box>
                         </MenuControlsContainer>
                     )}
@@ -96,5 +105,5 @@ const EditorCmp = (props: EditorProps): ReactElement => {
             )}
         </>
     );
-};
+});
 export default EditorCmp;

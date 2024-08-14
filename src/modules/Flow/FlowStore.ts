@@ -39,7 +39,7 @@ export default class FlowStore {
             const project = this.stores.tasksStore.projects[id];
             project.tasks.forEach((task, index) => {
                 taskEdges.push({
-                    id: index.toString(), source: task.id.toString(), target: task.relations.blocks.toString(), type: 'smoothstep',
+                    id: index.toString(), source: task.id.toString(), target: task.relations.blocks.toString(), type: 'custom', data: { label: 'blockiert' },
                 } as Edge);
             });
         });

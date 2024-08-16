@@ -1,4 +1,4 @@
-import { DragHandle } from '@mui/icons-material';
+import { ColorLens, DragHandle } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -17,6 +17,7 @@ import {
     ListItemButton,
     ListItemText,
     MenuItem,
+    Popover,
     RadioGroup,
     Select,
     TextField,
@@ -25,6 +26,7 @@ import {
 import { observer } from 'mobx-react';
 import { useRef, useState, type ReactElement } from 'react';
 import Draggable from 'react-draggable';
+import { SketchPicker } from 'react-color';
 import { defaultTask, type Relations, type Task } from '../tasks';
 import useStores from '../Store';
 
@@ -36,8 +38,10 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
     const [task, setTask] = useState<Task>(isUpdate ? (stores.tasksStore.taskOverlayState as Task) : defaultTask);
     const [project, setProject] = useState<number>(0);
     const [titleError, setTitleError] = useState<boolean>(false);
+    const [colorPickerOpen, setColorPickerOpen] = useState<boolean>(false);
 
     const nodeRef = useRef(null);
+    const colorPickerRef = useRef(null);
 
     const handleUpdateTask = (key: keyof Task, value: string) => {
         if (titleError) {
@@ -112,7 +116,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                 hideBackdrop
                 PaperProps={{ sx: { maxWidth: '300px' } }}
             >
-                <DialogTitle sx={{ pointerEvents: 'auto' }} display="flex" justifyContent="space-between" alignItems="center">
+                <DialogTitle sx={{ pointerEvents: 'auto', backgroundColor: task.color ?? undefined }} display="flex" justifyContent="space-between" alignItems="center">
                     New Task
                     <IconButton sx={{ cursor: 'move' }} id="draggable-dialog-button">
                         <DragHandle />
@@ -247,6 +251,12 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                             </Select>
                         </FormControl>
                     </FormControl>
+                    <IconButton ref={colorPickerRef} onClick={() => setColorPickerOpen(true)}>
+                        <ColorLens />
+                    </IconButton>
+                    <Popover open={colorPickerOpen} onClose={() => setColorPickerOpen(false)} anchorEl={colorPickerRef.current} transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+                        <SketchPicker color={task.color} onChange={(color) => setTask({ ...task, color: color.hex })} />
+                    </Popover>
                 </DialogContent>
                 <DialogActions sx={{ pointerEvents: 'auto' }}>
                     <Button onClick={() => stores.tasksStore.setTaskOverlayState(false)}>Cancel</Button>

@@ -21,6 +21,7 @@ export interface Task {
     project: number;
     board?: number;
     state: 'open' | 'closed';
+    color?: string
 }
 
 export interface Relations {

@@ -40,6 +40,8 @@ const TodoCmp = observer((): ReactElement => {
     const activeTodos = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state !== 'closed');
     const closedTodos = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state === 'closed');
 
+    const { todoSettings } = stores.settingsStore;
+
     const handleToggle = (id: number) => {
         const storeTaskToUpdate = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.find((task) => task.id === id);
         if (storeTaskToUpdate !== undefined) {
@@ -66,6 +68,7 @@ const TodoCmp = observer((): ReactElement => {
         setNewTodoTitle('');
         setAddModeActive(false);
     };
+
     return (
         <Box
             sx={{
@@ -170,7 +173,14 @@ const TodoCmp = observer((): ReactElement => {
                             {closedTodos.map((task) => {
                                 return (
                                     <>
-                                        <ListItem sx={{ backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[900], color: theme.palette.text.disabled }} key={`${task.id}-${task.title}`}>
+                                        <ListItem
+                                            sx={{
+                                                backgroundColor: theme.palette.mode === 'light'
+                                                    ? theme.palette.grey[200] : theme.palette.grey[900],
+                                                color: theme.palette.text.disabled,
+                                            }}
+                                            key={`${task.id}-${task.title}`}
+                                        >
                                             <ListItemButton onClick={() => handleToggle(task.id)} dense>
                                                 <ListItemIcon>
                                                     <Checkbox edge="start" checked={task.state === 'closed'} tabIndex={-1} disableRipple />
@@ -189,7 +199,7 @@ const TodoCmp = observer((): ReactElement => {
                     {activeTodos.map((task) => {
                         return (
                             <>
-                                <ListItem key={`${task.id}-${task.title}`}>
+                                <ListItem sx={{ backgroundColor: todoSettings.color ? (task.color ?? undefined) : undefined }} key={`${task.id}-${task.title}`}>
                                     <ListItemButton onClick={() => handleToggle(task.id)} dense>
                                         <ListItemIcon>
                                             <Checkbox edge="start" checked={task.state === 'closed'} tabIndex={-1} disableRipple />

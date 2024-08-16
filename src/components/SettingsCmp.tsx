@@ -17,6 +17,7 @@ import SettingStore from '../stores/SettingsStore';
 import ModuleSection from './SettingsSections/ModuleSection';
 import ModuleOrderSection from './SettingsSections/ModuleOrderSection';
 import NotebookSection from './SettingsSections/NotebookSection';
+import TodoSection from './SettingsSections/TodoSection';
 
 const SettingsCmp = observer((): ReactElement => {
     const stores = useStores();
@@ -46,6 +47,7 @@ const SettingsCmp = observer((): ReactElement => {
             <ModuleSection />
             <ModuleOrderSection />
             <NotebookSection />
+            <TodoSection />
             <Button variant="contained" color="error" startIcon={<DeleteForever />} onClick={() => SettingStore.reset()}>
                 Zurücksetzen
             </Button>

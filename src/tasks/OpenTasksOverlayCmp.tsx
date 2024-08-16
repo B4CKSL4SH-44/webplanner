@@ -1,6 +1,7 @@
-import { DeleteForever, DragHandle } from '@mui/icons-material';
+import { DeleteForever } from '@mui/icons-material';
 import {
-    Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton,
+    Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Divider,
+    Typography,
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { useRef, type ReactElement } from 'react';
@@ -25,17 +26,16 @@ const OpenTasksOverlayCmp = observer((props: { task: Task }): ReactElement => {
                 hideBackdrop
                 PaperProps={{ sx: { width: '300px' } }}
             >
-                <DialogTitle sx={{ pointerEvents: 'auto' }} display="flex" justifyContent="space-between" alignItems="center">
+                <DialogTitle id="draggable-dialog-button" sx={{ cursor: 'move', pointerEvents: 'auto', backgroundColor: task.color ?? undefined }} display="flex" justifyContent="space-between" alignItems="center">
                     <Box maxWidth="100%" overflow="hidden" sx={{ overflowWrap: 'anywhere' }} textOverflow="ellipsis">
                         {task.title}
                     </Box>
-                    <IconButton sx={{ cursor: 'move' }} id="draggable-dialog-button">
-                        <DragHandle />
-                    </IconButton>
                 </DialogTitle>
                 <Divider />
                 <DialogContent sx={{ pointerEvents: 'auto', display: 'flex', flexDirection: 'column' }}>
-                    {task.description}
+                    {task.description.trim() === ''
+                        ? <Typography fontStyle="italic">keine Beschreibung</Typography>
+                        : <Typography>{task.description}</Typography>}
                     <Chip
                         sx={{ maxWidth: 'fit-content' }}
                         color={task.priority === 'high' ? 'error' : task.priority === 'medium' ? 'primary' : 'success'}

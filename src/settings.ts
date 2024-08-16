@@ -14,6 +14,7 @@ export interface Settings {
     kanbanProject: number;
     todoProject: number;
     notebookSettings: NotebookSettings
+    todoSettings: TodoSettings
 }
 
 export interface NotebookSettings {
@@ -27,6 +28,10 @@ export interface NotebookSettings {
     highlight: boolean
     sortedList: boolean
     unSortedList: boolean
+}
+
+export interface TodoSettings {
+    color: boolean
 }
 
 const defaultSettings: Settings = {
@@ -52,6 +57,9 @@ const defaultSettings: Settings = {
         highlight: true,
         sortedList: true,
         unSortedList: true,
+    },
+    todoSettings: {
+        color: true,
     },
 };
 

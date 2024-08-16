@@ -1,6 +1,8 @@
 import type { PaletteMode } from '@mui/material';
 import { action, makeObservable, observable } from 'mobx';
-import type { Module, Settings } from '../settings';
+import type {
+    Module, NotebookSettings, Settings, TodoSettings,
+} from '../settings';
 import defaultSettings from '../settings';
 
 export default class SettingStore {
@@ -57,6 +59,24 @@ export default class SettingStore {
         SettingStore.writeLsSettings(lsSettings);
     };
 
+    public notebookSettings: NotebookSettings;
+
+    public setNotebookSettings = (newValue: NotebookSettings) => {
+        const lsSettings = SettingStore.getLsSettings();
+        this.notebookSettings = newValue;
+        lsSettings.notebookSettings = this.notebookSettings;
+        SettingStore.writeLsSettings(lsSettings);
+    };
+
+    public todoSettings: TodoSettings;
+
+    public setTodoSettings = (newValue: TodoSettings) => {
+        const lsSettings = SettingStore.getLsSettings();
+        this.todoSettings = newValue;
+        lsSettings.todoSettings = this.todoSettings;
+        SettingStore.writeLsSettings(lsSettings);
+    };
+
     public static reset = () => {
         localStorage.setItem('webPlannerSettings', JSON.stringify(defaultSettings));
         window.location.reload();
@@ -75,6 +95,8 @@ export default class SettingStore {
         this.activeProjects = defaultSettings.activeProjects;
         this.kanbanProject = defaultSettings.kanbanProject;
         this.todoProject = defaultSettings.todoProject;
+        this.notebookSettings = defaultSettings.notebookSettings;
+        this.todoSettings = defaultSettings.todoSettings;
         const lsSettings = localStorage.getItem('webPlannerSettings');
         if (lsSettings !== null) {
             const parsedSettings: Settings = JSON.parse(lsSettings);
@@ -83,6 +105,8 @@ export default class SettingStore {
             this.activeProjects = parsedSettings.activeProjects;
             this.kanbanProject = parsedSettings.kanbanProject;
             this.todoProject = parsedSettings.todoProject ?? 0;
+            this.notebookSettings = parsedSettings.notebookSettings ?? defaultSettings.notebookSettings;
+            this.todoSettings = parsedSettings.todoSettings ?? defaultSettings.todoSettings;
         } else {
             localStorage.setItem('webPlannerSettings', JSON.stringify(defaultSettings));
         }
@@ -99,6 +123,10 @@ export default class SettingStore {
             setKanbanProject: action,
             todoProject: observable,
             setTodoProject: action,
+            notebookSettings: observable,
+            setNotebookSettings: action,
+            todoSettings: observable,
+            setTodoSettings: action,
         });
     }
 

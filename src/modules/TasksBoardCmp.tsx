@@ -229,20 +229,32 @@ const TasksBoardCmp = observer((): ReactElement => {
                                     )}
                                     {activeTasks.map((task) => {
                                         return (
-                                            <TableRow hover role="button" key={`tableRow-${task.id}`} onClick={() => { setTaskDialogOpen(task); }}>
+                                            <TableRow
+                                                sx={{
+                                                    backgroundColor: task.color ?? undefined,
+                                                    '&.MuiTableRow-hover:hover': {
+                                                        backgroundColor: task.color ?? undefined,
+                                                        opacity: task.color !== undefined ? 0.6 : undefined,
+                                                    },
+                                                }}
+                                                hover
+                                                role="button"
+                                                key={`tableRow-${task.id}`}
+                                                onClick={() => { setTaskDialogOpen(task); }}
+                                            >
                                                 <TableCell sx={{ width: '150px' }}>
                                                     {task.id}
                                                     <IconButton
                                                         size="small"
                                                         disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
-                                                        onClick={() => handleOpenTask(task)}
+                                                        onClick={(e) => { e.stopPropagation(); handleOpenTask(task); }}
                                                     >
                                                         <OpenInNew />
                                                     </IconButton>
-                                                    <IconButton size="small" onClick={() => stores.tasksStore.setTaskOverlayState(task)}>
+                                                    <IconButton size="small" onClick={(e) => { e.stopPropagation(); stores.tasksStore.setTaskOverlayState(task); }}>
                                                         <Edit />
                                                     </IconButton>
-                                                    <IconButton size="small" disabled={stores.tasksStore.taskTimer !== null} onClick={() => stores.tasksStore.setTaskTimer(task)}>
+                                                    <IconButton size="small" disabled={stores.tasksStore.taskTimer !== null} onClick={(e) => { e.stopPropagation(); stores.tasksStore.setTaskTimer(task); }}>
                                                         <Timer />
                                                     </IconButton>
                                                 </TableCell>

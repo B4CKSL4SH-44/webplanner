@@ -1,22 +1,27 @@
-import './App.css';
-import {
-    Box, Drawer, Tab, Tabs, CssBaseline, Divider, createTheme,
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { ThemeProvider } from '@emotion/react';
+import {
+    Box,
+    CssBaseline, Divider,
+    Drawer, Tab, Tabs,
+    createTheme,
+} from '@mui/material';
+import { observer } from 'mobx-react';
+import { useEffect, useState } from 'react';
+import './App.css';
 import useStores from './Store';
 import HeaderCmp from './components/HeaderCmp';
-import TaskOverlayCmp from './tasks/NewTaskOverlayCmp';
-import TasksBoardCmp from './modules/TasksBoardCmp';
-import OpenTasksOverlayCmp from './tasks/OpenTasksOverlayCmp';
-import NewProjectOverlayCmp from './tasks/NewProjectOverlay';
-import TaskTimerCmp from './components/TimerCmp';
-import KanbanCmp from './modules/Kanban/KanbanCmp';
-import TodoCmp from './modules/TodoCmp';
 import SettingsCmp from './components/SettingsCmp';
-import { type ModuleNames } from './settings';
+import TaskTimerCmp from './components/TimerCmp';
+import FlowCmp from './modules/Flow/FlowCmp';
+import FlowStore from './modules/Flow/FlowStore';
+import KanbanCmp from './modules/Kanban/KanbanCmp';
 import NoteBookCmp from './modules/NoteBookCmp';
+import TasksBoardCmp from './modules/TasksBoardCmp';
+import TodoCmp from './modules/TodoCmp';
+import { type ModuleNames } from './settings';
+import NewProjectOverlayCmp from './tasks/NewProjectOverlay';
+import TaskOverlayCmp from './tasks/NewTaskOverlayCmp';
+import OpenTasksOverlayCmp from './tasks/OpenTasksOverlayCmp';
 
 const App = observer(() => {
     const stores = useStores();
@@ -25,6 +30,12 @@ const App = observer(() => {
     const [activeModule, setActiveModule] = useState<ModuleNames | null>(
         stores.settingsStore.modules.slice().sort((a, b) => a.position - b.position).find((module) => module.active === true)?.name ?? null,
     );
+
+    useEffect(() => {
+        stores.flowStore = new FlowStore({ stores });
+    }, []);
+
+    console.log(process.env.REACT_APP_TEST_VAR);
 
     useEffect(() => {
         if (activeModule !== null && stores.settingsStore.modules.find((module) => module.name === activeModule)!.active === false) {
@@ -71,6 +82,7 @@ const App = observer(() => {
                         {activeModule === 'notebook' && <NoteBookCmp />}
                         {activeModule === 'tasks' && <TasksBoardCmp />}
                         {activeModule === 'kanban' && <KanbanCmp />}
+                        {activeModule === 'flow' && <FlowCmp />}
                         {activeModule === 'todo' && <TodoCmp />}
                     </Box>
                 </Box>

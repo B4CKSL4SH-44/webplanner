@@ -48,6 +48,7 @@ export default class FlowStore {
 
     public constructor(props: { stores: Store }) {
         this.stores = props.stores;
+
         this.nodes = [];
         this.edges = [];
 

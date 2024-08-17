@@ -1,3 +1,4 @@
+import { Card } from '@mui/material';
 import { useReactFlow } from '@xyflow/react';
 import { useCallback } from 'react';
 
@@ -37,9 +38,9 @@ const ContextMenu = (props: {
     }, [id, setNodes, setEdges]);
 
     return (
-        <div
+        <Card
             style={{
-                top: top as number, left: left as number, right: right as number, bottom: bottom as number,
+                top: top as number, left: left as number, right: right as number, bottom: bottom as number, zIndex: 99,
             }}
             aria-hidden
             className="context-menu"
@@ -53,7 +54,7 @@ const ContextMenu = (props: {
             </p>
             <button type="button" onClick={duplicateNode}>duplicate</button>
             <button type="button" onClick={deleteNode}>delete</button>
-        </div>
+        </Card>
     );
 };
 

@@ -36,6 +36,9 @@ const FlowController = observer(() => {
     const flowStore = useFlowStore();
     const { settingsStore, tasksStore } = useStores();
 
+    const [edgeType, setEdgeType] = useState('blockiert');
+    const [activeProject, setActiveProject] = useState<number>(0);
+
     const lsNodes = localStorage.getItem('nodes');
 
     const flowRef = useRef(null);
@@ -45,7 +48,7 @@ const FlowController = observer(() => {
     const createNodes = () => {
         const taskNodes: Node[] = [];
         settingsStore.activeProjects.forEach((id) => {
-            const project = tasksStore.projects[id];
+            const project = tasksStore.projects[activeProject];
             project.tasks.forEach((task, index) => {
                 taskNodes.push({
                     id: task.id.toString(), position: { x: 250 * index + 50, y: 50 }, data: { task }, type: 'custom',
@@ -110,8 +113,6 @@ const FlowController = observer(() => {
         onEdgesChange(changes);
     };
 
-    const [edgeType, setEdgeType] = useState('blockiert');
-
     return (
         <>
             <Stack direction="row" m={2} spacing={1} sx={{ backgroundColor: theme.palette.background.default, width: 'fit-content' }}>
@@ -135,28 +136,18 @@ const FlowController = observer(() => {
                     <Select
                         sx={{ p: 0 }}
                         labelId="select-project-label"
-                        value={settingsStore.activeProjects}
+                        value={activeProject}
                         label="Projekte auswählen"
-                        multiple
                         autoWidth
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                                {selected.map((select) => (
-                                    tasksStore.projects[select].alias
-                                ))}
-                            </Box>
-                        )}
-                        onChange={(e) => settingsStore.setActiveProjects(e.target.value as number[])}
+                        onChange={(e) => setActiveProject(Number(e.target.value))}
                     >
                         {Object.keys(tasksStore.projects).map((projectStringId) => {
                             const project = {
                                 ...tasksStore.projects[Number(projectStringId)],
                             };
                             return (
-                                <MenuItem key={projectStringId} defaultChecked={project.id === 0} value={project.id}>
-                                    <Checkbox checked={settingsStore.activeProjects.includes(project.id)} />
-                                    <ListItemText>{project.alias}</ListItemText>
-                                    <Chip label={project.tasks.length} />
+                                <MenuItem key={projectStringId} value={project.id}>
+                                    {project.alias}
                                 </MenuItem>
                             );
                         })}

@@ -13,11 +13,13 @@ export default class TasksStore {
         TasksStore.writeLsProjects(this.projects);
     };
 
-    public addProject = (newProject: Project) => {
+    public addProject = async (newProject: Project) => {
         const lsProjects = TasksStore.getLsProjects();
         lsProjects[newProject.id] = newProject;
         this.projects = lsProjects;
         TasksStore.writeLsProjects(lsProjects);
+        const response = await fetch('http://localhost:8000/addproject', { body: JSON.stringify({ newProject }), method: 'POST', mode: 'no-cors' });
+        console.log(response);
     };
 
     public addBoard = (project: Project, board: string) => {

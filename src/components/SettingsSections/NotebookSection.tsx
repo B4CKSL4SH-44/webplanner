@@ -25,7 +25,7 @@ const NotebookSection = observer((): ReactElement => {
                 <List>
                     {(Object.keys(notebookSettings) as (keyof NotebookSettings)[]).map((key) => {
                         return (
-                            <ListItem dense>
+                            <ListItem key={key} dense>
                                 <ListItemText>
                                     <FormControlLabel sx={{ flexGrow: 1 }} labelPlacement="start" control={<Switch onChange={() => handleSettingChange(key)} checked={notebookSettings[key]} />} label={key.toUpperCase()} />
                                 </ListItemText>

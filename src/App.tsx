@@ -35,7 +35,7 @@ const App = observer(() => {
         stores.flowStore = new FlowStore({ stores });
     }, []);
 
-    console.log(process.env.REACT_APP_TEST_VAR);
+    // console.log(process.env.REACT_APP_TEST_VAR);
 
     useEffect(() => {
         if (activeModule !== null && stores.settingsStore.modules.find((module) => module.name === activeModule)!.active === false) {

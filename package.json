@@ -42,8 +42,8 @@
     "build-client": "PORT=4000 react-scripts build",
     "test-client": "PORT=4000 react-scripts test",
     "eject-client": "PORT=4000 react-scripts eject",
-    "start-server": "bun run index.ts",
-    "start-dev": "bun --watch run index.ts",
+    "start-server": "bun run server/index.ts",
+    "start-dev": "bun --watch run server/index.ts",
     "lint": "eslint -c .eslintrc.json --ext .ts,.tsx ./src",
     "lint-fix": "eslint -c .eslintrc.json --ext .ts,.tsx --fix ./src",
     "lint-quiet": "eslint -c .eslintrc.json --ext .ts,.tsx --quiet ./src"

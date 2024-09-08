@@ -18,7 +18,11 @@ export default class TasksStore {
         lsProjects[newProject.id] = newProject;
         this.projects = lsProjects;
         TasksStore.writeLsProjects(lsProjects);
-        const response = await fetch('http://localhost:8000/addproject', { body: JSON.stringify({ newProject }), method: 'POST', mode: 'no-cors' });
+        const response = await fetch('http://localhost:8000/addproject', 
+            { 
+                body: JSON.stringify({ newProject }),
+                 method: 'POST', 
+                 mode: 'no-cors' });
         console.log(response);
     };
 

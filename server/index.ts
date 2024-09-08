@@ -37,14 +37,11 @@ try {
 
 const server = Bun.serve({
     port: Bun.env.PORT || 8000,
-    fetch(req) {
+   async fetch(req) {
         const url = new URL(req.url);
         if (url.pathname === '/addproject') {
-            // addProject(req).then((res) => { return res; });
-            req.json().then((request) => {
-                console.log(request);
-                return new Response('Test');
-            });
+            const res = await addProject(req, db);
+            return res
         } else {
             return new Response('Hello!');
         }

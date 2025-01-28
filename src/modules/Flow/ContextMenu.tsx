@@ -13,9 +13,11 @@ const ContextMenu = (props: {
     const {
         id, top, left, right, bottom, onClick,
     } = props;
+
     const {
         getNode, setNodes, addNodes, setEdges,
     } = useReactFlow();
+
     const duplicateNode = useCallback(() => {
         const node = getNode(id);
         const position = {
@@ -39,12 +41,19 @@ const ContextMenu = (props: {
 
     return (
         <Card
-            style={{
-                top: top as number, left: left as number, right: right as number, bottom: bottom as number, zIndex: 99,
+            id="flow-context-menu"
+            sx={{
+                top: top as number,
+                left: left as number,
+                right: right as number,
+                bottom: bottom as number,
+                zIndex: 99,
+                position: 'absolute',
             }}
             aria-hidden
             className="context-menu"
             onClick={onClick}
+            variant="outlined"
         >
             <p style={{ margin: '0.5em' }}>
                 <small>
@@ -52,7 +61,7 @@ const ContextMenu = (props: {
                     {id}
                 </small>
             </p>
-            <button type="button" onClick={duplicateNode}>duplicate</button>
+            <button type="button" onClick={duplicateNode} disabled>duplicate</button>
             <button type="button" onClick={deleteNode}>delete</button>
         </Card>
     );

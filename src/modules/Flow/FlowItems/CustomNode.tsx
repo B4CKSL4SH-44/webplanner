@@ -6,8 +6,8 @@ import {
 import {
     Handle, Position, type Node, type NodeProps,
 } from '@xyflow/react';
-import useStores from '../../Store';
-import type { Task } from '../../tasks';
+import useStores from '../../../Store';
+import type { Task } from '../../../tasks';
 
 export type TCustomNode = Node<
 {

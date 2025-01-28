@@ -1,19 +1,5 @@
 import {
-    Box,
-    Checkbox,
-    Chip,
-    FormControl,
-    InputLabel,
-    ListItemText,
-    MenuItem,
-    Select,
-    Stack,
-    useTheme,
-} from '@mui/material';
-import {
     addEdge,
-    Background, Controls, MiniMap,
-    ReactFlow,
     reconnectEdge,
     useEdgesState,
     useNodesState,
@@ -26,13 +12,16 @@ import {
 import { observer } from 'mobx-react';
 import { useCallback, useRef, useState } from 'react';
 import useStores from '../../Store';
-import ContextMenu from './ContextMenu';
-import CustomEdge from './CustomEdge';
-import CustomNode from './CustomNode';
+import FlowCmp from './FlowCmp';
 import { useFlowStore } from './FlowStore';
 
+/**
+ * FlowController component that manages the flow of nodes and edges.
+ * It observes changes and updates the state for nodes and edges.
+ *
+ * @returns {JSX.Element} The Flow component.
+ */
 const FlowController = observer(() => {
-    const theme = useTheme();
     const flowStore = useFlowStore();
     const { settingsStore, tasksStore } = useStores();
 
@@ -87,20 +76,22 @@ const FlowController = observer(() => {
 
     const onEdgeContextMenu = useCallback(
         (event: React.MouseEvent, edge: Edge) => {
-            // Prevent native context menu from showing
+        // Prevent native context menu from showing
             event.preventDefault();
 
             // Calculate position of the context menu. We want to make sure it
             // doesn't get positioned off-screen.
             const pane = (flowRef.current! as HTMLDivElement).getBoundingClientRect();
+            const yDiff = window.innerHeight - pane.height;
+            const xDiff = window.innerWidth - pane.width;
             const newMenu = ({
                 id: edge.id,
-                top: event.clientY < pane.height - 200 && event.clientY,
-                left: event.clientX < pane.width - 200 && event.clientX,
-                right: event.clientX >= pane.width - 200 && pane.width - event.clientX,
-                bottom: event.clientY >= pane.height - 200 && pane.height - event.clientY,
+                top: event.clientY - yDiff + 10,
+                left: event.clientX - xDiff + 10,
+                right: false,
+                bottom: false,
             });
-            setMenu(newMenu);
+            setMenu(newMenu as { id: string, top: number | false, left: number | false, right: number | false, bottom: number | false, });
         },
         [setMenu],
     );
@@ -113,71 +104,27 @@ const FlowController = observer(() => {
         onEdgesChange(changes);
     };
 
-    return (
-        <>
-            <Stack direction="row" m={2} spacing={1} sx={{ backgroundColor: theme.palette.background.default, width: 'fit-content' }}>
-                <FormControl sx={{ minWidth: 150 }}>
-                    <InputLabel id="label">Beziehung</InputLabel>
-                    <Select
-                        label="Beziehung"
-                        labelId="label"
-                        value={edgeType}
-                        onChange={(e) => setEdgeType(e.target.value)}
-                        autoWidth
-                    >
-                        <MenuItem value="blockiert">blockiert</MenuItem>
-                        <MenuItem value="Beziehung mit">Beziehung mit</MenuItem>
-                        <MenuItem value="Vorgänger von">Vorgänger von</MenuItem>
-                        <MenuItem value="Nachfolger von">Nachfolger von</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ minWidth: 150 }}>
-                    <InputLabel id="select-project-label">Projekte auswählen</InputLabel>
-                    <Select
-                        sx={{ p: 0 }}
-                        labelId="select-project-label"
-                        value={activeProject}
-                        label="Projekte auswählen"
-                        autoWidth
-                        onChange={(e) => setActiveProject(Number(e.target.value))}
-                    >
-                        {Object.keys(tasksStore.projects).map((projectStringId) => {
-                            const project = {
-                                ...tasksStore.projects[Number(projectStringId)],
-                            };
-                            return (
-                                <MenuItem key={projectStringId} value={project.id}>
-                                    {project.alias}
-                                </MenuItem>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-            </Stack>
-            <ReactFlow
-                ref={flowRef}
-                nodes={nodes}
-                edges={edges}
-                nodeTypes={{ custom: CustomNode }}
-                edgeTypes={{ custom: CustomEdge }}
-                onNodesChange={onNodesChangeHandler}
-                onEdgesChange={onEdgesChangeHandler}
-                onConnect={onConnect}
-                onReconnect={onReconnect}
-                onReconnectStart={onReconnectStart}
-                onReconnectEnd={onReconnectEnd}
-                colorMode={theme.palette.mode}
-                onEdgeContextMenu={onEdgeContextMenu}
-                onPaneClick={onPaneClick}
-                style={{ height: '100%', width: '100%' }}
-            >
+    const flowCmpProps = {
+        activeProject,
+        setActiveProject,
+        edgeType,
+        setEdgeType,
+        flowRef,
+        nodes,
+        edges,
+        onNodesChangeHandler,
+        onEdgesChangeHandler,
+        onConnect,
+        onReconnect,
+        onReconnectStart,
+        onReconnectEnd,
+        onEdgeContextMenu,
+        onPaneClick,
+        menu,
+    };
 
-                <MiniMap />
-                <Controls />
-                <Background />
-                {menu && <ContextMenu onClick={onPaneClick} bottom={menu.bottom} left={menu.left} right={menu.right} top={menu.top} id={menu.id} />}
-            </ReactFlow>
-        </>
+    return (
+        <FlowCmp {...flowCmpProps} />
     );
 });
 

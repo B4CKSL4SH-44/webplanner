@@ -12,7 +12,7 @@ import useStores from './Store';
 import HeaderCmp from './components/HeaderCmp';
 import SettingsCmp from './components/SettingsCmp';
 import TaskTimerCmp from './components/TimerCmp';
-import FlowCmp from './modules/Flow/FlowCmp';
+import FlowController from './modules/Flow/FlowController';
 import FlowStore from './modules/Flow/FlowStore';
 import KanbanCmp from './modules/Kanban/KanbanCmp';
 import NoteBookCmp from './modules/NoteBookCmp';
@@ -82,7 +82,7 @@ const App = observer(() => {
                         {activeModule === 'notebook' && <NoteBookCmp />}
                         {activeModule === 'tasks' && <TasksBoardCmp />}
                         {activeModule === 'kanban' && <KanbanCmp />}
-                        {activeModule === 'flow' && <FlowCmp />}
+                        {activeModule === 'flow' && <FlowController />}
                         {activeModule === 'todo' && <TodoCmp />}
                     </Box>
                 </Box>

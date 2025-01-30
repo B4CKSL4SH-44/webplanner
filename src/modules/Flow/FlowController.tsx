@@ -28,8 +28,6 @@ const FlowController = observer(() => {
     const [edgeType, setEdgeType] = useState('blockiert');
     const [activeProject, setActiveProject] = useState<number>(0);
 
-    const lsNodes = localStorage.getItem('nodes');
-
     const flowRef = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(flowStore.nodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(flowStore.edges);

@@ -8,12 +8,16 @@ import useStores, { type Store } from '../../Store';
 export default class FlowStore {
     private stores: Store;
 
+    // const lsNodes = localStorage.getItem('nodes');
+
+    // Flow Nodes
     public nodes: Node[];
 
     public setNodes = (newNodes: Node[]) => {
         this.nodes = newNodes;
     };
 
+    // Flow Edges
     public edges: Edge[];
 
     public setEdges = (newEdges: Edge[]) => {

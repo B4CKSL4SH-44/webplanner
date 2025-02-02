@@ -4,6 +4,8 @@ import addProject from './addProject';
 
 const db = new Database('./webconductor.sqlite', { create: true });
 
+export interface CustomResponse extends Response {}
+
 try {
     db.query('SELECT * FROM Projects').run();
 } catch (error: { message: string }) {
@@ -37,17 +39,19 @@ try {
 
 const server = Bun.serve({
     port: Bun.env.PORT || 8000,
-    fetch(req) {
+    async fetch(req) {
         const url = new URL(req.url);
         if (url.pathname === '/addproject') {
-            // addProject(req).then((res) => { return res; });
-            req.json().then((request) => {
-                console.log(request);
-                return new Response('Test');
-            });
-        } else {
-            return new Response('Hello!');
+            //  console.log('REQUEST: ', req);
+            const res = await addProject(req, db);
+            // console.log('RES: ', await res.json());
+            return res;
+            // req.json().then((request) => {
+            //     console.log(request);
+            //     return new Response('Test');
+            // });
         }
+        return new Response('Hello!');
     },
 });
 

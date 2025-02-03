@@ -25,8 +25,7 @@ const FlowController = observer(() => {
     const flowStore = useFlowStore();
     const { settingsStore, tasksStore } = useStores();
 
-    const [edgeType, setEdgeType] = useState('blockiert');
-    const [activeProject, setActiveProject] = useState<number>(0);
+    const { activeProject } = flowStore;
 
     const flowRef = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(flowStore.nodes);
@@ -103,10 +102,6 @@ const FlowController = observer(() => {
     };
 
     const flowCmpProps = {
-        activeProject,
-        setActiveProject,
-        edgeType,
-        setEdgeType,
         flowRef,
         nodes,
         edges,

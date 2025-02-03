@@ -1,4 +1,5 @@
 import {
+    Box,
     Stack,
     useTheme,
 } from '@mui/material';
@@ -12,17 +13,15 @@ import {
     type NodeChange,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { observer } from 'mobx-react';
 import useStores from '../../Store';
 import ContextMenu from './ContextMenu';
+import EdgeSettings from './EdgeSettings';
 import CustomEdge from './FlowItems/CustomEdge';
 import CustomNode from './FlowItems/CustomNode';
 import TaskSearch from './TaskSearch';
 
 interface FlowCmpProps {
-    activeProject: number;
-    setActiveProject: (project: number) => void;
-    edgeType: string;
-    setEdgeType: (type: string) => void;
     flowRef: React.RefObject<HTMLDivElement>;
     nodes: Node[];
     edges: Edge[];
@@ -44,10 +43,6 @@ interface FlowCmpProps {
  * It also renders a context menu when the user right-clicks on an edge.
  *
  * @param {FlowCmpProps} props - The props for the component.
- * @param {number} props.activeProject - The currently selected project.
- * @param {(project: number) => void} props.setActiveProject - A function to set the active project.
- * @param {string} props.edgeType - The currently selected edge type.
- * @param {(type: string) => void} props.setEdgeType - A function to set the edge type.
  * @param {React.RefObject<HTMLDivElement>} props.flowRef - A ref to the ReactFlow component.
  * @param {Node[]} props.nodes - The nodes in the graph.
  * @param {Edge[]} props.edges - The edges in the graph.
@@ -61,12 +56,8 @@ interface FlowCmpProps {
  * @param {() => void} props.onPaneClick - A function to handle clicking on the pane.
  * @param {{ id: string, top: number | false, left: number | false, right: number | false, bottom: number | false, } | null} props.menu - The context menu to show.
  */
-const FlowCmp = (props: FlowCmpProps): JSX.Element => {
+const FlowCmp = observer((props: FlowCmpProps): JSX.Element => {
     const {
-        activeProject,
-        setActiveProject,
-        edgeType,
-        setEdgeType,
         flowRef,
         nodes,
         edges,
@@ -212,70 +203,35 @@ const FlowCmp = (props: FlowCmpProps): JSX.Element => {
 
     return (
         <Stack direction="row" height="100%" display="flex">
-            <TaskSearch tasks={top100Films} onSelect={(selected) => console.log('selected', selected)} />
-            {/* <Stack direction="row" m={2} spacing={1} sx={{ backgroundColor: theme.palette.background.default, width: 'fit-content' }}>
-                <FormControl sx={{ minWidth: 150 }}>
-                    <InputLabel id="label">Beziehung</InputLabel>
-                    <Select
-                        label="Beziehung"
-                        labelId="label"
-                        value={edgeType}
-                        onChange={(e) => setEdgeType(e.target.value)}
-                        autoWidth
-                    >
-                        <MenuItem value="blockiert">blockiert</MenuItem>
-                        <MenuItem value="Beziehung mit">Beziehung mit</MenuItem>
-                        <MenuItem value="Vorgänger von">Vorgänger von</MenuItem>
-                        <MenuItem value="Nachfolger von">Nachfolger von</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ minWidth: 150 }}>
-                    <InputLabel id="select-project-label">Projekte auswählen</InputLabel>
-                    <Select
-                        sx={{ p: 0 }}
-                        labelId="select-project-label"
-                        value={activeProject}
-                        label="Projekte auswählen"
-                        autoWidth
-                        onChange={(e) => setActiveProject(Number(e.target.value))}
-                    >
-                        {Object.keys(tasksStore.projects).map((projectStringId) => {
-                            const project = {
-                                ...tasksStore.projects[Number(projectStringId)],
-                            };
-                            return (
-                                <MenuItem key={projectStringId} value={project.id}>
-                                    {project.alias}
-                                </MenuItem>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-            </Stack> */}
-            <ReactFlow
-                ref={flowRef}
-                nodes={nodes}
-                edges={edges}
-                nodeTypes={{ custom: CustomNode }}
-                edgeTypes={{ custom: CustomEdge }}
-                onNodesChange={onNodesChangeHandler}
-                onEdgesChange={onEdgesChangeHandler}
-                onConnect={onConnect}
-                onReconnect={onReconnect}
-                onReconnectStart={onReconnectStart}
-                onReconnectEnd={onReconnectEnd}
-                colorMode={theme.palette.mode}
-                onEdgeContextMenu={onEdgeContextMenu}
-                onPaneClick={onPaneClick}
-                style={{ height: '100%', width: '100%' }}
-            >
+            <TaskSearch />
+            <Box sx={{ flex: 1 }}>
+                <EdgeSettings />
+                <ReactFlow
+                    ref={flowRef}
+                    nodes={nodes}
+                    edges={edges}
+                    nodeTypes={{ custom: CustomNode }}
+                    edgeTypes={{ custom: CustomEdge }}
+                    onNodesChange={onNodesChangeHandler}
+                    onEdgesChange={onEdgesChangeHandler}
+                    onConnect={onConnect}
+                    onReconnect={onReconnect}
+                    onReconnectStart={onReconnectStart}
+                    onReconnectEnd={onReconnectEnd}
+                    colorMode={theme.palette.mode}
+                    onEdgeContextMenu={onEdgeContextMenu}
+                    onPaneClick={onPaneClick}
+                    style={{ height: '100%', width: '100%' }}
+                >
 
-                <MiniMap />
-                <Controls />
-                <Background />
-                {menu && <ContextMenu onClick={onPaneClick} bottom={menu.bottom} left={menu.left} right={menu.right} top={menu.top} id={menu.id} />}
-            </ReactFlow>
+                    <MiniMap />
+                    <Controls />
+                    <Background />
+                    {menu && <ContextMenu onClick={onPaneClick} bottom={menu.bottom} left={menu.left} right={menu.right} top={menu.top} id={menu.id} />}
+                </ReactFlow>
+            </Box>
         </Stack>
     );
-};
+});
+
 export default FlowCmp;

@@ -23,7 +23,7 @@ export default class FlowStore {
     private createNodesFromTasks = () => {
         const taskNodes: Node[] = [];
         this.stores.settingsStore.activeProjects.forEach((id) => {
-            const project = this.stores.tasksStore.projects[id];
+            const project = this.stores.projectsStore.projects[id];
             project.tasks.forEach((task, index) => {
                 taskNodes.push({
                     id: task.id.toString(), position: { x: 250 * index + 50, y: 50 }, data: { task }, type: 'custom',
@@ -36,7 +36,7 @@ export default class FlowStore {
     private createEdgesFromTasks = () => {
         const taskEdges: Edge[] = [];
         this.stores.settingsStore.activeProjects.forEach((id) => {
-            const project = this.stores.tasksStore.projects[id];
+            const project = this.stores.projectsStore.projects[id];
             project.tasks.forEach((task, index) => {
                 taskEdges.push({
                     id: index.toString(), source: task.id.toString(), target: task.relations.blocks.toString(), type: 'smoothstep',

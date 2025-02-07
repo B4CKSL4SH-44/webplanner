@@ -1,6 +1,8 @@
 import { DragHandle } from '@mui/icons-material';
 import {
-    Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, TextField,
+    Alert,
+    AlertTitle,
+    Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, IconButton, TextField,
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { useRef, useState, type ReactElement } from 'react';
@@ -28,27 +30,32 @@ const NewProjectOverlayCmp = observer((props: { activeModule: ModuleNames | null
 
     const handleClose = (event: any, reason: string) => {
         if (reason && reason === 'backdropClick') return;
-        stores.tasksStore.setNewProjectOverlayActive(false);
+        stores.projectsStore.setNewProjectOverlayActive(false);
     };
 
-    const handleSave = (e: React.KeyboardEvent | React.MouseEvent) => {
+    const handleSave = async (e: React.KeyboardEvent | React.MouseEvent) => {
         e.preventDefault();
         if (project.alias.replaceAll(' ', '').length === 0) {
             setTitleError(true);
             return;
         }
         let newId;
-        if (Object.keys(stores.tasksStore.projects).length === 1) {
+        if (Object.keys(stores.projectsStore.projects).length === 1) {
             newId = 1;
         } else {
-            const sorted = Object.keys(stores.tasksStore.projects).sort((a, b) => Number(b) - Number(a));
+            const sorted = Object.keys(stores.projectsStore.projects).sort((a, b) => Number(b) - Number(a));
             newId = Number(sorted[0]) + 1;
         }
-        stores.tasksStore.addProject({
+        const response = await stores.projectsStore.addProject({
             ...project,
             id: newId,
         });
-        stores.tasksStore.setNewProjectOverlayActive(false);
+
+        if (response.success === false) {
+            stores.projectsStore.setAddProjectError(response.status);
+            return;
+        }
+        stores.projectsStore.setNewProjectOverlayActive(false);
         // Adds new project to the active module's selection
         switch (activeModule) {
             case 'tasks':
@@ -71,7 +78,7 @@ const NewProjectOverlayCmp = observer((props: { activeModule: ModuleNames | null
                 sx={{ pointerEvents: 'none' }}
                 disablePortal
                 disableEnforceFocus
-                open={stores.tasksStore.newProjectOverlayActive}
+                open={stores.projectsStore.newProjectOverlayActive}
                 onClose={handleClose}
                 hideBackdrop
                 PaperProps={{ sx: { maxWidth: '300px' } }}
@@ -83,6 +90,8 @@ const NewProjectOverlayCmp = observer((props: { activeModule: ModuleNames | null
                     </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ pointerEvents: 'auto' }}>
+                    {stores.projectsStore.addProjectError !== undefined && <Alert severity="error"><AlertTitle>{stores.projectsStore.addProjectError}</AlertTitle></Alert>}
+                    <FormControlLabel control={<Checkbox />} label="Lokal" />
                     <FormControl sx={{ p: '1rem' }}>
                         <TextField
                             autoFocus
@@ -98,7 +107,7 @@ const NewProjectOverlayCmp = observer((props: { activeModule: ModuleNames | null
                     </FormControl>
                 </DialogContent>
                 <DialogActions sx={{ pointerEvents: 'auto' }}>
-                    <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(false)}>Cancel</Button>
+                    <Button onClick={() => stores.projectsStore.setNewProjectOverlayActive(false)}>Cancel</Button>
                     <Button onClick={(e) => handleSave(e)}>Speichern</Button>
                 </DialogActions>
             </Dialog>

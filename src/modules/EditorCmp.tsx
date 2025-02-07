@@ -72,7 +72,7 @@ const EditorCmp = observer((props: EditorProps): ReactElement => {
                             {notebookSettings.unSortedList && <MenuButtonBulletedList />}
                             <Box flexGrow={1} display="flex" justifyContent="flex-end">
                                 <Button
-                                    onClick={() => stores.tasksStore.setTaskOverlayState(true)}
+                                    onClick={() => stores.projectsStore.setTaskOverlayState(true)}
                                     sx={{ alignSelf: 'flex-end' }}
                                     variant="contained"
                                     startIcon={<Send />}

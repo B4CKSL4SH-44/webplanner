@@ -45,8 +45,8 @@ const OpenTasksOverlayCmp = observer((props: { task: Task }): ReactElement => {
                 <DialogActions sx={{ pointerEvents: 'auto', justifyContent: 'space-between' }}>
                     <Button
                         onClick={() => {
-                            stores.tasksStore.deleteTask(task);
-                            stores.tasksStore.closeTask(task);
+                            stores.projectsStore.deleteTask(task);
+                            stores.projectsStore.closeTask(task);
                         }}
                         size="small"
                         variant="contained"
@@ -56,7 +56,7 @@ const OpenTasksOverlayCmp = observer((props: { task: Task }): ReactElement => {
                         löschen
                     </Button>
 
-                    <Button onClick={() => stores.tasksStore.closeTask(task)}>Schließen</Button>
+                    <Button onClick={() => stores.projectsStore.closeTask(task)}>Schließen</Button>
                 </DialogActions>
             </Dialog>
         </Draggable>

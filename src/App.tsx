@@ -61,12 +61,12 @@ const App = observer(() => {
                 <Box flexGrow={1} minHeight={0} width="100%" display="flex" flexDirection="column">
                     <HeaderCmp />
                     <Box flexGrow={1} minHeight={0} display="flex" flexDirection="column">
-                        {stores.tasksStore.taskOverlayState && <TaskOverlayCmp />}
-                        {stores.tasksStore.newProjectOverlayActive && <NewProjectOverlayCmp activeModule={activeModule} />}
-                        {stores.tasksStore.openTasks.map((openTask) => (
+                        {stores.projectsStore.taskOverlayState && <TaskOverlayCmp />}
+                        {stores.projectsStore.newProjectOverlayActive && <NewProjectOverlayCmp activeModule={activeModule} />}
+                        {stores.projectsStore.openTasks.map((openTask) => (
                             <OpenTasksOverlayCmp key={openTask.id} task={openTask} />
                         ))}
-                        {stores.tasksStore.taskTimer !== null && <TaskTimerCmp />}
+                        {stores.projectsStore.taskTimer !== null && <TaskTimerCmp />}
                         <Drawer anchor="right" open={stores.settingsStore.settingsOpen} onClose={() => stores.settingsStore.setSettingsOpen(false)}>
                             <SettingsCmp />
                         </Drawer>

@@ -46,7 +46,7 @@ const TaskTimerCmp = observer((): ReactElement => {
                 <Box>
                     <Typography>
                         Timer:
-                        {stores.tasksStore.taskTimer?.title}
+                        {stores.projectsStore.taskTimer?.title}
                     </Typography>
                     <Typography>{getTimeString()}</Typography>
                 </Box>
@@ -63,7 +63,7 @@ const TaskTimerCmp = observer((): ReactElement => {
                         <Pause />
                     </IconButton>
                 )}
-                <IconButton onClick={() => stores.tasksStore.setTaskTimer(null)}>
+                <IconButton onClick={() => stores.projectsStore.setTaskTimer(null)}>
                     <Stop />
                 </IconButton>
             </Alert>

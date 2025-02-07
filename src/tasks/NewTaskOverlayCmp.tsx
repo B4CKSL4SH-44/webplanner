@@ -33,9 +33,9 @@ import useStores from '../Store';
 const NewTaskOverlayCmp = observer((): ReactElement => {
     const stores = useStores();
 
-    const isUpdate = typeof stores.tasksStore.taskOverlayState !== 'boolean';
+    const isUpdate = typeof stores.projectsStore.taskOverlayState !== 'boolean';
 
-    const [task, setTask] = useState<Task>(isUpdate ? (stores.tasksStore.taskOverlayState as Task) : defaultTask);
+    const [task, setTask] = useState<Task>(isUpdate ? (stores.projectsStore.taskOverlayState as Task) : defaultTask);
     const [project, setProject] = useState<number>(0);
     const [titleError, setTitleError] = useState<boolean>(false);
     const [colorPickerOpen, setColorPickerOpen] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
 
     const handleClose = (event: any, reason: string) => {
         if (reason && reason === 'backdropClick') return;
-        stores.tasksStore.setTaskOverlayState(false);
+        stores.projectsStore.setTaskOverlayState(false);
     };
 
     const handleSave = () => {
@@ -65,13 +65,13 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
         // Bei Neu:
         if (!isUpdate) {
             let newId;
-            if (stores.tasksStore.projects[project].tasks.length === 0) {
+            if (stores.projectsStore.projects[project].tasks.length === 0) {
                 newId = 1;
             } else {
-                const sorted = stores.tasksStore.projects[project].tasks.sort((a, b) => b.id - a.id);
+                const sorted = stores.projectsStore.projects[project].tasks.sort((a, b) => b.id - a.id);
                 newId = sorted[0].id + 1;
             }
-            stores.tasksStore.addTask({
+            stores.projectsStore.addTask({
                 ...task,
                 id: newId,
                 project,
@@ -79,9 +79,9 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
             });
         } else {
             // Bei Update
-            stores.tasksStore.updateTask(task);
+            stores.projectsStore.updateTask(task);
         }
-        stores.tasksStore.setTaskOverlayState(false);
+        stores.projectsStore.setTaskOverlayState(false);
     };
 
     const handleRelationToggle = (key: keyof Relations) => {
@@ -111,7 +111,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                 sx={{ pointerEvents: 'none' }}
                 disablePortal
                 disableEnforceFocus
-                open={stores.tasksStore.taskOverlayState !== false}
+                open={stores.projectsStore.taskOverlayState !== false}
                 onClose={handleClose}
                 hideBackdrop
                 PaperProps={{ sx: { maxWidth: '300px' } }}
@@ -190,7 +190,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                                                     maxWidth: '300px',
                                                 }}
                                             >
-                                                {stores.tasksStore.projects[0].tasks
+                                                {stores.projectsStore.projects[0].tasks
                                                     .filter((storeTask) => selected.includes(storeTask.id))
                                                     .map((storeTask) => (
                                                         <Tooltip title={storeTask.title}>
@@ -203,7 +203,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                                     multiple
                                     value={task.relations.blocks}
                                 >
-                                    {stores.tasksStore.projects[0].tasks.map((storeTask) => {
+                                    {stores.projectsStore.projects[0].tasks.map((storeTask) => {
                                         return (
                                             <MenuItem sx={{ maxWidth: '320px' }} key={storeTask.id} value={storeTask.id}>
                                                 <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{storeTask.title}</Box>
@@ -222,11 +222,11 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                                 label="Projekt auswählen"
                                 onChange={(e) => setProject(Number(e.target.value))}
                             >
-                                {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
+                                {Object.keys(stores.projectsStore.projects).map((projectStringId) => {
                                     const projectId = Number(projectStringId);
                                     return (
                                         <MenuItem key={projectId} value={projectId}>
-                                            {stores.tasksStore.projects[projectId].alias}
+                                            {stores.projectsStore.projects[projectId].alias}
                                         </MenuItem>
                                     );
                                 })}
@@ -240,11 +240,11 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                                 label="Board auswählen"
                                 onChange={(e) => setTask({ ...task, board: Number(e.target.value) })}
                             >
-                                {Object.keys(stores.tasksStore.projects[0].boards).map((boardStringId) => {
+                                {Object.keys(stores.projectsStore.projects[0].boards).map((boardStringId) => {
                                     const boardId = Number(boardStringId);
                                     return (
                                         <MenuItem key={boardId} value={boardId}>
-                                            {stores.tasksStore.projects[project].boards[boardId]}
+                                            {stores.projectsStore.projects[project].boards[boardId]}
                                         </MenuItem>
                                     );
                                 })}
@@ -259,7 +259,7 @@ const NewTaskOverlayCmp = observer((): ReactElement => {
                     </Popover>
                 </DialogContent>
                 <DialogActions sx={{ pointerEvents: 'auto' }}>
-                    <Button onClick={() => stores.tasksStore.setTaskOverlayState(false)}>Cancel</Button>
+                    <Button onClick={() => stores.projectsStore.setTaskOverlayState(false)}>Cancel</Button>
                     <Button onClick={handleSave}>Speichern</Button>
                 </DialogActions>
             </Dialog>

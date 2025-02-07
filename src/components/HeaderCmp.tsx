@@ -16,7 +16,7 @@ const HeaderCmp = observer((): ReactElement => {
                     sx={{ mr: '1rem' }}
                     color="info"
                     size="small"
-                    onClick={() => stores.tasksStore.setTaskOverlayState(true)}
+                    onClick={() => stores.projectsStore.setTaskOverlayState(true)}
                     variant="contained"
                     startIcon={<Send />}
                 >

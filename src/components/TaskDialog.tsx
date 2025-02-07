@@ -15,7 +15,7 @@ const TaskDialog = observer((props: { task: Task, onClose: ()=>void, onBack: ()=
     const handleSave = (updatedTask: Task) => {
         setEditTitle(false);
         setEditDescription(false);
-        stores.tasksStore.updateTask(updatedTask);
+        stores.projectsStore.updateTask(updatedTask);
     };
     return (
         <CustomDialog

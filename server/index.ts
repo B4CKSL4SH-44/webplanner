@@ -4,7 +4,10 @@ import addProject from './addProject';
 
 const db = new Database('./webconductor.sqlite', { create: true });
 
-export interface CustomResponse extends Response {}
+export interface CustomResponse {
+    success: boolean,
+    status: string
+}
 
 try {
     db.query('SELECT * FROM Projects').run();
@@ -41,15 +44,14 @@ const server = Bun.serve({
     port: Bun.env.PORT || 8000,
     async fetch(req) {
         const url = new URL(req.url);
-        if (url.pathname === '/addproject') {
-            //  console.log('REQUEST: ', req);
-            const res = await addProject(req, db);
-            // console.log('RES: ', await res.json());
-            return res;
-            // req.json().then((request) => {
-            //     console.log(request);
-            //     return new Response('Test');
-            // });
+        let res: CustomResponse | undefined;
+        if (url.pathname === 'api/addproject') {
+            res = await addProject(req, db);
+        }
+        if (res !== undefined) {
+            const response = new Response(JSON.stringify(res));
+            response.headers.set('Access-Control-Allow-Origin', '*');
+            return response;
         }
         return new Response('Hello!');
     },

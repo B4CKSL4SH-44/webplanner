@@ -2,9 +2,16 @@ import { action, makeObservable, observable } from 'mobx';
 import {
     defaultProjects, type Project, type Projects, type Task,
 } from '../tasks';
+import type { CustomResponse } from '../../server';
 
 export default class TasksStore {
     private static instance: TasksStore;
+
+    public addProjectLoading: boolean = false;
+
+    public setAddProjectLoading = (newValue: boolean) => {
+        this.addProjectLoading = newValue;
+    };
 
     public projects: Projects = defaultProjects;
 
@@ -13,13 +20,14 @@ export default class TasksStore {
         TasksStore.writeLsProjects(this.projects);
     };
 
-    public addProject = async (newProject: Project) => {
+    public addProject = async (newProject: Project): Promise<CustomResponse> => {
         const lsProjects = TasksStore.getLsProjects();
         lsProjects[newProject.id] = newProject;
         this.projects = lsProjects;
         TasksStore.writeLsProjects(lsProjects);
-        const response = await fetch('http://localhost:8000/addproject', { body: JSON.stringify(newProject), method: 'POST' });
-        console.log(response);
+        const response = await fetch('http://localhost:8000/api/addproject', { body: JSON.stringify(newProject), method: 'POST' });
+        const data: CustomResponse = await response.json();
+        return data;
     };
 
     public addBoard = (project: Project, board: string) => {
@@ -63,6 +71,12 @@ export default class TasksStore {
                 tasks: updatedTasks,
             },
         });
+    };
+
+    public addProjectError: string | undefined = undefined;
+
+    public setAddProjectError = (newValue: string | undefined) => {
+        this.addProjectError = newValue;
     };
 
     public taskOverlayState: boolean | Task = false;
@@ -117,9 +131,14 @@ export default class TasksStore {
             localStorage.setItem('webPlannerProjects', JSON.stringify(defaultProjects));
         }
         makeObservable(this, {
+            addProjectLoading: observable,
+            setAddProjectLoading: action,
+
             projects: observable,
             setProjects: action,
             addProject: action,
+            addProjectError: observable,
+            setAddProjectError: action,
             newProjectOverlayActive: observable,
             setNewProjectOverlayActive: action,
             addTask: action,

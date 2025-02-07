@@ -34,7 +34,7 @@ const KanbanCmp = observer((): ReactElement => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [isDragging, setIsDragging] = useState<number | undefined>(undefined);
 
-    const project = stores.tasksStore.projects[stores.settingsStore.kanbanProject];
+    const project = stores.projectsStore.projects[stores.settingsStore.kanbanProject];
 
     const handleDrop = (e: DropResult) => {
         setIsDragging(undefined);
@@ -43,13 +43,13 @@ const KanbanCmp = observer((): ReactElement => {
         const originalTask = project.tasks.find((task) => task.id === taskId);
         if (originalTask !== undefined) {
             originalTask.board = boardId;
-            stores.tasksStore.updateTask(originalTask);
+            stores.projectsStore.updateTask(originalTask);
         }
     };
 
     const handleNewBoard = () => {
         setIsAddBoardActive(false);
-        stores.tasksStore.addBoard(stores.tasksStore.projects[stores.settingsStore.kanbanProject], newBoardTitle);
+        stores.projectsStore.addBoard(stores.projectsStore.projects[stores.settingsStore.kanbanProject], newBoardTitle);
     };
 
     useEffect(() => {
@@ -59,7 +59,7 @@ const KanbanCmp = observer((): ReactElement => {
             }
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [stores.tasksStore.projects]);
+    }, [stores.projectsStore.projects]);
 
     return (
         <Box
@@ -81,9 +81,9 @@ const KanbanCmp = observer((): ReactElement => {
                         label="Projekte auswählen"
                         onChange={(e) => stores.settingsStore.setKanbanProject(Number(e.target.value))}
                     >
-                        {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
+                        {Object.keys(stores.projectsStore.projects).map((projectStringId) => {
                             const projectSelect = {
-                                ...stores.tasksStore.projects[Number(projectStringId)],
+                                ...stores.projectsStore.projects[Number(projectStringId)],
                             };
                             return (
                                 <MenuItem key={projectStringId} value={projectSelect.id}>
@@ -93,7 +93,7 @@ const KanbanCmp = observer((): ReactElement => {
                         })}
                     </Select>
                 </FormControl>
-                <Button onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
+                <Button onClick={() => stores.projectsStore.setNewProjectOverlayActive(true)} variant="contained" color="success" startIcon={<Add />}>
                     Projekt hinzufügen
                 </Button>
                 {isAddBoardActive ? (

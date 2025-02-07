@@ -46,8 +46,8 @@ const TasksBoardCmp = observer((): ReactElement => {
     const [showClosed, setShowClosed] = useState<boolean>(false);
 
     const handleOpenTask = (newTask: Task) => {
-        if (stores.tasksStore.openTasks.some((task) => task.id === newTask.id)) return;
-        stores.tasksStore.setOpenTasks([...stores.tasksStore.openTasks, newTask]);
+        if (stores.projectsStore.openTasks.some((task) => task.id === newTask.id)) return;
+        stores.projectsStore.setOpenTasks([...stores.projectsStore.openTasks, newTask]);
     };
 
     const hideProject = (projectToHide: Project) => {
@@ -60,7 +60,7 @@ const TasksBoardCmp = observer((): ReactElement => {
         if (taskDialogOpen !== null) {
             const updatedTask: Task = { ...taskDialogOpen, state: 'closed' };
             setTaskDialogOpen(null);
-            stores.tasksStore.updateTask(updatedTask);
+            stores.projectsStore.updateTask(updatedTask);
         }
     };
 
@@ -89,13 +89,13 @@ const TasksBoardCmp = observer((): ReactElement => {
                         size="small"
                         autoWidth
                         renderValue={(selected) => {
-                            return selected.map((select) => <Chip key={`chip-${stores.tasksStore.projects[select].alias}`} sx={{ mx: '2px' }} label={stores.tasksStore.projects[select].alias} />);
+                            return selected.map((select) => <Chip key={`chip-${stores.projectsStore.projects[select].alias}`} sx={{ mx: '2px' }} label={stores.projectsStore.projects[select].alias} />);
                         }}
                         onChange={(e) => stores.settingsStore.setActiveProjects(e.target.value as number[])}
                     >
-                        {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
+                        {Object.keys(stores.projectsStore.projects).map((projectStringId) => {
                             const project = {
-                                ...stores.tasksStore.projects[Number(projectStringId)],
+                                ...stores.projectsStore.projects[Number(projectStringId)],
                             };
                             return (
                                 <MenuItem key={projectStringId} defaultChecked={project.id === 0} value={project.id}>
@@ -120,7 +120,7 @@ const TasksBoardCmp = observer((): ReactElement => {
                                 xs: 'none', sm: 'inline-flex', md: 'inline-flex', lg: 'inline-flex',
                             },
                         }}
-                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        onClick={() => stores.projectsStore.setNewProjectOverlayActive(true)}
                         variant="contained"
                         color="success"
                         startIcon={<PlaylistAdd />}
@@ -148,7 +148,7 @@ const TasksBoardCmp = observer((): ReactElement => {
 
                     <Button
                         variant="contained"
-                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        onClick={() => stores.projectsStore.setNewProjectOverlayActive(true)}
                         color="success"
                     >
                         <PlaylistAdd />
@@ -168,7 +168,7 @@ const TasksBoardCmp = observer((): ReactElement => {
                     <Box>Keine Projekte ausgewählt</Box>
                 ) : (
                     stores.settingsStore.activeProjects.map((id) => {
-                        const project = stores.tasksStore.projects[id];
+                        const project = stores.projectsStore.projects[id];
                         const activeTasks = project.tasks.filter((task) => task.state !== 'closed');
                         const closedTasks = project.tasks.filter((task) => task.state === 'closed');
                         return (
@@ -246,15 +246,15 @@ const TasksBoardCmp = observer((): ReactElement => {
                                                     {task.id}
                                                     <IconButton
                                                         size="small"
-                                                        disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
+                                                        disabled={stores.projectsStore.openTasks.some((openTask) => openTask.id === task.id)}
                                                         onClick={(e) => { e.stopPropagation(); handleOpenTask(task); }}
                                                     >
                                                         <OpenInNew />
                                                     </IconButton>
-                                                    <IconButton size="small" onClick={(e) => { e.stopPropagation(); stores.tasksStore.setTaskOverlayState(task); }}>
+                                                    <IconButton size="small" onClick={(e) => { e.stopPropagation(); stores.projectsStore.setTaskOverlayState(task); }}>
                                                         <Edit />
                                                     </IconButton>
-                                                    <IconButton size="small" disabled={stores.tasksStore.taskTimer !== null} onClick={(e) => { e.stopPropagation(); stores.tasksStore.setTaskTimer(task); }}>
+                                                    <IconButton size="small" disabled={stores.projectsStore.taskTimer !== null} onClick={(e) => { e.stopPropagation(); stores.projectsStore.setTaskTimer(task); }}>
                                                         <Timer />
                                                     </IconButton>
                                                 </TableCell>
@@ -290,7 +290,7 @@ const TasksBoardCmp = observer((): ReactElement => {
                                                     <IconButton
                                                         sx={{ color: theme.palette.text.disabled }}
                                                         size="small"
-                                                        disabled={stores.tasksStore.openTasks.some((openTask) => openTask.id === task.id)}
+                                                        disabled={stores.projectsStore.openTasks.some((openTask) => openTask.id === task.id)}
                                                         onClick={() => handleOpenTask(task)}
                                                     >
                                                         <OpenInNew />
@@ -298,15 +298,15 @@ const TasksBoardCmp = observer((): ReactElement => {
                                                     <IconButton
                                                         sx={{ color: theme.palette.text.disabled }}
                                                         size="small"
-                                                        onClick={() => stores.tasksStore.setTaskOverlayState(task)}
+                                                        onClick={() => stores.projectsStore.setTaskOverlayState(task)}
                                                     >
                                                         <Edit />
                                                     </IconButton>
                                                     <IconButton
                                                         sx={{ color: theme.palette.text.disabled }}
                                                         size="small"
-                                                        disabled={stores.tasksStore.taskTimer !== null}
-                                                        onClick={() => stores.tasksStore.setTaskTimer(task)}
+                                                        disabled={stores.projectsStore.taskTimer !== null}
+                                                        onClick={() => stores.projectsStore.setTaskTimer(task)}
                                                     >
                                                         <Timer />
                                                     </IconButton>

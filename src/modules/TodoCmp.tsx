@@ -37,34 +37,34 @@ const TodoCmp = observer((): ReactElement => {
     const [newTodoTitle, setNewTodoTitle] = useState<string>('');
     const [showClosed, setShowClosed] = useState<boolean>(true);
 
-    const activeTodos = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state !== 'closed');
-    const closedTodos = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state === 'closed');
+    const activeTodos = stores.projectsStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state !== 'closed');
+    const closedTodos = stores.projectsStore.projects[stores.settingsStore.todoProject].tasks.filter((task) => task.state === 'closed');
 
     const { todoSettings } = stores.settingsStore;
 
     const handleToggle = (id: number) => {
-        const storeTaskToUpdate = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.find((task) => task.id === id);
+        const storeTaskToUpdate = stores.projectsStore.projects[stores.settingsStore.todoProject].tasks.find((task) => task.id === id);
         if (storeTaskToUpdate !== undefined) {
             const taskToUpdate = { ...storeTaskToUpdate };
             taskToUpdate.state = taskToUpdate.state === 'closed' ? 'open' : 'closed';
-            stores.tasksStore.updateTask(taskToUpdate);
+            stores.projectsStore.updateTask(taskToUpdate);
         }
     };
 
     const handleNewTodo = () => {
         if (newTodoTitle.replaceAll(' ', '').length === 0) return;
         let newId;
-        if (stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.length === 0) {
+        if (stores.projectsStore.projects[stores.settingsStore.todoProject].tasks.length === 0) {
             newId = 1;
         } else {
-            const sorted = stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.slice().sort((a, b) => b.id - a.id);
+            const sorted = stores.projectsStore.projects[stores.settingsStore.todoProject].tasks.slice().sort((a, b) => b.id - a.id);
             newId = sorted[0].id + 1;
         }
         const newTask: Task = defaultTask;
         newTask.id = newId;
         newTask.title = newTodoTitle;
         newTask.project = stores.settingsStore.todoProject;
-        stores.tasksStore.addTask(newTask);
+        stores.projectsStore.addTask(newTask);
         setNewTodoTitle('');
         setAddModeActive(false);
     };
@@ -94,9 +94,9 @@ const TodoCmp = observer((): ReactElement => {
                         autoWidth
                         onChange={(e) => stores.settingsStore.setTodoProject(Number(e.target.value))}
                     >
-                        {Object.keys(stores.tasksStore.projects).map((projectStringId) => {
+                        {Object.keys(stores.projectsStore.projects).map((projectStringId) => {
                             const project = {
-                                ...stores.tasksStore.projects[Number(projectStringId)],
+                                ...stores.projectsStore.projects[Number(projectStringId)],
                             };
                             return (
                                 <MenuItem key={projectStringId} value={project.id}>
@@ -117,7 +117,7 @@ const TodoCmp = observer((): ReactElement => {
                         sx={{
                             whiteSpace: 'nowrap',
                         }}
-                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        onClick={() => stores.projectsStore.setNewProjectOverlayActive(true)}
                         variant="contained"
                         color="success"
                         startIcon={<PlaylistAdd />}
@@ -145,7 +145,7 @@ const TodoCmp = observer((): ReactElement => {
                 >
                     <Button
                         variant="contained"
-                        onClick={() => stores.tasksStore.setNewProjectOverlayActive(true)}
+                        onClick={() => stores.projectsStore.setNewProjectOverlayActive(true)}
                         color="success"
                     >
                         <PlaylistAdd />
@@ -163,7 +163,7 @@ const TodoCmp = observer((): ReactElement => {
             </Toolbar>
             <Box flexGrow={1} minHeight={0} overflow="auto" sx={{ border: '1px solid rgba(0, 0, 0, 0.12)', padding: '4px' }}>
                 <List>
-                    {stores.tasksStore.projects[stores.settingsStore.todoProject].tasks.length === 0 && (
+                    {stores.projectsStore.projects[stores.settingsStore.todoProject].tasks.length === 0 && (
                         <Typography fontStyle="italic">Keine offenen Todos</Typography>
                     )}
                     <Divider />

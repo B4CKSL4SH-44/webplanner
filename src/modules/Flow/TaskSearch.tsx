@@ -19,8 +19,9 @@ const TaskSearch = observer(() => {
     const { settingsStore, tasksStore } = useStores();
     const theme = useTheme();
     const flowStore = useFlowStore();
-    const [search, setSearch] = useState('');
+    const [searchString, setSearchString] = useState('');
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+    const [tasks, setTasks] = useState<Task[]>([]);
 
     useEffect(() => {
         const newTasks: Task[] = [];
@@ -29,8 +30,9 @@ const TaskSearch = observer(() => {
                 newTasks.push(task);
             });
         });
+        setTasks(newTasks);
         setFilteredTasks(Array.from(
-            new Map([...filteredTasks, ...newTasks].map(
+            new Map(newTasks.map(
                 (item) => [item.id, item],
             )).values(),
         ).filter(
@@ -39,10 +41,14 @@ const TaskSearch = observer(() => {
     }, []);
 
     // Handle input change
-    const handleSearch = (event: any) => {
+    const handleChange = (event: any) => {
         const { value } = event.target;
-        setSearch(value.label);
-        const filtered = Object.values(filteredTasks).filter((task) => task.title.toLowerCase().includes(value.toLowerCase()));
+        setSearchString(value);
+        const filtered = Object.values(tasks).filter((task) => {
+            const taskString = `${task.title} ${task.description}`.toLowerCase();
+            const searchValue = value.toLowerCase();
+            return taskString.includes(searchValue);
+        });
         setFilteredTasks(filtered);
     };
 
@@ -58,8 +64,8 @@ const TaskSearch = observer(() => {
         >
             <TextField
                 fullWidth
-                value={search}
-                onChange={handleSearch}
+                value={searchString}
+                onChange={handleChange}
                 placeholder="Suche Task..."
                 size="small"
                 sx={{

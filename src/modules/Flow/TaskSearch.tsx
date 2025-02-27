@@ -54,7 +54,7 @@ const TaskSearch = observer(() => {
 
     // Handle selection
     const handleAdd = (task: Task) => {
-        flowStore.addTaskToFlow(task);
+        flowStore.addTaskToFlow(task.id);
     };
 
     return (

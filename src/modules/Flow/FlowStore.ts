@@ -23,54 +23,60 @@ export default class FlowStore {
         this.activeProject = project;
     };
 
-    // const lsNodes = localStorage.getItem('nodes');
+    /** ALL TASKS */
+    /**
+     * A list of all tasks in the currently active project.
+     */
+    public allTasks: Task[] = [];
 
-    // all tasks
-    public tasks: Task[] = [];
-
+    /**
+     * Adds a new task to the list of all tasks.
+     *
+     * @param {Task} newTask - The task to be added.
+     */
     public addTask = (newTask: Task) => {
-        this.tasks.push(newTask);
+        this.allTasks.push(newTask);
     };
 
-    // tasks in flow
-    public tasksInFlow: Task[] = [];
+    /** TASKS IN FLOW */
+    /**
+     * An array of task Ids that are currently in the flow.
+     */
+    public taskIdsInFlow: number[] = [];
 
-    public addTaskInFlow = (newTask: Task) => {
-        this.tasksInFlow.push(newTask);
+    /**
+     * Adds a task to the flow.
+     *
+     * @param {number} Id - The Id of the task to be added.
+     */
+    public addTaskToFlow = (Id: number) => {
+        this.taskIdsInFlow.push(Id);
     };
 
-    // tasks in search
-    public tasksInSearch: Task[] = [];
+    public getTaskById = (id: number) => this.allTasks.find((task) => task.id === id);
 
-    public addTaskInSearch = (newTask: Task) => {
-        this.tasksInSearch.push(newTask);
-    };
+    /** TASKS IN SEARCH */
+    public taskIdsInSearch: number[] = this.allTasks.filter((task) => this.taskIdsInFlow.includes(task.id)).map((task) => task.id);
 
-    // Flow Nodes
-    public nodes: Node[];
+    /** FLOW NODES */
+    public nodes: Node[] = [];
 
     public setNodes = (newNodes: Node[]) => {
         this.nodes = newNodes;
     };
 
     // Flow Edges
-    public edges: Edge[];
+    public edges: Edge[] = [];
 
     public setEdges = (newEdges: Edge[]) => {
         this.edges = newEdges;
     };
 
-    public addTaskToFlow = (task: Task) => {
-        this.addTaskInFlow(task);
-        this.tasksInSearch.filter((t) => t.id !== task.id);
-
-        this.createNodesFromTasks();
-        this.createEdgesFromTasks();
-    };
-
     private createNodesFromTasks = () => {
         const taskNodes: Node[] = [];
-        this.tasksInFlow.forEach((task, index) => {
+        this.taskIdsInFlow.forEach((taskId, index) => {
+            const task = this.getTaskById(taskId);
+            if (task === undefined) return;
             taskNodes.push({
                 id: task.id.toString(), position: { x: 250 * index + 50, y: 50 }, data: { task }, type: 'custom',
             } as Node);
@@ -101,17 +107,17 @@ export default class FlowStore {
         });
 
         // sort tasks, to show them in task search or in flow
-        this.tasks.forEach((task) => {
+        this.allTasks.forEach((task) => {
             if (this.nodes.some((node) => node.id === task.id.toString())) {
-                this.addTaskInFlow(task);
-            } else {
-                this.addTaskInSearch(task);
+                this.addTaskToFlow(task.id);
             }
         });
     };
 
     public constructor(props: { stores: Store }) {
-        this.stores = props.stores;
+        const { stores } = props;
+
+        this.stores = stores;
 
         this.nodes = [];
         this.edges = [];

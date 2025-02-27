@@ -2,7 +2,9 @@ import {
     type Edge,
     type Node,
 } from '@xyflow/react';
-import { action, makeObservable, observable } from 'mobx';
+import {
+    makeAutoObservable,
+} from 'mobx';
 import useStores, { type Store } from '../../Store';
 import type { Task } from '../../tasks';
 
@@ -68,7 +70,6 @@ export default class FlowStore {
 
     private createNodesFromTasks = () => {
         const taskNodes: Node[] = [];
-        console.log('tasksInFlow', ...this.tasksInFlow);
         this.tasksInFlow.forEach((task, index) => {
             taskNodes.push({
                 id: task.id.toString(), position: { x: 250 * index + 50, y: 50 }, data: { task }, type: 'custom',
@@ -120,17 +121,7 @@ export default class FlowStore {
         this.createNodesFromTasks();
         this.createEdgesFromTasks();
 
-        makeObservable(this, {
-            nodes: observable,
-            tasks: observable,
-            tasksInFlow: observable,
-            tasksInSearch: observable,
-            addTask: action,
-            addTaskInFlow: action,
-            addTaskInSearch: action,
-            addTaskToFlow: action,
-            setNodes: action,
-        });
+        makeAutoObservable(this);
     }
 }
 

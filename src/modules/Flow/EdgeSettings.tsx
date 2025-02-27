@@ -19,7 +19,15 @@ const EdgeSettings = () => {
     } = useFlowStore();
 
     return (
-        <Stack direction="row" m={1} spacing={1} sx={{ border: `1px solid ${theme.palette.divider}`, height: 'fit-content', width: 'fit-content' }}>
+        <Stack
+            direction="row"
+            m={1}
+            spacing={1}
+            sx={{
+                position: 'absolute',
+                zIndex: theme.zIndex.fab,
+            }}
+        >
             <FormControl sx={{ minWidth: 150 }}>
                 <InputLabel id="label">Beziehung</InputLabel>
                 <Select
@@ -28,6 +36,7 @@ const EdgeSettings = () => {
                     value={edgeType}
                     onChange={(e) => setEdgeType(e.target.value)}
                     autoWidth
+                    sx={{ backgroundColor: theme.palette.background.paper }}
                 >
                     <MenuItem value="blockiert">blockiert</MenuItem>
                     <MenuItem value="Beziehung mit">Beziehung mit</MenuItem>
@@ -38,12 +47,12 @@ const EdgeSettings = () => {
             <FormControl sx={{ minWidth: 150 }}>
                 <InputLabel id="select-project-label">Projekte auswählen</InputLabel>
                 <Select
-                    sx={{ p: 0 }}
                     labelId="select-project-label"
                     value={activeProject}
                     label="Projekte auswählen"
                     autoWidth
                     onChange={(e) => setActiveProject(Number(e.target.value))}
+                    sx={{ backgroundColor: theme.palette.background.paper }}
                 >
                     {Object.keys(tasksStore.projects).map((projectStringId) => {
                         const project = {

@@ -17,8 +17,8 @@ import { useFlowStore } from './FlowStore';
 
 const TaskSearch = observer(() => {
     const { settingsStore, tasksStore } = useStores();
-    const flowStore = useFlowStore();
     const theme = useTheme();
+    const flowStore = useFlowStore();
     const [search, setSearch] = useState('');
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
 
@@ -47,13 +47,13 @@ const TaskSearch = observer(() => {
     };
 
     // Handle selection
-    const handleSelect = (task: Task) => {
+    const handleAdd = (task: Task) => {
         flowStore.addTaskToFlow(task);
     };
 
     return (
         <Box sx={{
-            position: 'relative', maxWidth: '320px', width: '100%', borderRight: `1px solid ${theme.palette.divider}`,
+            maxWidth: '320px', width: '100%', backgroundColor: 'background.paper', display: 'flex', flexDirection: 'column', borderRight: `1px solid ${theme.palette.divider}`,
         }}
         >
             <TextField
@@ -62,12 +62,37 @@ const TaskSearch = observer(() => {
                 onChange={handleSearch}
                 placeholder="Suche Task..."
                 size="small"
+                sx={{
+                    p: 1,
+                    backgroundColor: 'background.default',
+                }}
+                InputProps={{ style: { backgroundColor: 'background.default' } }}
             />
+            <Divider />
             <Paper
                 style={{
-                    width: '100%',
-                    height: '100%',
                     overflowY: 'scroll',
+                    flexGrow: 1,
+                    height: 0,
+                }}
+                sx={{
+                    '&::-webkit-scrollbar': {
+                        width: '8px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        background: 'rgba(0, 0, 0, 0.05)',
+                        borderRadius: '10px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        background: 'rgba(0, 0, 0, 0.2)',
+                        borderRadius: '10px',
+                        transition: 'background 0.3s',
+                    },
+                    '&::-webkit-scrollbar-thumb:hover': {
+                        background: 'rgba(0, 0, 0, 0.4)',
+                    },
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.05)',
                 }}
             >
                 <List>
@@ -77,8 +102,8 @@ const TaskSearch = observer(() => {
                                 <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ListItemText id={task.title} primary={task.title} sx={{ flex: 1 }} />
                                     <IconButton
-                                        onClick={() => handleSelect(task)}
-                                        sx={{ p: 0 }} // Removes extra padding
+                                        onClick={() => handleAdd(task)}
+                                        sx={{ p: 0 }}
                                         color="primary"
                                     >
                                         <AddBoxIcon />

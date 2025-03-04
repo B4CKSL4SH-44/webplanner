@@ -12,7 +12,7 @@ import useStores from './Store';
 import HeaderCmp from './components/HeaderCmp';
 import SettingsCmp from './components/SettingsCmp';
 import TaskTimerCmp from './components/TimerCmp';
-import FlowController from './modules/Flow/FlowController';
+import FlowCmp from './modules/Flow/FlowCmp';
 import FlowStore from './modules/Flow/FlowStore';
 import KanbanCmp from './modules/Kanban/KanbanCmp';
 import NoteBookCmp from './modules/NoteBookCmp';
@@ -32,7 +32,7 @@ const App = observer(() => {
     );
 
     useEffect(() => {
-        stores.flowStore = new FlowStore({ stores });
+        stores.flowStore = new FlowStore(stores);
     }, []);
 
     console.log(process.env.REACT_APP_TEST_VAR);
@@ -82,7 +82,7 @@ const App = observer(() => {
                         {activeModule === 'notebook' && <NoteBookCmp />}
                         {activeModule === 'tasks' && <TasksBoardCmp />}
                         {activeModule === 'kanban' && <KanbanCmp />}
-                        {activeModule === 'flow' && <FlowController />}
+                        {activeModule === 'flow' && <FlowCmp />}
                         {activeModule === 'todo' && <TodoCmp />}
                     </Box>
                 </Box>

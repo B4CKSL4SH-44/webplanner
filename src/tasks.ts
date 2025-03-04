@@ -1,3 +1,7 @@
+import {
+    type Node,
+} from '@xyflow/react';
+
 export interface Projects {
     0: Project;
     [projectId: number]: Project;
@@ -21,6 +25,7 @@ export interface Task {
     project: number;
     board?: number;
     state: 'open' | 'closed';
+    flow?: Node;
 }
 
 export interface Relations {

@@ -7,22 +7,25 @@ import {
     Handle, Position, type Node, type NodeProps,
 } from '@xyflow/react';
 import useStores from '../../../Store';
-import type { Task } from '../../../tasks';
+import { useFlowStore } from '../FlowStore';
 
 export type TCustomNode = Node<
 {
-    task: Task;
+    id: number;
 },
 'custom'
 >;
 
 const CustomNode = (props: NodeProps<TCustomNode>) => {
     const { data } = props;
-    const {
-        priority, title, description, project,
-    } = data.task;
+    const { id } = data;
     const theme = useTheme();
     const stores = useStores();
+    const flowStore = useFlowStore();
+
+    const {
+        project, title, description, priority,
+    } = flowStore.tasks.find((task) => task.id === id)!;
 
     const projectName = stores.tasksStore.projects[project].alias;
 

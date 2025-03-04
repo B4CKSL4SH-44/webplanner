@@ -23,6 +23,15 @@ const TaskSearch = observer(() => {
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
     const [tasks, setTasks] = useState<Task[]>([]);
 
+    const handleAddTask = (task: Task) => {
+        if (!task.flow) {
+            task.flow = {
+                id: task.id.toString(), position: { x: 0, y: 0 }, data: { id: task.id }, type: 'custom',
+            };
+        }
+        flowStore.addTask(task);
+    };
+
     useEffect(() => {
         const newTasks: Task[] = [];
         settingsStore.activeProjects.forEach((id) => {
@@ -36,9 +45,9 @@ const TaskSearch = observer(() => {
                 (item) => [item.id, item],
             )).values(),
         ).filter(
-            (task: Task) => flowStore?.nodes.every((node) => (node.data.task as Task).id !== task.id),
+            (task: Task) => flowStore.nodes.every((node) => (node.data.id !== task.id)),
         ));
-    }, []);
+    }, [flowStore.nodes]);
 
     // Handle input change
     const handleChange = (event: any) => {
@@ -50,11 +59,6 @@ const TaskSearch = observer(() => {
             return taskString.includes(searchValue);
         });
         setFilteredTasks(filtered);
-    };
-
-    // Handle selection
-    const handleAdd = (task: Task) => {
-        flowStore.addTaskToFlow(task.id);
     };
 
     return (
@@ -108,7 +112,7 @@ const TaskSearch = observer(() => {
                                 <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
                                     <ListItemText id={task.title} primary={task.title} sx={{ flex: 1 }} />
                                     <IconButton
-                                        onClick={() => handleAdd(task)}
+                                        onClick={() => handleAddTask(task)}
                                         sx={{ p: 0 }}
                                         color="primary"
                                     >

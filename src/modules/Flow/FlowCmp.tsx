@@ -16,10 +16,14 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { observer } from 'mobx-react';
+import {
+    useCallback, useMemo, useRef, useState,
+} from 'react';
 import ContextMenu from './ContextMenu';
 import EdgeSettings from './EdgeSettings';
 import CustomEdge from './FlowItems/CustomEdge';
 import CustomNode from './FlowItems/CustomNode';
+import { useFlowStore } from './FlowStore';
 import TaskSearch from './TaskSearch';
 
 interface FlowCmpProps {
@@ -57,25 +61,41 @@ interface FlowCmpProps {
  * @param {() => void} props.onPaneClick - A function to handle clicking on the pane.
  * @param {{ id: string, top: number | false, left: number | false, right: number | false, bottom: number | false, } | null} props.menu - The context menu to show.
  */
-const FlowCmp = observer((props: FlowCmpProps): JSX.Element => {
+const FlowCmp = observer((): JSX.Element => {
+    const flowStore = useFlowStore();
     const {
-        flowRef,
-        nodes,
-        edges,
-        onNodesChangeHandler,
-        onEdgesChangeHandler,
-        onConnect,
-        onReconnect,
-        onReconnectStart,
-        onReconnectEnd,
-        onEdgeContextMenu,
-        onPaneClick,
-        menu,
-    } = props;
+        nodes, edges, setNodes, addTask, syncTasksWithNodes, onNodesChange, onEdgesChange,
+    } = flowStore;
 
+    const flowRef = useRef<HTMLDivElement | null>(null);
     const theme = useTheme();
-    console.log(theme);
 
+    // Handlers
+    const handleNodesChange = useCallback((changes: NodeChange[]) => onNodesChange(changes), [onNodesChange]);
+
+    const handleEdgesChange = useCallback((changes: EdgeChange[]) => onEdgesChange(changes), [onEdgesChange]);
+
+    const handleNodeDragStop = useCallback(() => syncTasksWithNodes(), [syncTasksWithNodes]);
+
+    const [menu, setMenu] = useState<{ id: string, top: number | false, left: number | false, right: number | false, bottom: number | false } | null>(null);
+
+    const onPaneClick = useCallback(() => setMenu(null), []);
+
+    const nodeTypes = useMemo(() => ({ custom: CustomNode }), []);
+    const edgeTypes = useMemo(() => ({ custom: CustomEdge }), []);
+
+    /* const onEdgeContextMenu = useCallback((event: React.MouseEvent, edge: Edge) => {
+        event.preventDefault();
+        const pane = flowRef.current!.getBoundingClientRect();
+        const newMenu = {
+            id: edge.id,
+            top: event.clientY - (window.innerHeight - pane.height) + 10,
+            left: event.clientX - (window.innerWidth - pane.width) + 10,
+            right: false,
+            bottom: false,
+        };
+        setMenu(newMenu);
+    }, []); */
     return (
         <Stack direction="row" flex={1} display="flex">
             <TaskSearch />
@@ -83,25 +103,22 @@ const FlowCmp = observer((props: FlowCmpProps): JSX.Element => {
                 <EdgeSettings />
                 <ReactFlow
                     ref={flowRef}
-                    nodes={nodes}
+                    nodes={[...flowStore.nodes]}
                     edges={edges}
-                    nodeTypes={{ custom: CustomNode }}
-                    edgeTypes={{ custom: CustomEdge }}
-                    onNodesChange={onNodesChangeHandler}
-                    onEdgesChange={onEdgesChangeHandler}
-                    onConnect={onConnect}
-                    onReconnect={onReconnect}
-                    onReconnectStart={onReconnectStart}
-                    onReconnectEnd={onReconnectEnd}
+                    nodeTypes={nodeTypes}
+                    edgeTypes={edgeTypes}
+                    onNodesChange={handleNodesChange}
+                    onEdgesChange={handleEdgesChange}
+                    // onNodeDragStop={handleNodeDragStop}
                     colorMode={theme.palette.mode}
-                    onEdgeContextMenu={onEdgeContextMenu}
-                    onPaneClick={onPaneClick}
+                    // onEdgeContextMenu={onEdgeContextMenu}
                     style={{ height: '100%', width: '100%' }}
+                    fitView
                 >
                     <MiniMap />
                     <Controls />
                     <Background />
-                    {menu && <ContextMenu onClick={onPaneClick} bottom={menu.bottom} left={menu.left} right={menu.right} top={menu.top} id={menu.id} />}
+                    {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
                 </ReactFlow>
             </Box>
         </Stack>

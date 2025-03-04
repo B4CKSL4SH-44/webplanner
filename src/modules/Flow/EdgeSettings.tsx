@@ -1,15 +1,13 @@
-import {
-    FormControl, InputLabel,
-    MenuItem,
-    Select,
-    Stack,
-    useTheme,
-} from '@mui/material';
-import useStores from '../../Store';
-import { useFlowStore } from './FlowStore';
-
 const EdgeSettings = () => {
-    const theme = useTheme();
+    return (
+        <div style={{
+            position: 'absolute',
+        }}
+        >
+            TODO
+        </div>
+    );
+    /* const theme = useTheme();
     const { tasksStore } = useStores();
     const {
         activeProject,
@@ -67,7 +65,7 @@ const EdgeSettings = () => {
                 </Select>
             </FormControl>
         </Stack>
-    );
+    ); */
 };
 
 export default EdgeSettings;
